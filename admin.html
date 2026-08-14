@@ -3,6 +3,8 @@
 
     async function loadStockData() {
         const tbody = document.getElementById('stock-list');
+        if (!tbody) return;
+        
         tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">กำลังโหลด...</td></tr>';
 
         try {
@@ -10,21 +12,33 @@
             const data = await res.json();
             
             tbody.innerHTML = '';
+
+            if (!Array.isArray(data) || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">ไม่มีข้อมูลในระบบ</td></tr>';
+                return;
+            }
+
             data.forEach((item) => {
-                // ดึงชื่อคอลัมน์มาแบบ Array เพื่อป้องกันปัญหาอักขระพิเศษ
+                // ดึง Key ทั้งหมดที่มีใน Row นั้นๆ
                 const keys = Object.keys(item);
-                const code = item[keys[0]]; // รหัสสินค้า
-                const email = item[keys[1]]; // เมล
-                const status = item[keys[2]]; // สถานะ
-                const expire = item[keys[4]]; // วันหมดอายุ
                 
+                // ใช้การดึงค่าตาม Index แบบปลอดภัย (Fallback เผื่อ Index ไม่มี)
+                const code = item[keys[0]] || '';
+                const email = item[keys[1]] || '';
+                const status = item[keys[2]] || '';
+                // เปลี่ยนจาก index 4 เป็น index 3 (หรือระบุชื่อคอลัมน์ไปเลย)
+                const expire = keys[3] ? item[keys[3]] : (keys[4] ? item[keys[4]] : '');
+
+                // Escape เครื่องหมาย ' เผื่อใน code มีอักขระพิเศษ
+                const safeCode = String(code).replace(/'/g, "\\'");
+
                 tbody.innerHTML += `
                     <tr>
                         <td><b>${code || '-'}</b></td>
                         <td>${email || '-'}</td>
                         <td>
                             <select class="${status === 'ว่าง' ? 'free' : 'busy'}" 
-                                    onchange="updateStatus('${code}', this.value)">
+                                    onchange="updateStatus('${safeCode}', this.value)">
                                 <option value="ว่าง" ${status === 'ว่าง' ? 'selected' : ''}>ว่าง</option>
                                 <option value="ไม่ว่าง" ${status !== 'ว่าง' ? 'selected' : ''}>ไม่ว่าง</option>
                             </select>
@@ -34,25 +48,48 @@
                 `;
             });
         } catch (err) {
-            console.error(err);
+            console.error('Fetch Error:', err);
             tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:red;">ดึงข้อมูลไม่สำเร็จ</td></tr>';
         }
     }
 
     async function updateStatus(code, newStatus) {
+        if (!code) {
+            alert('ไม่พบรหัสสินค้า ไม่สามารถอัปเดตได้');
+            return;
+        }
+
         try {
-            // ใช้ encodeURIComponent เพื่อป้องกันปัญหาอักขระใน URL
-            const url = `${SHEETDB_URL}/รหัสสินค้า%20(Code)/${encodeURIComponent(code)}`;
-            await fetch(url, {
+            // ดึงข้อมูลแถวแรกมาหาชื่อคอลัมน์แรกเพื่อใช้เป็น Key ในการ PATCH
+            const resData = await fetch(SHEETDB_URL);
+            const data = await resData.json();
+            const firstKey = Object.keys(data[0])[0]; // ชื่อคอลัมน์แรก เช่น 'รหัสสินค้า (Code)'
+            const statusKey = Object.keys(data[0])[2]; // ชื่อคอลัมน์สถานะ เช่น 'สถานะ (Status)'
+
+            const url = `${SHEETDB_URL}/${encodeURIComponent(firstKey)}/${encodeURIComponent(code)}`;
+            
+            const response = await fetch(url, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ data: { 'สถานะ (Status)': newStatus } })
+                body: JSON.stringify({ 
+                    data: { 
+                        [statusKey]: newStatus 
+                    } 
+                })
             });
-            alert('อัปเดตเป็น ' + newStatus + ' เรียบร้อย');
+
+            if (response.ok) {
+                alert('อัปเดตเป็น ' + newStatus + ' เรียบร้อย');
+                loadStockData(); // โหลดข้อมูลใหม่เพื่ออัปเดต Class/สี ของ Select
+            } else {
+                throw new Error('Network response was not ok');
+            }
         } catch (err) {
-            alert('แก้ไขไม่สำเร็จ!');
+            console.error('Update Error:', err);
+            alert('แก้ไขไม่สำเร็จ! ตรวจสอบชื่อคอลัมน์ใน Google Sheets');
         }
     }
 
-    window.onload = loadStockData;
+    // เรียกทำงานเมื่อ DOM โหลดเสร็จ ชัวร์กว่า window.onload
+    document.addEventListener('DOMContentLoaded', loadStockData);
 </script>
