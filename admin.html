@@ -1,95 +1,61 @@
 <script>
-    const SHEETDB_URL = "https://sheetdb.io/api/v1/5xaf2rla9nky0"; 
+    // ใส่ URL ของ Cloudflare Worker ของคุณตรงนี้
+    const WORKER_URL = "https://your-worker-name.your-subdomain.workers.dev"; 
 
     async function loadStockData() {
         const tbody = document.getElementById('stock-list');
         if (!tbody) return;
-        
         tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">กำลังโหลด...</td></tr>';
 
         try {
-            const res = await fetch(SHEETDB_URL);
+            const res = await fetch(WORKER_URL);
             const data = await res.json();
             
+            if (data.error) throw new Error(data.error);
+
             tbody.innerHTML = '';
-
-            if (!Array.isArray(data) || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">ไม่มีข้อมูลในระบบ</td></tr>';
-                return;
-            }
-
             data.forEach((item) => {
-                // ดึง Key ทั้งหมดที่มีใน Row นั้นๆ
-                const keys = Object.keys(item);
-                
-                // ใช้การดึงค่าตาม Index แบบปลอดภัย (Fallback เผื่อ Index ไม่มี)
-                const code = item[keys[0]] || '';
-                const email = item[keys[1]] || '';
-                const status = item[keys[2]] || '';
-                // เปลี่ยนจาก index 4 เป็น index 3 (หรือระบุชื่อคอลัมน์ไปเลย)
-                const expire = keys[3] ? item[keys[3]] : (keys[4] ? item[keys[4]] : '');
-
-                // Escape เครื่องหมาย ' เผื่อใน code มีอักขระพิเศษ
-                const safeCode = String(code).replace(/'/g, "\\'");
-
                 tbody.innerHTML += `
                     <tr>
-                        <td><b>${code || '-'}</b></td>
-                        <td>${email || '-'}</td>
+                        <td><b>${item.code}</b></td>
+                        <td>${item.email}</td>
                         <td>
-                            <select class="${status === 'ว่าง' ? 'free' : 'busy'}" 
-                                    onchange="updateStatus('${safeCode}', this.value)">
-                                <option value="ว่าง" ${status === 'ว่าง' ? 'selected' : ''}>ว่าง</option>
-                                <option value="ไม่ว่าง" ${status !== 'ว่าง' ? 'selected' : ''}>ไม่ว่าง</option>
+                            <select class="${item.status === 'ว่าง' ? 'free' : 'busy'}" 
+                                    onchange="updateStatus(${item.row}, this.value)">
+                                <option value="ว่าง" ${item.status === 'ว่าง' ? 'selected' : ''}>ว่าง</option>
+                                <option value="ไม่ว่าง" ${item.status !== 'ว่าง' ? 'selected' : ''}>ไม่ว่าง</option>
                             </select>
                         </td>
-                        <td>${expire || '-'}</td>
+                        <td>${item.expire}</td>
                     </tr>
                 `;
             });
         } catch (err) {
-            console.error('Fetch Error:', err);
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:red;">ดึงข้อมูลไม่สำเร็จ</td></tr>';
+            console.error(err);
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">ดึงข้อมูลไม่สำเร็จ: ${err.message}</td></tr>`;
         }
     }
 
-    async function updateStatus(code, newStatus) {
-        if (!code) {
-            alert('ไม่พบรหัสสินค้า ไม่สามารถอัปเดตได้');
-            return;
-        }
-
+    async function updateStatus(rowNum, newStatus) {
         try {
-            // ดึงข้อมูลแถวแรกมาหาชื่อคอลัมน์แรกเพื่อใช้เป็น Key ในการ PATCH
-            const resData = await fetch(SHEETDB_URL);
-            const data = await resData.json();
-            const firstKey = Object.keys(data[0])[0]; // ชื่อคอลัมน์แรก เช่น 'รหัสสินค้า (Code)'
-            const statusKey = Object.keys(data[0])[2]; // ชื่อคอลัมน์สถานะ เช่น 'สถานะ (Status)'
-
-            const url = `${SHEETDB_URL}/${encodeURIComponent(firstKey)}/${encodeURIComponent(code)}`;
-            
-            const response = await fetch(url, {
-                method: 'PATCH',
+            const res = await fetch(WORKER_URL, {
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    data: { 
-                        [statusKey]: newStatus 
-                    } 
+                body: JSON.stringify({
+                    row: rowNum,
+                    status: newStatus
                 })
             });
 
-            if (response.ok) {
-                alert('อัปเดตเป็น ' + newStatus + ' เรียบร้อย');
-                loadStockData(); // โหลดข้อมูลใหม่เพื่ออัปเดต Class/สี ของ Select
-            } else {
-                throw new Error('Network response was not ok');
-            }
+            const result = await res.json();
+            if (result.error) throw new Error(result.error);
+
+            alert(`อัปเดตบรรทัดที่ ${rowNum} เป็น "${newStatus}" เรียบร้อย!`);
+            loadStockData(); // โหลดหน้าใหม่เพื่ออัปเดตสถานะและสี
         } catch (err) {
-            console.error('Update Error:', err);
-            alert('แก้ไขไม่สำเร็จ! ตรวจสอบชื่อคอลัมน์ใน Google Sheets');
+            alert('แก้ไขไม่สำเร็จ: ' + err.message);
         }
     }
 
-    // เรียกทำงานเมื่อ DOM โหลดเสร็จ ชัวร์กว่า window.onload
     document.addEventListener('DOMContentLoaded', loadStockData);
 </script>
