@@ -1,5 +1,4 @@
 <script>
-    // ใส่ URL ที่มึงก๊อปปี้มาจาก SheetDB ตรงนี้
     const SHEETDB_URL = "https://sheetdb.io/api/v1/5xaf2rla9nky0"; 
 
     async function loadStockData() {
@@ -11,38 +10,45 @@
             const data = await res.json();
             
             tbody.innerHTML = '';
-            data.forEach((item, index) => {
-                // SheetDB ส่งข้อมูลมาเป็น Object ตามชื่อหัวคอลัมน์
-                // เช็กชื่อหัวคอลัมน์ใน Sheet มึง (รหัสสินค้า, เมล / โปรไฟล์, สถานะ (Status), จำนวนวัน, วันหมดอายุ)
+            data.forEach((item) => {
+                // ดึงชื่อคอลัมน์มาแบบ Array เพื่อป้องกันปัญหาอักขระพิเศษ
+                const keys = Object.keys(item);
+                const code = item[keys[0]]; // รหัสสินค้า
+                const email = item[keys[1]]; // เมล
+                const status = item[keys[2]]; // สถานะ
+                const expire = item[keys[4]]; // วันหมดอายุ
+                
                 tbody.innerHTML += `
                     <tr>
-                        <td><b>${item['รหัสสินค้า (Code)'] || '-'}</b></td>
-                        <td>${item['เมล / โปรไฟล์'] || '-'}</td>
+                        <td><b>${code || '-'}</b></td>
+                        <td>${email || '-'}</td>
                         <td>
-                            <select class="${item['สถานะ (Status)'] === 'ว่าง' ? 'free' : 'busy'}" 
-                                    onchange="updateStatus('${item['รหัสสินค้า (Code)']}', this.value)">
-                                <option value="ว่าง" ${item['สถานะ (Status)'] === 'ว่าง' ? 'selected' : ''}>ว่าง</option>
-                                <option value="ไม่ว่าง" ${item['สถานะ (Status)'] !== 'ว่าง' ? 'selected' : ''}>ไม่ว่าง</option>
+                            <select class="${status === 'ว่าง' ? 'free' : 'busy'}" 
+                                    onchange="updateStatus('${code}', this.value)">
+                                <option value="ว่าง" ${status === 'ว่าง' ? 'selected' : ''}>ว่าง</option>
+                                <option value="ไม่ว่าง" ${status !== 'ว่าง' ? 'selected' : ''}>ไม่ว่าง</option>
                             </select>
                         </td>
-                        <td>${item['วันหมดอายุ'] || '-'}</td>
+                        <td>${expire || '-'}</td>
                     </tr>
                 `;
             });
         } catch (err) {
+            console.error(err);
             tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:red;">ดึงข้อมูลไม่สำเร็จ</td></tr>';
         }
     }
 
     async function updateStatus(code, newStatus) {
-        // อัปเดตผ่าน API ของ SheetDB โดยอ้างอิงจากคอลัมน์ "รหัสสินค้า (Code)"
         try {
-            await fetch(`${SHEETDB_URL}/รหัสสินค้า%20(Code)/${code}`, {
+            // ใช้ encodeURIComponent เพื่อป้องกันปัญหาอักขระใน URL
+            const url = `${SHEETDB_URL}/รหัสสินค้า%20(Code)/${encodeURIComponent(code)}`;
+            await fetch(url, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ data: { 'สถานะ (Status)': newStatus } })
             });
-            alert('อัปเดตสถานะเป็น ' + newStatus + ' เรียบร้อย');
+            alert('อัปเดตเป็น ' + newStatus + ' เรียบร้อย');
         } catch (err) {
             alert('แก้ไขไม่สำเร็จ!');
         }
