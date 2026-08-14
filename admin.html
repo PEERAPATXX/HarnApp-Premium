@@ -1,61 +1,106 @@
-<script>
-    // ใส่ URL ของ Cloudflare Worker ของคุณตรงนี้
-    const WORKER_URL = "https://your-worker-name.your-subdomain.workers.dev"; 
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการสต็อก - Admin</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f9; }
+        table { width: 100%; border-collapse: collapse; background: #fff; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #333; color: white; }
+        select { padding: 5px; border-radius: 4px; font-weight: bold; }
+        .free { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .busy { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
 
-    async function loadStockData() {
-        const tbody = document.getElementById('stock-list');
-        if (!tbody) return;
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">กำลังโหลด...</td></tr>';
+    <h2>รายการสินค้าในสต็อก</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>รหัสสินค้า (Code)</th>
+                <th>อีเมล (Email)</th>
+                <th>สถานะ (Status)</th>
+                <th>วันหมดอายุ (Expire)</th>
+            </tr>
+        </thead>
+        <tbody id="stock-list">
+            <tr>
+                <td colspan="4" style="text-align:center;">กำลังโหลด...</td>
+            </tr>
+        </tbody>
+    </table>
 
-        try {
-            const res = await fetch(WORKER_URL);
-            const data = await res.json();
+    <script>
+        // 🛑 ใส่ URL ของ Cloudflare Worker ของคุณตรงนี้
+        const WORKER_URL = "https://your-worker-name.your-subdomain.workers.dev"; 
+
+        async function loadStockData() {
+            const tbody = document.getElementById('stock-list');
+            if (!tbody) return;
             
-            if (data.error) throw new Error(data.error);
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>';
 
-            tbody.innerHTML = '';
-            data.forEach((item) => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><b>${item.code}</b></td>
-                        <td>${item.email}</td>
-                        <td>
-                            <select class="${item.status === 'ว่าง' ? 'free' : 'busy'}" 
-                                    onchange="updateStatus(${item.row}, this.value)">
-                                <option value="ว่าง" ${item.status === 'ว่าง' ? 'selected' : ''}>ว่าง</option>
-                                <option value="ไม่ว่าง" ${item.status !== 'ว่าง' ? 'selected' : ''}>ไม่ว่าง</option>
-                            </select>
-                        </td>
-                        <td>${item.expire}</td>
-                    </tr>
-                `;
-            });
-        } catch (err) {
-            console.error(err);
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">ดึงข้อมูลไม่สำเร็จ: ${err.message}</td></tr>`;
+            try {
+                const res = await fetch(WORKER_URL);
+                const data = await res.json();
+                
+                if (data.error) throw new Error(data.error);
+
+                tbody.innerHTML = '';
+                
+                if (!Array.isArray(data) || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">ไม่มีข้อมูลในระบบ</td></tr>';
+                    return;
+                }
+
+                data.forEach((item) => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><b>${item.code}</b></td>
+                            <td>${item.email}</td>
+                            <td>
+                                <select class="${item.status === 'ว่าง' ? 'free' : 'busy'}" 
+                                        onchange="updateStatus(${item.row}, this.value)">
+                                    <option value="ว่าง" ${item.status === 'ว่าง' ? 'selected' : ''}>ว่าง</option>
+                                    <option value="ไม่ว่าง" ${item.status !== 'ว่าง' ? 'selected' : ''}>ไม่ว่าง</option>
+                                </select>
+                            </td>
+                            <td>${item.expire}</td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">ดึงข้อมูลไม่สำเร็จ: ${err.message}</td></tr>`;
+            }
         }
-    }
 
-    async function updateStatus(rowNum, newStatus) {
-        try {
-            const res = await fetch(WORKER_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    row: rowNum,
-                    status: newStatus
-                })
-            });
+        async function updateStatus(rowNum, newStatus) {
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        row: rowNum,
+                        status: newStatus
+                    })
+                });
 
-            const result = await res.json();
-            if (result.error) throw new Error(result.error);
+                const result = await res.json();
+                if (result.error) throw new Error(result.error);
 
-            alert(`อัปเดตบรรทัดที่ ${rowNum} เป็น "${newStatus}" เรียบร้อย!`);
-            loadStockData(); // โหลดหน้าใหม่เพื่ออัปเดตสถานะและสี
-        } catch (err) {
-            alert('แก้ไขไม่สำเร็จ: ' + err.message);
+                alert(`อัปเดตบรรทัดที่ ${rowNum} เป็น "${newStatus}" เรียบร้อย!`);
+                loadStockData(); // รีโหลดข้อมูลตารางใหม่
+            } catch (err) {
+                alert('แก้ไขไม่สำเร็จ: ' + err.message);
+            }
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', loadStockData);
-</script>
+        document.addEventListener('DOMContentLoaded', loadStockData);
+    </script>
+</body>
+</html>
