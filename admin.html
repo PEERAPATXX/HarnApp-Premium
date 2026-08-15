@@ -15,7 +15,6 @@
             --magenta-bright: #ff007f;
             --purple-witch: #050505;
             --purple-dark: #23082a;
-            --blue-hair: #38bdf8;
             --card-bg: rgba(255, 255, 255, 0.96);
         }
 
@@ -89,8 +88,43 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 12px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             flex-shrink: 0;
+        }
+
+        /* ช่องค้นหา Real-time */
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 16px 8px 38px;
+            border-radius: 30px;
+            border: 1.5px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 0.88rem;
+            outline: none;
+            transition: all 0.2s ease;
+            background: #ffffff;
+        }
+
+        .search-input:focus {
+            border-color: var(--magenta-bright);
+            box-shadow: 0 0 8px rgba(255, 0, 127, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            opacity: 0.4;
+            pointer-events: none;
         }
 
         .action-btns {
@@ -98,7 +132,7 @@
             gap: 8px;
         }
 
-        /* 3. Category Tabs */
+        /* Tabs และ ปุ่มกด */
         .category-tabs {
             display: flex;
             gap: 8px;
@@ -106,12 +140,12 @@
             padding: 6px;
             border-radius: 40px;
             overflow-x: auto;
+            margin-bottom: 12px;
+            flex-shrink: 0;
             -webkit-overflow-scrolling: touch;
         }
 
-        .category-tabs::-webkit-scrollbar {
-            display: none;
-        }
+        .category-tabs::-webkit-scrollbar { display: none; }
 
         .tab-btn {
             border: none;
@@ -143,15 +177,7 @@
             box-shadow: 0 3px 12px rgba(255, 0, 127, 0.35);
         }
 
-        .tab-btn:hover:not(.active) {
-            color: var(--purple-witch);
-            background: rgba(255, 0, 127, 0.1);
-        }
-
-        /* ปุ่ม Refresh & Add */
-        .btn-refresh {
-            background: var(--purple-witch);
-            color: #ffffff;
+        .btn-refresh, .btn-add {
             border: none;
             padding: 8px 18px;
             border-radius: 30px;
@@ -166,35 +192,18 @@
             white-space: nowrap;
         }
 
-        .btn-refresh:hover {
-            background: #334155;
-            transform: translateY(-1px);
-        }
+        .btn-refresh { background: var(--purple-witch); color: #ffffff; }
+        .btn-refresh:hover { background: #334155; }
 
         .btn-add {
             background: var(--magenta-bright);
             color: #ffffff;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 30px;
-            font-family: inherit;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
             box-shadow: 0 3px 10px rgba(255, 0, 127, 0.3);
         }
 
-        .btn-add:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
+        .btn-add:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        /* 4. Table Wrapper */
+        /* 3. Table Wrapper */
         .table-wrapper {
             width: 100%;
             flex: 1;
@@ -206,24 +215,8 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .table-wrapper::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 10px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb:hover {
-            background: var(--magenta-bright);
-        }
+        .table-wrapper::-webkit-scrollbar { width: 6px; height: 6px; }
+        .table-wrapper::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
         table { 
             width: 100%; 
@@ -250,7 +243,6 @@
             vertical-align: middle;
         }
 
-        tr:last-child td { border-bottom: none; }
         tr:hover { background-color: #fff1f7; }
 
         select { 
@@ -264,7 +256,6 @@
             outline: none;
         }
 
-        /* กล่องใส่วันที่ + ปุ่มลบ */
         .date-picker-group {
             display: inline-flex;
             align-items: center;
@@ -272,23 +263,21 @@
         }
 
         input[type="date"], input[type="text"], select.form-control { 
-            padding: 6px 10px; 
-            border-radius: 6px; 
-            border: 1px solid #cbd5e1; 
-            cursor: pointer; 
+            padding: 8px 12px; 
+            border-radius: 8px; 
+            border: 1.5px solid #cbd5e1; 
             font-family: inherit; 
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             color: #334155;
             background-color: #fff;
             outline: none;
             width: 100%;
         }
 
-        input[type="date"]:focus, input[type="text"]:focus, select.form-control:focus {
+        input:focus, select.form-control:focus {
             border-color: var(--magenta-bright);
         }
 
-        /* ปุ่ม X สำหรับกดล้างวันที่ */
         .btn-clear-date {
             background: #ffe4e6;
             color: #be123c;
@@ -302,36 +291,21 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
             flex-shrink: 0;
-        }
-
-        .btn-clear-date:active {
-            transform: scale(0.9);
-            background: var(--magenta-bright);
-            color: #fff;
         }
 
         .free { background-color: #dcfce7; color: #166534; }
         .busy { background-color: #ffe4e6; color: #9f1239; }
 
-        .badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
         .badge-normal { background-color: #f1f5f9; color: #475569; }
         .expired { background-color: #ffe4e6; color: #be123c; font-weight: 700; }
         .soon { background-color: #fef3c7; color: #b45309; font-weight: 700; }
-
         .font-code { font-family: monospace; font-size: 0.95rem; font-weight: 700; color: var(--purple-witch); }
         .text-center { text-align: center; }
         .text-muted { color: #94a3b8; }
 
-        /* 5. Modal Popup สำหรับเพิ่มสินค้า */
+        /* 4. Modal สำหรับฟอร์มเพิ่มสินค้า (แยกสัดส่วนชัดเจน) */
         .modal {
             display: none;
             position: fixed;
@@ -348,30 +322,33 @@
 
         .modal-content {
             background: #fff;
-            border-radius: 16px;
+            border-radius: 20px;
             width: 100%;
-            max-width: 420px;
-            padding: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            max-width: 450px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 0, 127, 0.2);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f1f5f9;
         }
 
-        .modal-header h3 { font-size: 1.1rem; color: #0f172a; }
-        .close-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #64748b; }
+        .modal-header h3 { font-size: 1.15rem; color: #0f172a; font-weight: 700; }
+        .close-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #94a3b8; }
 
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: #475569; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #475569; }
 
         .modal-actions {
             display: flex;
-            gap: 8px;
-            margin-top: 18px;
+            gap: 10px;
+            margin-top: 24px;
         }
 
         .btn-submit {
@@ -380,77 +357,44 @@
             color: #fff;
             border: none;
             padding: 10px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-family: inherit;
             font-weight: 600;
             cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 0, 127, 0.3);
         }
 
         .btn-cancel {
             flex: 1;
-            background: #e2e8f0;
+            background: #f1f5f9;
             color: #475569;
             border: none;
             padding: 10px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-family: inherit;
             font-weight: 600;
             cursor: pointer;
         }
 
-        /* 📱 MOBILE RESPONSIVE DESIGN */
+        /* Responsive Mobile */
         @media (max-width: 650px) {
-            body {
-                padding: 10px 8px;
-            }
-
-            .banner-slot {
-                border-radius: 12px;
-                margin-bottom: 10px;
-            }
-
-            .dashboard-card {
-                padding: 10px;
-                border-radius: 16px;
-            }
+            body { padding: 10px 8px; }
+            .dashboard-card { padding: 12px; }
 
             .top-bar {
-                flex-direction: row;
-                align-items: center;
+                flex-direction: column;
+                align-items: stretch;
                 gap: 8px;
-                margin-bottom: 10px;
             }
 
-            .category-tabs {
-                flex: 1;
-                padding: 4px;
+            .search-box { width: 100%; }
+
+            .action-btns {
+                justify-content: flex-end;
             }
 
-            .tab-btn {
-                padding: 6px 10px;
-                font-size: 0.78rem;
-            }
-
-            .btn-refresh, .btn-add {
-                padding: 6px 10px;
-                font-size: 0.78rem;
-            }
-
-            .table-wrapper {
-                border: none;
-                background: transparent;
-                padding-right: 4px;
-            }
-
-            table, thead, tbody, th, td, tr { 
-                display: block; 
-            }
-
-            thead tr { 
-                position: absolute;
-                top: -9999px;
-                left: -9999px;
-            }
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { position: absolute; top: -9999px; left: -9999px; }
 
             tr { 
                 background: #ffffff;
@@ -458,16 +402,14 @@
                 border-radius: 12px;
                 margin-bottom: 10px;
                 padding: 10px 12px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.03);
             }
 
             td { 
                 border: none;
-                padding: 5px 0;
+                padding: 6px 0;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                font-size: 0.85rem;
             }
 
             td::before { 
@@ -483,20 +425,14 @@
                 margin-bottom: 4px;
             }
 
-            td.empty-row {
-                justify-content: center;
-            }
-
-            td.empty-row::before {
-                display: none;
-            }
+            td.empty-row { justify-content: center; }
+            td.empty-row::before { display: none; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-
         <!-- ป้าย Banner หลัก -->
         <div class="banner-slot">
             <img src="banner.png" alt="Harnapp Admin Banner">
@@ -505,31 +441,42 @@
         <!-- Main Dashboard Card -->
         <div class="dashboard-card">
             
+            <!-- แถบด้านบน: ช่องค้นหา + ปุ่มกดต่างๆ -->
             <div class="top-bar">
-                <div class="category-tabs">
-                    <button class="tab-btn active" onclick="switchCategory('ALL', this)">
-                        <img src="https://cdn-icons-png.flaticon.com/512/839/839888.png" alt="All" class="tab-icon">
-                        ทั้งหมด
-                    </button>
-
-                    <button class="tab-btn" onclick="switchCategory('NETFLIX', this)">
-                        <img src="https://cdn-icons-png.flaticon.com/512/732/732228.png" alt="Netflix" class="tab-icon">
-                        Netflix
-                    </button>
-
-                    <button class="tab-btn" onclick="switchCategory('YOUTUBE', this)">
-                        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" class="tab-icon">
-                        YouTube
-                    </button>
+                <!-- 🔍 ช่องค้นหา Real-Time -->
+                <div class="search-box">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="search-input" class="search-input" placeholder="ค้นหาอีเมล หรือ รหัสสินค้า..." oninput="handleSearch()">
                 </div>
 
                 <div class="action-btns">
-                    <button class="btn-add" onclick="openAddModal()">+ เพิ่มเมล</button>
+                    <button class="btn-add" onclick="openAddModal()">+ เพิ่มเมลเข้าสต็อก</button>
                     <button class="btn-refresh" onclick="loadStockData()">รีเฟรช</button>
                 </div>
             </div>
 
-            <!-- ส่วนตารางแสดงสินค้า -->
+            <!-- แท็บแยกหมวดหมู่บริการ -->
+            <div class="category-tabs">
+                <button class="tab-btn active" onclick="switchCategory('ALL', this)">
+                    <img src="https://cdn-icons-png.flaticon.com/512/839/839888.png" alt="All" class="tab-icon">
+                    ทั้งหมด
+                </button>
+
+                <button class="tab-btn" onclick="switchCategory('NETFLIX', this)">
+                    <img src="https://cdn-icons-png.flaticon.com/512/732/732228.png" alt="Netflix" class="tab-icon">
+                    Netflix
+                </button>
+
+                <button class="tab-btn" onclick="switchCategory('YOUTUBE', this)">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" class="tab-icon">
+                    YouTube
+                </button>
+            </div>
+
+            <!-- ตารางแสดงรายการสต็อก -->
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -552,37 +499,41 @@
         </div>
     </div>
 
-    <!-- Modal เพิ่มรายการใหม่ -->
+    <!-- ➕ Modal ส่วนฟอร์มเพิ่มสินค้า/เมลใหม่ (แยกต่างหาก) -->
     <div class="modal" id="addModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>เพิ่มข้อมูลสินค้าเข้าสต็อก</h3>
+                <h3>➕ เพิ่มเมลเข้าสต็อกใหม่</h3>
                 <button class="close-btn" onclick="closeAddModal()">✕</button>
             </div>
             <form id="addStockForm" onsubmit="handleAddSubmit(event)">
                 <div class="form-group">
-                    <label>หมวดหมู่ / Prefixes</label>
-                    <select id="add-category" class="form-control" required>
-                        <option value="YOUTUBE">YouTube (YT)</option>
-                        <option value="NETFLIX">Netflix (NF)</option>
+                    <label>หมวดหมู่บริการ</label>
+                    <select id="add-category" class="form-control" onchange="autoFillPrefix()">
+                        <option value="YT">YouTube (YT)</option>
+                        <option value="NF">Netflix (NF)</option>
                         <option value="OTHER">อื่นๆ</option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label>รหัสสินค้า (Code)</label>
                     <input type="text" id="add-code" placeholder="เช่น YT-01 หรือ NF-01" required>
                 </div>
+
                 <div class="form-group">
-                    <label>อีเมลลูกค้า / ไอดี</label>
-                    <input type="text" id="add-email" placeholder="example@mail.com" required>
+                    <label>อีเมลลูกค้า / ไอดีใช้งาน</label>
+                    <input type="text" id="add-email" placeholder="customer@gmail.com" required>
                 </div>
+
                 <div class="form-group">
-                    <label>วันหมดอายุ</label>
+                    <label>วันหมดอายุ (ถ้ายังไม่กำหนดสามารถเว้นว่างได้)</label>
                     <input type="date" id="add-expire">
                 </div>
+
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" onclick="closeAddModal()">ยกเลิก</button>
-                    <button type="submit" class="btn-submit">บันทึกข้อมูล</button>
+                    <button type="submit" class="btn-submit">บันทึกข้อมูลเข้าชีต</button>
                 </div>
             </form>
         </div>
@@ -593,6 +544,7 @@
         
         let rawStockData = [];
         let currentCategory = 'ALL';
+        let searchQuery = '';
 
         function toDateInputValue(str) {
             if (!str || str === '-' || str.trim() === '') return '';
@@ -640,22 +592,37 @@
             }
         }
 
+        /* 🔍 ฟังก์ชันคำนวณและค้นหา Real-time */
+        function handleSearch() {
+            searchQuery = document.getElementById('search-input').value.trim().toLowerCase();
+            renderTable();
+        }
+
         function renderTable() {
             const tbody = document.getElementById('stock-list');
             tbody.innerHTML = '';
 
             let filteredData = rawStockData.filter(item => {
-                if (currentCategory === 'ALL') return true;
-                
-                const searchStr = `${item.code} ${item.email}`.toUpperCase();
-                if (currentCategory === 'NETFLIX') return searchStr.includes('NETFLIX') || searchStr.includes('NF');
-                if (currentCategory === 'YOUTUBE') return searchStr.includes('YOUTUBE') || searchStr.includes('YT');
-                if (currentCategory === 'DISNEY') return searchStr.includes('DISNEY') || searchStr.includes('DIS');
-                return true;
+                const codeUpper = (item.code || '').toUpperCase();
+                const emailLower = (item.email || '').toLowerCase();
+
+                // 1. กรองตามแท็บ Category
+                let passCategory = false;
+                if (currentCategory === 'ALL') passCategory = true;
+                else if (currentCategory === 'NETFLIX' && (codeUpper.includes('NF') || codeUpper.includes('NETFLIX'))) passCategory = true;
+                else if (currentCategory === 'YOUTUBE' && (codeUpper.includes('YT') || codeUpper.includes('YOUTUBE'))) passCategory = true;
+
+                // 2. กรองตาม Search Query (ทั้ง Email และ Code)
+                let passSearch = true;
+                if (searchQuery) {
+                    passSearch = emailLower.includes(searchQuery) || codeUpper.toLowerCase().includes(searchQuery);
+                }
+
+                return passCategory && passSearch;
             });
 
             if (filteredData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted empty-row">ไม่มีข้อมูลในหมวดหมู่นี้</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted empty-row">ไม่พบข้อมูลที่ตรงกับการค้นหา</td></tr>';
                 return;
             }
 
@@ -697,7 +664,7 @@
             renderTable();
         }
 
-        /* เปิด / ปิด Modal เพิ่มสินค้า */
+        /* เปิด / ปิด Modal */
         function openAddModal() {
             document.getElementById('addModal').classList.add('open');
         }
@@ -707,7 +674,7 @@
             document.getElementById('addStockForm').reset();
         }
 
-        /* ฟังก์ชันส่งค่าเพิ่มข้อมูลสินค้าใหม่ */
+        /* เพิ่มข้อมูลสินค้า/เมล */
         async function handleAddSubmit(event) {
             event.preventDefault();
 
@@ -731,7 +698,7 @@
                 const result = await res.json();
                 if (result.error) throw new Error(result.error);
 
-                alert('เพิ่มข้อมูลสำเร็จ!');
+                alert('เพิ่มเมลเข้าสต็อกเรียบร้อย!');
                 closeAddModal();
                 loadStockData();
             } catch (err) {
