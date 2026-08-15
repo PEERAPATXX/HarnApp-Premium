@@ -93,6 +93,11 @@
             flex-shrink: 0;
         }
 
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
         /* 3. Category Tabs */
         .category-tabs {
             display: flex;
@@ -143,7 +148,7 @@
             background: rgba(255, 0, 127, 0.1);
         }
 
-        /* ปุ่ม Refresh */
+        /* ปุ่ม Refresh & Add */
         .btn-refresh {
             background: var(--purple-witch);
             color: #ffffff;
@@ -162,7 +167,30 @@
         }
 
         .btn-refresh:hover {
+            background: #334155;
+            transform: translateY(-1px);
+        }
+
+        .btn-add {
             background: var(--magenta-bright);
+            color: #ffffff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            box-shadow: 0 3px 10px rgba(255, 0, 127, 0.3);
+        }
+
+        .btn-add:hover {
+            opacity: 0.9;
             transform: translateY(-1px);
         }
 
@@ -243,8 +271,8 @@
             gap: 4px;
         }
 
-        input[type="date"] { 
-            padding: 5px 8px; 
+        input[type="date"], input[type="text"], select.form-control { 
+            padding: 6px 10px; 
             border-radius: 6px; 
             border: 1px solid #cbd5e1; 
             cursor: pointer; 
@@ -253,10 +281,10 @@
             color: #334155;
             background-color: #fff;
             outline: none;
-            min-height: 32px;
+            width: 100%;
         }
 
-        input[type="date"]:focus {
+        input[type="date"]:focus, input[type="text"]:focus, select.form-control:focus {
             border-color: var(--magenta-bright);
         }
 
@@ -275,6 +303,7 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
+            flex-shrink: 0;
         }
 
         .btn-clear-date:active {
@@ -301,6 +330,73 @@
         .font-code { font-family: monospace; font-size: 0.95rem; font-weight: 700; color: var(--purple-witch); }
         .text-center { text-align: center; }
         .text-muted { color: #94a3b8; }
+
+        /* 5. Modal Popup สำหรับเพิ่มสินค้า */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .modal.open { display: flex; }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h3 { font-size: 1.1rem; color: #0f172a; }
+        .close-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #64748b; }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: #475569; }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            background: var(--magenta-bright);
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background: #e2e8f0;
+            color: #475569;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
         /* 📱 MOBILE RESPONSIVE DESIGN */
         @media (max-width: 650px) {
@@ -335,7 +431,7 @@
                 font-size: 0.78rem;
             }
 
-            .btn-refresh {
+            .btn-refresh, .btn-add {
                 padding: 6px 10px;
                 font-size: 0.78rem;
             }
@@ -427,7 +523,10 @@
                     </button>
                 </div>
 
-                <button class="btn-refresh" onclick="loadStockData()">รีเฟรช</button>
+                <div class="action-btns">
+                    <button class="btn-add" onclick="openAddModal()">+ เพิ่มสินค้า</button>
+                    <button class="btn-refresh" onclick="loadStockData()">รีเฟรช</button>
+                </div>
             </div>
 
             <!-- ส่วนตารางแสดงสินค้า -->
@@ -450,6 +549,42 @@
                 </table>
             </div>
 
+        </div>
+    </div>
+
+    <!-- Modal เพิ่มรายการใหม่ -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>เพิ่มข้อมูลสินค้าเข้าสต็อก</h3>
+                <button class="close-btn" onclick="closeAddModal()">✕</button>
+            </div>
+            <form id="addStockForm" onsubmit="handleAddSubmit(event)">
+                <div class="form-group">
+                    <label>หมวดหมู่ / Prefixes</label>
+                    <select id="add-category" class="form-control" required>
+                        <option value="YOUTUBE">YouTube (YT)</option>
+                        <option value="NETFLIX">Netflix (NF)</option>
+                        <option value="OTHER">อื่นๆ</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>รหัสสินค้า (Code)</label>
+                    <input type="text" id="add-code" placeholder="เช่น YT-01 หรือ NF-01" required>
+                </div>
+                <div class="form-group">
+                    <label>อีเมลลูกค้า / ไอดี</label>
+                    <input type="text" id="add-email" placeholder="example@mail.com" required>
+                </div>
+                <div class="form-group">
+                    <label>วันหมดอายุ</label>
+                    <input type="date" id="add-expire">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeAddModal()">ยกเลิก</button>
+                    <button type="submit" class="btn-submit">บันทึกข้อมูล</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -562,6 +697,48 @@
             renderTable();
         }
 
+        /* เปิด / ปิด Modal เพิ่มสินค้า */
+        function openAddModal() {
+            document.getElementById('addModal').classList.add('open');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('open');
+            document.getElementById('addStockForm').reset();
+        }
+
+        /* ฟังก์ชันส่งค่าเพิ่มข้อมูลสินค้าใหม่ */
+        async function handleAddSubmit(event) {
+            event.preventDefault();
+
+            const code = document.getElementById('add-code').value;
+            const email = document.getElementById('add-email').value;
+            const expire = document.getElementById('add-expire').value || '-';
+
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        action: 'add',
+                        code: code,
+                        email: email,
+                        status: 'ว่าง',
+                        expire: expire
+                    })
+                });
+
+                const result = await res.json();
+                if (result.error) throw new Error(result.error);
+
+                alert('เพิ่มข้อมูลสำเร็จ!');
+                closeAddModal();
+                loadStockData();
+            } catch (err) {
+                alert('เพิ่มข้อมูลไม่สำเร็จ: ' + err.message);
+            }
+        }
+
         async function updateStatus(rowNum, newStatus) {
             try {
                 const res = await fetch(WORKER_URL, {
@@ -578,14 +755,12 @@
             }
         }
 
-        /* รองรับการพิมพ์ลบด้วยมือหรือกดรีเซ็ตบน iOS */
         function handleDateInput(rowNum, inputElem) {
             if (!inputElem.value) {
                 updateExpire(rowNum, '-');
             }
         }
 
-        /* ปุ่ม ✕ กดล้างวันที่โดยตรง */
         function clearDate(rowNum) {
             const inputElem = document.getElementById(`date-input-${rowNum}`);
             if (inputElem) {
