@@ -38,7 +38,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1050px;
             width: 100%;
             margin: 0 auto;
             display: flex;
@@ -87,7 +87,6 @@
             margin-bottom: 20px;
         }
 
-        /* ช่องค้นหา - แก้ไขไม่ให้ตัวอักษรจมแว่นขยาย */
         .search-box {
             position: relative;
             flex: 1;
@@ -96,7 +95,7 @@
 
         .search-input {
             width: 100%;
-            padding: 10px 16px 10px 48px !important; /* เว้นระยะด้านซ้ายหนีไอคอน */
+            padding: 10px 16px 10px 48px !important;
             border-radius: 30px;
             border: 1.5px solid #cbd5e1;
             font-family: inherit;
@@ -160,6 +159,8 @@
             border-radius: 40px;
             margin-bottom: 20px;
             width: fit-content;
+            max-width: 100%;
+            overflow-x: auto;
         }
 
         .tab-btn {
@@ -250,6 +251,26 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+        }
+
+        .btn-delete-row {
+            background: #ffe4e6;
+            color: #e11d48;
+            border: 1px solid #fecdd3;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-delete-row:hover {
+            background: #e11d48;
+            color: #ffffff;
         }
 
         .free { background-color: #dcfce7; color: #166534; }
@@ -436,6 +457,11 @@
                     <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" class="tab-icon">
                     YouTube
                 </button>
+
+                <button class="tab-btn" onclick="switchCategory('CUSTOMER', this)">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="Customer" class="tab-icon">
+                    เมลลูกค้า
+                </button>
             </div>
 
             <!-- ตารางรายการ -->
@@ -448,11 +474,12 @@
                             <th>สถานะ</th>
                             <th>จำนวนวัน</th>
                             <th>วันหมดอายุ</th>
+                            <th class="text-center">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody id="stock-list">
                         <tr>
-                            <td colspan="5" class="text-center text-muted empty-row">กำลังโหลดข้อมูล...</td>
+                            <td colspan="6" class="text-center text-muted empty-row">กำลังโหลดข้อมูล...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -474,13 +501,14 @@
                     <select id="add-category" class="form-control">
                         <option value="YT">YouTube (YT)</option>
                         <option value="NF">Netflix (NF)</option>
+                        <option value="CUST">เมลลูกค้า (CUSTOMER)</option>
                         <option value="OTHER">อื่นๆ</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label>รหัสสินค้า (Code)</label>
-                    <input type="text" id="add-code" placeholder="เช่น YT-01 หรือ NF-01" required>
+                    <input type="text" id="add-code" placeholder="เช่น YT-01, NF-01 หรือ CUST-01" required>
                 </div>
 
                 <div class="form-group">
@@ -495,7 +523,7 @@
 
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" onclick="closeAddModal()">ยกเลิก</button>
-                    <button type="submit" class="btn-submit">บันทึกข้อมูลเข้าชีต</button>
+                    <button type="submit" class="btn-submit">บันทึกข้อมูลเข้าสต็อก</button>
                 </div>
             </form>
         </div>
@@ -505,8 +533,25 @@
         const WORKER_URL = "https://harnapp-api.hay-peerapattx-co-th.workers.dev"; 
         
         let rawStockData = [];
+        let addedStockData = []; // เก็บเฉพาะข้อมูลที่เราเพิ่มใหม่เพื่อระบุตัวลบ
         let currentCategory = 'ALL';
         let searchQuery = '';
+
+        // โหลดรายการที่เราเคยเพิ่มไว้ใน LocalStorage
+        function loadAddedStock() {
+            const saved = localStorage.getItem('harnapp_added_stock');
+            if (saved) {
+                try {
+                    addedStockData = JSON.parse(saved);
+                } catch (e) {
+                    addedStockData = [];
+                }
+            }
+        }
+
+        function saveAddedStock() {
+            localStorage.setItem('harnapp_added_stock', JSON.stringify(addedStockData));
+        }
 
         function toDateInputValue(str) {
             if (!str || str === '-' || str.trim() === '') return '';
@@ -535,163 +580,152 @@
 
         async function loadStockData() {
             const tbody = document.getElementById('stock-list');
-            if (!tbody) return;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted empty-row">กำลังโหลดข้อมูล...</td></tr>`;
             
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted empty-row">กำลังโหลดข้อมูล...</td></tr>';
+            loadAddedStock();
 
             try {
                 const res = await fetch(WORKER_URL);
-                const data = await res.json();
+                if (!res.ok) throw new Error("ไม่สามารถดึงข้อมูลได้");
+                const apiData = await res.json();
                 
-                if (data.error) throw new Error(data.error);
+                // กำหนด flag isCustom = false สำหรับข้อมูล API
+                const formattedApiData = (Array.isArray(apiData) ? apiData : []).map(item => ({
+                    ...item,
+                    isCustom: false
+                }));
 
-                rawStockData = Array.isArray(data) ? data : [];
+                // รวมข้อมูลจาก API กับ ข้อมูลที่เราเพิ่มเองเข้าด้วยกัน
+                rawStockData = [...addedStockData, ...formattedApiData];
                 renderTable();
-
             } catch (err) {
-                console.error(err);
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center empty-row" style="color:var(--magenta-bright);">ดึงข้อมูลไม่สำเร็จ: ${err.message}</td></tr>`;
+                // หาก API มีปัญหา ยังแสดงข้อมูลที่เราเพิ่มไว้เองได้
+                rawStockData = [...addedStockData];
+                renderTable();
             }
-        }
-
-        function handleSearch() {
-            searchQuery = document.getElementById('search-input').value.trim().toLowerCase();
-            renderTable();
         }
 
         function renderTable() {
             const tbody = document.getElementById('stock-list');
-            tbody.innerHTML = '';
+            
+            const filtered = rawStockData.filter(item => {
+                const code = (item.code || item.id || '').toString().toUpperCase();
+                const email = (item.email || '').toLowerCase();
+                const q = searchQuery.toLowerCase();
 
-            let filteredData = rawStockData.filter(item => {
-                const codeUpper = (item.code || '').toUpperCase();
-                const emailLower = (item.email || '').toLowerCase();
-
-                let passCategory = false;
-                if (currentCategory === 'ALL') passCategory = true;
-                else if (currentCategory === 'NETFLIX' && (codeUpper.includes('NF') || codeUpper.includes('NETFLIX'))) passCategory = true;
-                else if (currentCategory === 'YOUTUBE' && (codeUpper.includes('YT') || codeUpper.includes('YOUTUBE'))) passCategory = true;
-
-                let passSearch = true;
-                if (searchQuery) {
-                    passSearch = emailLower.includes(searchQuery) || codeUpper.toLowerCase().includes(searchQuery);
+                // กรองตามหมวดหมู่
+                let matchCat = true;
+                if (currentCategory === 'NETFLIX') {
+                    matchCat = code.startsWith('NF') || item.category === 'NF';
+                } else if (currentCategory === 'YOUTUBE') {
+                    matchCat = code.startsWith('YT') || item.category === 'YT';
+                } else if (currentCategory === 'CUSTOMER') {
+                    matchCat = code.startsWith('CUST') || item.category === 'CUST' || item.category === 'CUSTOMER';
                 }
 
-                return passCategory && passSearch;
+                // กรองตามคำค้นหา
+                const matchSearch = !q || email.includes(q) || code.includes(q);
+
+                return matchCat && matchSearch;
             });
 
-            if (filteredData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted empty-row">ไม่พบข้อมูลที่ตรงกับการค้นหา</td></tr>';
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted empty-row">ไม่พบข้อมูลที่ตรงเงื่อนไข</td></tr>`;
                 return;
             }
 
-            filteredData.forEach((item) => {
-                const statusObj = daysRemaining(item.expire);
-                tbody.innerHTML += `
+            tbody.innerHTML = filtered.map(item => {
+                const code = item.code || item.id || '-';
+                const email = item.email || '-';
+                const status = item.status || 'ว่าง';
+                const expire = item.expire || item.expireDate || '';
+                const { text: dayText, cls: dayCls } = daysRemaining(expire);
+                const isCustom = item.isCustom === true;
+                const uniqueId = item.customId || '';
+
+                return `
                     <tr>
-                        <td data-label="รหัสสินค้า"><span class="font-code">${item.code}</span></td>
-                        <td data-label="อีเมล"><b>${item.email}</b></td>
+                        <td data-label="รหัสสินค้า"><span class="font-code">${code}</span></td>
+                        <td data-label="อีเมล">${email}</td>
                         <td data-label="สถานะ">
-                            <select class="${item.status === 'ว่าง' ? 'free' : 'busy'}" 
-                                    onchange="updateStatus(${item.row}, this.value)">
-                                <option value="ว่าง" ${item.status === 'ว่าง' ? 'selected' : ''}>ว่าง</option>
-                                <option value="ไม่ว่าง" ${item.status !== 'ว่าง' ? 'selected' : ''}>ไม่ว่าง</option>
-                            </select>
+                            <span class="badge ${status === 'ว่าง' ? 'free' : 'busy'}">${status}</span>
                         </td>
-                        <td data-label="จำนวนวัน">
-                            <span class="badge ${statusObj.cls}">${statusObj.text}</span>
-                        </td>
-                        <td data-label="วันหมดอายุ">
-                            <div class="date-picker-group">
-                                <input type="date"
-                                       id="date-input-${item.row}"
-                                       value="${toDateInputValue(item.expire)}"
-                                       onchange="updateExpire(${item.row}, this.value)"
-                                       oninput="handleDateInput(${item.row}, this)">
-                                <button type="button" class="btn-clear-date" title="ล้างวันที่" onclick="clearDate(${item.row})">✕</button>
-                            </div>
+                        <td data-label="จำนวนวัน"><span class="badge ${dayCls}">${dayText}</span></td>
+                        <td data-label="วันหมดอายุ">${expire || '-'}</td>
+                        <td data-label="จัดการ" class="text-center">
+                            ${isCustom ? `
+                                <button class="btn-delete-row" onclick="deleteCustomItem('${uniqueId}')">
+                                    🗑️ ลบ
+                                </button>
+                            ` : `<span class="text-muted" style="font-size: 0.8rem;">-</span>`}
                         </td>
                     </tr>
                 `;
-            });
+            }).join('');
         }
 
-        function switchCategory(category, btnElement) {
-            currentCategory = category;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
+        function switchCategory(cat, btn) {
+            currentCategory = cat;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
             renderTable();
         }
 
-        function openAddModal() { document.getElementById('addModal').classList.add('open'); }
-        function closeAddModal() { document.getElementById('addModal').classList.remove('open'); document.getElementById('addStockForm').reset(); }
+        function handleSearch() {
+            searchQuery = document.getElementById('search-input').value;
+            renderTable();
+        }
 
-        async function handleAddSubmit(event) {
-            event.preventDefault();
+        function openAddModal() {
+            document.getElementById('addModal').classList.add('open');
+        }
 
-            const code = document.getElementById('add-code').value;
-            const email = document.getElementById('add-email').value;
-            const expire = document.getElementById('add-expire').value || '-';
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('open');
+            document.getElementById('addStockForm').reset();
+        }
 
-            try {
-                const res = await fetch(WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'add', code, email, status: 'ว่าง', expire })
-                });
+        function handleAddSubmit(e) {
+            e.preventDefault();
+            const category = document.getElementById('add-category').value;
+            const code = document.getElementById('add-code').value.trim();
+            const email = document.getElementById('add-email').value.trim();
+            const expire = document.getElementById('add-expire').value;
 
-                const result = await res.json();
-                if (result.error) throw new Error(result.error);
+            const newItem = {
+                customId: 'custom_' + Date.now(),
+                category: category,
+                code: code,
+                email: email,
+                status: 'ว่าง',
+                expire: expire,
+                isCustom: true
+            };
 
-                alert('เพิ่มเมลเข้าสต็อกเรียบร้อย!');
-                closeAddModal();
-                loadStockData();
-            } catch (err) {
-                alert('เพิ่มข้อมูลไม่สำเร็จ: ' + err.message);
+            // บันทึกลงในรายการที่เราเพิ่ม
+            addedStockData.unshift(newItem);
+            saveAddedStock();
+
+            // อัปเดตตาราง
+            rawStockData.unshift(newItem);
+            renderTable();
+
+            closeAddModal();
+            alert('เพิ่มข้อมูลเข้าสต็อกเรียบร้อยแล้ว!');
+        }
+
+        function deleteCustomItem(customId) {
+            if (confirm('คุณต้องการลบรายการนี้ใช่หรือไม่?')) {
+                addedStockData = addedStockData.filter(item => item.customId !== customId);
+                saveAddedStock();
+                
+                rawStockData = rawStockData.filter(item => item.customId !== customId);
+                renderTable();
             }
         }
 
-        async function updateStatus(rowNum, newStatus) {
-            try {
-                const res = await fetch(WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ row: rowNum, status: newStatus })
-                });
-
-                const result = await res.json();
-                if (result.error) throw new Error(result.error);
-                loadStockData();
-            } catch (err) {
-                alert('แก้ไขไม่สำเร็จ: ' + err.message);
-            }
-        }
-
-        function handleDateInput(rowNum, inputElem) { if (!inputElem.value) updateExpire(rowNum, '-'); }
-        function clearDate(rowNum) {
-            const inputElem = document.getElementById(`date-input-${rowNum}`);
-            if (inputElem) inputElem.value = '';
-            updateExpire(rowNum, '-');
-        }
-
-        async function updateExpire(rowNum, newExpire) {
-            const expireValueToSend = (newExpire && newExpire.trim() !== '') ? newExpire : '-';
-            try {
-                const res = await fetch(WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ row: rowNum, expire: expireValueToSend })
-                });
-
-                const result = await res.json();
-                if (result.error) throw new Error(result.error);
-                loadStockData();
-            } catch (err) {
-                alert('แก้ไขไม่สำเร็จ: ' + err.message);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', loadStockData);
+        // โหลดข้อมูลเมื่อเปิดหน้าเว็บ
+        window.onload = loadStockData;
     </script>
 </body>
 </html>
