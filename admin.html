@@ -472,7 +472,7 @@
         </div>
     </div>
 
-    <!-- Modal ฟอร์มเพิ่มสินค้า -->
+    <!-- Modal ฟอร์มเพิ่มสินค้า (ปรับปรุงตามเงื่อนไขใหม่แล้ว) -->
     <div class="modal" id="addModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -480,19 +480,17 @@
                 <button class="close-btn" onclick="closeAddModal()">✕</button>
             </div>
             <form id="addStockForm" onsubmit="handleAddSubmit(event)">
-                <div class="form-group">
-                    <label>หมวดหมู่บริการ</label>
-                    <select id="add-category" class="form-control">
-                        <option value="CUSTOMER">เมลลูกค้า (CUSTOMER)</option>
-                        <option value="YT">YouTube (YT)</option>
-                        <option value="NF">Netflix (NF)</option>
-                        <option value="OTHER">อื่นๆ</option>
-                    </select>
-                </div>
-
+                
+                <!-- รหัสสินค้าแบบ Select Dropdown -->
                 <div class="form-group">
                     <label>รหัสสินค้า (Code)</label>
-                    <input type="text" id="add-code" placeholder="เช่น CUST-01, YT-01, NF-01" required>
+                    <select id="add-code" class="form-control" required>
+                        <option value="" disabled selected>-- กรุณาเลือกรหัสสินค้า --</option>
+                        <option value="YT 30D (เมลร้านต่อเมล)">YT 30D (เมลร้านต่อเมล)</option>
+                        <option value="YT 30D (เมลร้านไม่ต่อเมล)">YT 30D (เมลร้านไม่ต่อเมล)</option>
+                        <option value="YT 30D (เมลลูกค้าต่อเมล)">YT 30D (เมลลูกค้าต่อเมล)</option>
+                        <option value="YT 30D (เมลลูกค้าไม่ต่อเมล)">YT 30D (เมลลูกค้าไม่ต่อเมล)</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -698,7 +696,7 @@
             document.getElementById('addStockForm').reset();
         }
 
-        // ➕ บันทึกข้อมูลเข้า G:L + บันทึกชื่อคนเพิ่มไปคอลัมน์ L หลังบ้าน
+        // ➕ บันทึกข้อมูลลงในคอลัมน์ G:L
         async function handleAddSubmit(e) {
             e.preventDefault();
             const token = getAuthToken();
@@ -710,9 +708,16 @@
             submitBtn.disabled = true;
             submitBtn.innerText = 'กำลังบันทึก...';
 
-            const code = document.getElementById('add-code').value.trim();
+            const code = document.getElementById('add-code').value;
             const email = document.getElementById('add-email').value.trim();
             const expire = document.getElementById('add-expire').value;
+
+            if (!code) {
+                alert('กรุณาเลือกรหัสสินค้าก่อนบันทึก');
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'บันทึกข้อมูลเข้าสต็อก';
+                return;
+            }
 
             const newItemPayload = {
                 action: "add",
