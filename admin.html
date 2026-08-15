@@ -585,29 +585,13 @@
             }
         }
 
-        /* ปุ่ม ✕ กดล้างวันที่โดยตรง + เปลี่ยนสถานะเป็น "ว่าง" อัตโนมัติ */
-        async function clearDate(rowNum) {
+        /* ปุ่ม ✕ กดล้างวันที่โดยตรง */
+        function clearDate(rowNum) {
             const inputElem = document.getElementById(`date-input-${rowNum}`);
             if (inputElem) {
                 inputElem.value = '';
             }
-            try {
-                const res = await fetch(WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        row: rowNum, 
-                        expire: '-', 
-                        status: 'ว่าง' 
-                    })
-                });
-
-                const result = await res.json();
-                if (result.error) throw new Error(result.error);
-                loadStockData();
-            } catch (err) {
-                alert('แก้ไขไม่สำเร็จ: ' + err.message);
-            }
+            updateExpire(rowNum, '-');
         }
 
         async function updateExpire(rowNum, newExpire) {
