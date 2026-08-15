@@ -224,7 +224,7 @@
         .close-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #94a3b8; }
         .form-group { margin-bottom: 14px; }
         .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #475569; }
-        input[type="text"], input[type="password"], input[type="date"], select.form-control { 
+        input[type="text"], input[type="email"], input[type="password"], input[type="date"], select.form-control { 
             width: 100%; padding: 10px 12px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-family: inherit; font-size: 0.88rem;
         }
         .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
@@ -431,7 +431,7 @@
         </div>
     </div>
 
-    <!-- Modal ฟอร์มเพิ่มสินค้า -->
+    <!-- Modal ฟอร์มเพิ่มสินค้า (ปรับปรุงดักอีเมลเฉพาะ @gmail หรือ @hotmail) -->
     <div class="modal" id="addModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -451,7 +451,7 @@
                 </div>
                 <div class="form-group">
                     <label>อีเมลลูกค้า / ไอดีใช้งาน</label>
-                    <input type="text" id="add-email" placeholder="customer@gmail.com" required>
+                    <input type="email" id="add-email" placeholder="customer@gmail.com" required>
                 </div>
                 <div class="form-group">
                     <label>วันหมดอายุ</label>
@@ -785,7 +785,7 @@
             document.getElementById('addStockForm').reset();
         }
 
-        /* 🚀 ปรับแต่งข้อความแจ้งเตือนเมลซ้ำให้ตัดคำว่า " ในรายการ [...]" ออกอัตโนมัติ */
+        /* 🚀 เพิ่มการตรวจสอบ Regex ป้องกันแอดมินใส่อีเมลโดเมนอื่นมั่วๆ */
         async function handleAddSubmit(e) {
             e.preventDefault();
             const token = getAuthToken();
@@ -795,19 +795,31 @@
             const currentDisplayName = sessionStorage.getItem('harnapp_admin_name') || currentUser;
 
             const submitBtn = document.getElementById('btnSubmitAdd');
-            submitBtn.disabled = true;
-            submitBtn.innerText = 'กำลังบันทึก...';
 
             const code = document.getElementById('add-code').value;
-            const email = document.getElementById('add-email').value.trim();
+            const email = document.getElementById('add-email').value.trim().toLowerCase();
             const expire = document.getElementById('add-expire').value;
 
             if (!code) {
                 Swal.fire('ข้อผิดพลาด', 'กรุณาเลือกรหัสสินค้าก่อนบันทึก', 'warning');
-                submitBtn.disabled = false;
-                submitBtn.innerText = 'บันทึกข้อมูลเข้าสต็อก';
                 return;
             }
+
+            // 🔒 ตรวจสอบว่าต้องเป็น @gmail หรือ @hotmail (รวมถึง .co.th และ outlook) เท่านั้น
+            const allowedEmailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|hotmail\.co\.th|outlook\.com)$/i;
+            
+            if (!allowedEmailRegex.test(email)) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'รูปแบบอีเมลไม่ถูกต้อง',
+                    text: 'อนุญาตให้ใช้อีเมลโดเมน @gmail.com หรือ @hotmail.com เท่านั้น!',
+                    confirmButtonColor: '#ff007f'
+                });
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'กำลังบันทึก...';
 
             const newItemPayload = {
                 action: "add",
@@ -841,7 +853,6 @@
                     closeAddModal();
                     loadStockData();
                 } else {
-                    // ✂️ ใช้ Regex ตัดส่วน " ในรายการ [...]" ออกตามที่ต้องการ
                     let rawMessage = resData.message || resData.error || 'พบข้อผิดพลาดที่ไม่ทราบสาเหตุ';
                     let cleanMessage = rawMessage.replace(/\s*ในรายการ\s*\[.*?\]/, '');
 
