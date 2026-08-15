@@ -8,6 +8,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- 🎨 SweetAlert2 สำหรับแจ้งเตือนแบบ UI สวยงาม -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <style>
         :root {
             --magenta-bg: #050505;
@@ -592,7 +595,14 @@
 
             updateProfileUI();
             closeProfileModal();
-            alert('✅ บันทึกข้อมูลส่วนตัวเรียบร้อยแล้ว!');
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'สำเร็จ!',
+                text: 'บันทึกข้อมูลส่วนตัวเรียบร้อยแล้ว',
+                timer: 1500,
+                showConfirmButton: false
+            });
         }
 
         async function handleLogin(e) {
@@ -679,8 +689,9 @@
                 });
 
                 if (res.status === 401) {
-                    alert('Session หมดอายุ กรุณาเข้าสู่ระบบใหม่');
-                    handleLogout();
+                    Swal.fire('Session หมดอายุ', 'กรุณาเข้าสู่ระบบใหม่อีกครั้ง', 'warning').then(() => {
+                        handleLogout();
+                    });
                     return;
                 }
 
@@ -774,10 +785,11 @@
             document.getElementById('addStockForm').reset();
         }
 
+        /* 🚀 ปรับปรุงระบบบันทึกและการแจ้งเตือนเมื่อเจออีเมลซ้ำ */
         async function handleAddSubmit(e) {
             e.preventDefault();
             const token = getAuthToken();
-            if (!token) return alert('Session หมดอายุ');
+            if (!token) return Swal.fire('Session หมดอายุ', 'กรุณาเข้าสู่ระบบใหม่', 'warning');
 
             const currentUser = sessionStorage.getItem('harnapp_admin_user') || 'Admin';
             const currentDisplayName = sessionStorage.getItem('harnapp_admin_name') || currentUser;
@@ -791,7 +803,7 @@
             const expire = document.getElementById('add-expire').value;
 
             if (!code) {
-                alert('กรุณาเลือกรหัสสินค้าก่อนบันทึก');
+                Swal.fire('ข้อผิดพลาด', 'กรุณาเลือกรหัสสินค้าก่อนบันทึก', 'warning');
                 submitBtn.disabled = false;
                 submitBtn.innerText = 'บันทึกข้อมูลเข้าสต็อก';
                 return;
@@ -817,28 +829,53 @@
                 });
 
                 const resData = await res.json();
+                
                 if (resData.success) {
-                    alert('✅ บันทึกข้อมูลเข้า Google Sheets เรียบร้อยแล้ว!');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'สำเร็จ!',
+                        text: 'บันทึกข้อมูลเข้า Google Sheets เรียบร้อยแล้ว',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
                     closeAddModal();
                     loadStockData();
                 } else {
-                    alert('❌ เกิดข้อผิดพลาด: ' + (resData.error || 'บันทึกไม่สำเร็จ'));
+                    // ดึง resData.message จาก Worker มาโชว์สวยๆ ใน SweetAlert2
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ไม่สามารถเพิ่มข้อมูลได้',
+                        text: resData.message || resData.error || 'พบข้อผิดพลาดที่ไม่ทราบสาเหตุ',
+                        confirmButtonColor: '#ff007f'
+                    });
                 }
             } catch (err) {
                 console.error("Add failed:", err);
-                alert('❌ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
+                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้', 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerText = 'บันทึกข้อมูลเข้าสต็อก';
             }
         }
 
+        /* 🗑️ ปรับปรุงระบบยืนยันการลบแบบสวยๆ */
         async function deleteItemRow(rowId, code) {
             if (!rowId) return;
             const token = getAuthToken();
-            if (!token) return alert('Session หมดอายุ');
+            if (!token) return Swal.fire('Session หมดอายุ', 'กรุณาเข้าสู่ระบบใหม่', 'warning');
 
-            if (confirm(`คุณต้องการลบรายการรหัส [${code}] ในแถวที่ ${rowId} ใช่หรือไม่?`)) {
+            const confirmResult = await Swal.fire({
+                title: 'ยืนยันการลบรายการ?',
+                text: `คุณต้องการลบรายการรหัส [${code}] ในแถวที่ ${rowId} ใช่หรือไม่?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'ลบรายการ',
+                cancelButtonText: 'ยกเลิก'
+            });
+
+            if (confirmResult.isConfirmed) {
                 try {
                     const res = await fetch(WORKER_URL, {
                         method: 'POST',
@@ -851,14 +888,20 @@
 
                     const resData = await res.json();
                     if (resData.success) {
-                        alert('✅ ลบรายการเรียบร้อยแล้ว');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'ลบสำเร็จ!',
+                            text: 'รายการถูกลบออกจากระบบเรียบร้อยแล้ว',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
                         loadStockData();
                     } else {
-                        alert('❌ ลบรายการไม่สำเร็จ: ' + (resData.error || ''));
+                        Swal.fire('เกิดข้อผิดพลาด', 'ลบรายการไม่สำเร็จ: ' + (resData.error || resData.message || ''), 'error');
                     }
                 } catch (err) {
                     console.error("Delete failed:", err);
-                    alert('❌ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
+                    Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้', 'error');
                 }
             }
         }
