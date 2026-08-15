@@ -31,39 +31,32 @@
             color: #262626;
             display: flex;
             flex-direction: column;
-        }
-
-        /* Top Bar ด้านบนสุด */
-        .global-top-bar {
+            min-height: 100vh;
             width: 100%;
-            max-width: 1050px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            position: relative;
-            z-index: 50;
-            flex-shrink: 0;
         }
 
-        .main-wrapper { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
+        .swal2-popup .swal2-input, 
+        .swal2-popup .swal2-file, 
+        .swal2-popup .swal2-textarea {
+            width: 90% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            margin: 1em auto !important;
         }
 
-        .container { 
-            max-width: 1050px; 
-            width: 100%; 
-            margin: 0 auto; 
-            display: flex; 
-            flex-direction: column; 
+        .global-top-bar {
+            width: 100%; max-width: none; padding: 12px 24px 0 24px;
+            display: flex; align-items: center; justify-content: flex-end;
+            position: relative; z-index: 50; flex-shrink: 0;
         }
+
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; padding-bottom: 24px; }
+        .container { max-width: 1050px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; }
 
         .banner-slot {
             width: 100%; aspect-ratio: 1983 / 793; border-radius: 16px; overflow: hidden;
             border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 25px rgba(236, 0, 140, 0.35);
-            background: var(--purple-witch); flex-shrink: 0;
+            background: var(--purple-witch); flex-shrink: 0; margin-bottom: 20px;
         }
         .banner-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
@@ -93,7 +86,6 @@
         .btn-add { background: var(--magenta-bright); color: #ffffff; box-shadow: 0 3px 10px rgba(255, 0, 127, 0.3); }
         .btn-add:hover { background: #e00070; }
 
-        /* ปุ่มโปรไฟล์ */
         .profile-container { position: relative; display: inline-block; }
         .profile-avatar {
             width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--magenta-bright), #7928ca);
@@ -157,23 +149,33 @@
         th:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
         td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
 
-        .btn-delete-row {
-            background: #ffe4e6; color: #e11d48; border: 1px solid #fecdd3; padding: 6px 14px;
-            border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
-            display: inline-flex; align-items: center; gap: 4px;
+        .badge { 
+            display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600;
+            user-select: none; transition: transform 0.15s ease, opacity 0.15s ease;
         }
-        .btn-delete-row:hover { background: #e11d48; color: #ffffff; }
-
+        .badge.clickable { cursor: pointer; }
+        .badge.clickable:hover { transform: scale(1.08); opacity: 0.9; }
+        
         .free { background-color: #dcfce7; color: #166534; }
         .busy { background-color: #ffe4e6; color: #9f1239; }
-        .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
         .badge-normal { background-color: #f1f5f9; color: #475569; }
         .expired { background-color: #ffe4e6; color: #be123c; font-weight: 700; }
         .soon { background-color: #fef3c7; color: #b45309; font-weight: 700; }
         .font-code { font-family: monospace; font-size: 0.9rem; font-weight: 700; color: #0f172a; }
         .text-center { text-align: center; }
         .text-muted { color: #94a3b8; }
-        .lock-icon { font-size: 1.1rem; opacity: 0.8; }
+
+        .btn-icon-edit {
+            cursor: pointer; opacity: 0.7; transition: opacity 0.2s, transform 0.2s; margin-left: 6px;
+            font-size: 0.9rem; vertical-align: middle; display: inline-block;
+        }
+        .btn-icon-edit:hover { opacity: 1; transform: scale(1.2); }
+
+        .btn-delete {
+            background: #ffe4e6; color: #e11d48; border: none; padding: 6px 12px; border-radius: 8px;
+            font-family: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+        }
+        .btn-delete:hover { background: #fecdd3; color: #9f1239; }
 
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -192,7 +194,7 @@
         input[type="text"], input[type="email"], input[type="password"], input[type="date"], select.form-control { 
             width: 100%; padding: 10px 12px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-family: inherit; font-size: 0.88rem;
         }
-        input:disabled { background: #f8fafc; color: #94a3b8; cursor: not-allowed; }
+        input:disabled, select:disabled { background: #f8fafc; color: #94a3b8; cursor: not-allowed; }
         .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
         .btn-submit { flex: 1; background: var(--magenta-bright); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
         .btn-cancel { flex: 1; background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
@@ -228,87 +230,21 @@
         .login-card p { color: #64748b; font-size: 0.85rem; margin-bottom: 24px; }
         .error-msg { background: #ffe4e6; color: #e11d48; padding: 10px; border-radius: 10px; font-size: 0.82rem; font-weight: 600; margin-bottom: 14px; display: none; }
 
-/* 1. ปรับ Top Bar ให้ขยายเต็มความกว้างจอ และชิดขอบขวา */
-        .global-top-bar {
-            width: 100%;
-            max-width: none; /* เอาการจำกัดความกว้างออกเพื่อให้ชิดขอบจอ */
-            padding: 12px 24px 0 24px; /* ระยะห่างจากขอบจอขวาและบน */
-            display: flex;
-            align-items: center;
-            justify-content: flex-end; /* ชิดขวาสุด */
-            position: relative;
-            z-index: 50;
-            flex-shrink: 0;
-        }
-
-        /* 💻 สำหรับ Computer และ iPad / Tablet (หน้าจอกว้างตั้งแต่ 769px ขึ้นไป) */
         @media (min-width: 769px) {
-            html, body {
-                min-height: 100vh;
-                overflow-x: hidden;
-                overflow-y: auto;
-            }
-
-            .global-top-bar {
-                height: 60px;
-                padding: 12px 24px 0 24px;
-                justify-content: flex-end;
-            }
-
-            .dashboard-card {
-                overflow: visible;
-            }
-
-            .table-wrapper {
-                overflow: visible;
-            }
+            html, body { min-height: 100vh; overflow-x: hidden; overflow-y: auto; }
+            .global-top-bar { height: 60px; padding: 12px 24px 0 24px; justify-content: flex-end; }
+            .dashboard-card { overflow: visible; }
+            .table-wrapper { overflow: visible; }
         }
 
-        /* 📱 สำหรับโทรศัพท์มือถือเท่านั้น (หน้าจอแคบกว่าหรือเท่ากับ 768px) */
         @media (max-width: 768px) {
-            html, body {
-                height: 100vh;
-                height: 100dvh;
-                overflow: hidden;
-            }
-
-            .global-top-bar {
-                height: 52px;
-                padding: 8px 16px 0 16px;
-                align-items: center;
-                justify-content: flex-end;
-            }
-
-            .profile-avatar {
-                width: 38px;
-                height: 38px;
-                font-size: 0.95rem;
-            }
-
-            .main-wrapper { 
-                padding: 0 10px 10px 10px; 
-                min-height: 0;
-            }
-
-            .container { 
-                height: 100%; 
-                min-height: 0; 
-                gap: 12px;
-            }
-
-            .dashboard-card {
-                flex: 1;
-                min-height: 0;
-                padding: 16px;
-                overflow: hidden;
-            }
-
-            .table-wrapper {
-                flex: 1;
-                min-height: 0;
-                overflow-y: auto;
-                overflow-x: auto;
-            }
+            html, body { height: 100vh; height: 100dvh; overflow: hidden; }
+            .global-top-bar { height: 52px; padding: 8px 16px 0 16px; align-items: center; justify-content: flex-end; }
+            .profile-avatar { width: 38px; height: 38px; font-size: 0.95rem; }
+            .main-wrapper { padding: 0 10px 10px 10px; min-height: 0; }
+            .container { height: 100%; min-height: 0; gap: 12px; }
+            .dashboard-card { flex: 1; min-height: 0; padding: 16px; overflow: hidden; }
+            .table-wrapper { flex: 1; min-height: 0; overflow-y: auto; overflow-x: auto; }
         }
     </style>
 </head>
@@ -412,13 +348,13 @@
                 <div class="table-wrapper">
                     <table>
                         <thead>
-                            <tr>
+                            <tr id="tableHeader">
                                 <th>รหัสสินค้า</th>
                                 <th>อีเมล</th>
                                 <th>สถานะ</th>
                                 <th>จำนวนวัน</th>
                                 <th>วันหมดอายุ</th>
-                                <th class="text-center">จัดการ</th>
+                                <th id="thAction" style="display: none;">จัดการ</th>
                             </tr>
                         </thead>
                         <tbody id="stock-list">
@@ -477,7 +413,7 @@
         </div>
     </div>
 
-    <!-- Modal เพิ่มสินค้า -->
+    <!-- ➕ Modal เพิ่มสินค้า -->
     <div class="modal" id="addModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -487,29 +423,36 @@
             <form id="addStockForm" onsubmit="handleAddSubmit(event)">
                 <div class="form-group" id="ownerTargetGroup" style="display: none;">
                     <label>บันทึกลงในฐานข้อมูลฝั่ง</label>
-                    <select id="add-target" class="form-control">
-                        <option value="customer" selected>ฝั่ง Admin (G:L)</option>
+                    <select id="add-target" class="form-control" onchange="toggleCategoryField()">
+                        <option value="customer" selected>ฝั่ง เมลลูกค้า (G:L)</option>
                         <option value="owner">ฝั่ง Owner (A:E)</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>รหัสสินค้า (Code)</label>
-                    <select id="add-code" class="form-control" required>
-                        <option value="" disabled selected>-- กรุณาเลือกรหัสสินค้า --</option>
-                        <option value="YT 30D (เมลร้านต่อเมล)">YT 30D (เมลร้านต่อเมล)</option>
-                        <option value="YT 30D (เมลร้านไม่ต่อเมล)">YT 30D (เมลร้านไม่ต่อเมล)</option>
-                        <option value="YT 30D (เมลลูกค้าต่อเมล)">YT 30D (เมลลูกค้าต่อเมล)</option>
-                        <option value="YT 30D (เมลลูกค้าไม่ต่อเมล)">YT 30D (เมลลูกค้าไม่ต่อเมล)</option>
+
+                <div class="form-group" id="categoryGroup">
+                    <label>หมวดหมู่</label>
+                    <select id="add-category" class="form-control">
+                        <option value="YouTube">YouTube</option>
+                        <option value="Netflix">Netflix</option>
+                        <option value="อื่นๆ">อื่นๆ</option>
                     </select>
                 </div>
+
+                <div class="form-group">
+                    <label>รหัสสินค้า (Code)</label>
+                    <input type="text" id="add-code-input" class="form-control" placeholder="กรอกรหัสสินค้า / ชื่อแพ็กเกจ" required>
+                </div>
+
                 <div class="form-group">
                     <label>อีเมลลูกค้า / ไอดีใช้งาน</label>
                     <input type="email" id="add-email" placeholder="customer@gmail.com" required>
                 </div>
+
                 <div class="form-group">
                     <label>วันหมดอายุ</label>
                     <input type="date" id="add-expire" class="form-control">
                 </div>
+
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" onclick="closeAddModal()">ยกเลิก</button>
                     <button type="submit" class="btn-submit" id="btnSubmitAdd">บันทึกข้อมูลเข้าสต็อก</button>
@@ -527,7 +470,24 @@
         let tempAvatarBase64 = null;
 
         function getAuthToken() { return sessionStorage.getItem('harnapp_auth_token'); }
-        function getUserRole() { return sessionStorage.getItem('harnapp_user_role') || 'admin'; }
+        function getUserRole() { return (sessionStorage.getItem('harnapp_user_role') || 'admin').toLowerCase(); }
+        function isOwner() { return getUserRole() === 'owner'; }
+        function hasAdminAccess() {
+            const role = getUserRole();
+            return role === 'admin' || role === 'owner';
+        }
+
+        function toggleCategoryField() {
+            const role = getUserRole();
+            const targetSelect = document.getElementById('add-target');
+            const categoryGroup = document.getElementById('categoryGroup');
+            
+            const isCustomer = (role !== 'owner') || (targetSelect && targetSelect.value === 'customer');
+            
+            if (categoryGroup) {
+                categoryGroup.style.display = isCustomer ? 'block' : 'none';
+            }
+        }
 
         function updateProfileUI() {
             const user = sessionStorage.getItem('harnapp_admin_user') || 'admin';
@@ -557,6 +517,11 @@
             const targetGroup = document.getElementById('ownerTargetGroup');
             if (targetGroup) {
                 targetGroup.style.display = role === 'owner' ? 'block' : 'none';
+            }
+
+            const thAction = document.getElementById('thAction');
+            if (thAction) {
+                thAction.style.display = hasAdminAccess() ? 'table-cell' : 'none';
             }
         }
 
@@ -688,7 +653,8 @@
             }
 
             const tbody = document.getElementById('stock-list');
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">กำลังโหลดข้อมูล...</td></tr>`;
+            const colSpan = hasAdminAccess() ? 6 : 5;
+            tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center text-muted">กำลังโหลดข้อมูล...</td></tr>`;
 
             try {
                 const res = await fetch(WORKER_URL, {
@@ -704,16 +670,17 @@
                     rawStockData = await res.json();
                     renderTable();
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center text-muted">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>`;
                 }
             } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">ไม่สามารถเชื่อมต่อกับฐานข้อมูลได้</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center text-muted">ไม่สามารถเชื่อมต่อกับฐานข้อมูลได้</td></tr>`;
             }
         }
 
         function renderTable() {
             const tbody = document.getElementById('stock-list');
-            const role = getUserRole();
+            const isAdmin = hasAdminAccess();
+            const colSpan = isAdmin ? 6 : 5;
 
             const filtered = rawStockData.filter(item => {
                 const code = (item.code || '').toString().toUpperCase();
@@ -730,7 +697,7 @@
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">ไม่พบข้อมูล</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center text-muted">ไม่พบข้อมูล</td></tr>`;
                 return;
             }
 
@@ -743,25 +710,185 @@
                 const itemType = item.type;
                 const { text: dayText, cls: dayCls } = daysRemaining(expire);
 
-                const canDelete = itemType === 'customer' || (itemType === 'owner' && role === 'owner');
+                // ✏️ Admin และ Owner แก้ไขอีเมลได้เหมือนกันทุกแถว
+                let emailEditBtn = '';
+                if (isAdmin) {
+                    emailEditBtn = `<span class="btn-icon-edit" onclick="editEmail(${rowId}, '${itemType}', '${email}')" title="แก้ไขอีเมล">✏️</span>`;
+                }
+
+                // 📅 Admin และ Owner เปิดปฏิทินเปลี่ยนวันหมดอายุได้เหมือนกันทุกแถว
+                let expireEditBtn = '';
+                if (isAdmin) {
+                    expireEditBtn = `
+                        <span class="btn-icon-edit" onclick="editExpireDate(event, ${rowId}, '${itemType}')" title="แก้ไขวันหมดอายุ">✏️</span>
+                        <input type="date" id="dateInput_${itemType}_${rowId}" value="${expire !== '-' ? expire : ''}" style="position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0;" onchange="handleDateDirectChange(${rowId}, '${itemType}', this.value)">
+                    `;
+                }
+
+                // 🗑️ Admin และ Owner ลบรายการได้เหมือนกันทุกแถว
+                let actionTd = '';
+                if (isAdmin) {
+                    actionTd = `<td data-label="จัดการ" class="text-center">
+                        <button class="btn-delete" onclick="deleteStock(${rowId}, '${itemType}', '${email}')">ลบ</button>
+                       </td>`;
+                }
 
                 return `
                     <tr>
                         <td data-label="รหัสสินค้า"><span class="font-code">${code}</span></td>
-                        <td data-label="อีเมล">${email}</td>
-                        <td data-label="สถานะ"><span class="badge ${status === 'ว่าง' ? 'free' : 'busy'}">${status}</span></td>
-                        <td data-label="จำนวนวัน"><span class="badge ${dayCls}">${dayText}</span></td>
-                        <td data-label="วันหมดอายุ">${expire || '-'}</td>
-                        <td data-label="จัดการ" class="text-center">
-                            ${canDelete ? `
-                                <button class="btn-delete-row" onclick="deleteItemRow(${rowId}, '${code}', '${itemType}')">
-                                    🗑️ ลบ
-                                </button>
-                            ` : `<span class="lock-icon">🔒</span>`}
+                        <td data-label="อีเมล">
+                            <span>${email}</span>${emailEditBtn}
                         </td>
+                        <td data-label="สถานะ">
+                            <span class="badge ${status === 'ว่าง' ? 'free' : 'busy'} ${isAdmin ? 'clickable' : ''}" 
+                                  onclick="${isAdmin ? `toggleStatus(${rowId}, '${itemType}', '${status}')` : ''}" 
+                                  title="${isAdmin ? 'คลิกเพื่อเปลี่ยนสถานะ' : ''}">
+                                ${status} 
+                            </span>
+                        </td>
+                        <td data-label="จำนวนวัน"><span class="badge ${dayCls}">${dayText}</span></td>
+                        <td data-label="วันหมดอายุ" style="position: relative;">
+                            <span>${expire || '-'}</span>${expireEditBtn}
+                        </td>
+                        ${actionTd}
                     </tr>
                 `;
             }).join('');
+        }
+
+        async function editEmail(rowId, itemType, currentEmail) {
+            if (!hasAdminAccess()) return;
+
+            const { value: newEmail } = await Swal.fire({
+                title: '✏️ แก้ไขอีเมล',
+                input: 'email',
+                inputLabel: 'กรอกอีเมลใหม่',
+                inputValue: currentEmail,
+                showCancelButton: true,
+                confirmButtonText: 'บันทึก',
+                cancelButtonText: 'ยกเลิก',
+                inputValidator: (value) => {
+                    if (!value) return 'กรุณากรอกอีเมล';
+                    const allowedEmailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|hotmail\.co\.th|outlook\.com)$/i;
+                    if (!allowedEmailRegex.test(value.trim())) {
+                        return 'รองรับเฉพาะ @gmail.com หรือ @hotmail.com';
+                    }
+                }
+            });
+
+            if (newEmail && newEmail !== currentEmail) {
+                updateStockItem(rowId, itemType, { email: newEmail.trim().toLowerCase() });
+            }
+        }
+
+        function editExpireDate(event, rowId, itemType) {
+            if (!hasAdminAccess()) return;
+            event.stopPropagation();
+            const dateInput = document.getElementById(`dateInput_${itemType}_${rowId}`);
+            if (dateInput) {
+                if (typeof dateInput.showPicker === 'function') {
+                    dateInput.showPicker();
+                } else {
+                    dateInput.focus();
+                    dateInput.click();
+                }
+            }
+        }
+
+        function handleDateDirectChange(rowId, itemType, selectedDate) {
+            updateStockItem(rowId, itemType, { expire: selectedDate || '-' });
+        }
+
+        async function updateStockItem(rowId, itemType, updatedFields) {
+            const token = getAuthToken();
+            const role = getUserRole();
+            const item = rawStockData.find(d => d.row === rowId && d.type === itemType);
+
+            if (!item) return;
+
+            const payload = {
+                action: "update",
+                row: rowId,
+                type: itemType,
+                code: item.code,
+                email: item.email,
+                status: item.status,
+                expire: item.expire || "-",
+                ...updatedFields
+            };
+
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-User-Role': role,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const resData = await res.json();
+                if (resData.success) {
+                    Swal.fire({ icon: 'success', title: 'อัปเดตเรียบร้อย!', timer: 1000, showConfirmButton: false });
+                    loadStockData();
+                } else {
+                    Swal.fire('เกิดข้อผิดพลาด', resData.message || 'อัปเดตไม่สำเร็จ', 'error');
+                }
+            } catch (err) {
+                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้', 'error');
+            }
+        }
+
+        async function deleteStock(rowId, itemType, email) {
+            if (!hasAdminAccess()) return;
+
+            const confirm = await Swal.fire({
+                title: 'ยืนยันการลบข้อมูล?',
+                text: `คุณต้องการลบรายการ ${email} ออกจากระบบใช่หรือไม่?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                confirmButtonText: 'ใช่, ลบเลย!',
+                cancelButtonText: 'ยกเลิก'
+            });
+
+            if (!confirm.isConfirmed) return;
+
+            const token = getAuthToken();
+            const role = getUserRole();
+
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-User-Role': role,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: "delete",
+                        row: rowId,
+                        type: itemType
+                    })
+                });
+
+                const resData = await res.json();
+                if (resData.success) {
+                    Swal.fire({ icon: 'success', title: 'ลบสำเร็จ!', text: 'ลบรายการออกเรียบร้อยแล้ว', timer: 1200, showConfirmButton: false });
+                    loadStockData();
+                } else {
+                    Swal.fire('เกิดข้อผิดพลาด', resData.message || 'ลบข้อมูลไม่สำเร็จ', 'error');
+                }
+            } catch (err) {
+                Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้', 'error');
+            }
+        }
+
+        async function toggleStatus(rowId, itemType, currentStatus) {
+            if (!hasAdminAccess()) return;
+            const newStatus = currentStatus === 'ว่าง' ? 'ใช้งานอยู่' : 'ว่าง';
+            updateStockItem(rowId, itemType, { status: newStatus });
         }
 
         function switchCategory(cat, btn) {
@@ -776,7 +903,11 @@
             renderTable();
         }
 
-        function openAddModal() { document.getElementById('addModal').classList.add('open'); }
+        function openAddModal() { 
+            document.getElementById('addModal').classList.add('open');
+            toggleCategoryField();
+        }
+
         function closeAddModal() {
             document.getElementById('addModal').classList.remove('open');
             document.getElementById('addStockForm').reset();
@@ -789,12 +920,13 @@
             if (!token) return Swal.fire('Session หมดอายุ', 'กรุณาเข้าสู่ระบบใหม่', 'warning');
 
             const submitBtn = document.getElementById('btnSubmitAdd');
-            const code = document.getElementById('add-code').value;
+            const code = document.getElementById('add-code-input').value.trim();
+            const category = document.getElementById('add-category').value;
             const email = document.getElementById('add-email').value.trim().toLowerCase();
             const expire = document.getElementById('add-expire').value;
             const targetSelect = document.getElementById('add-target');
             
-            const targetSection = role === 'owner' && targetSelect ? targetSelect.value : 'customer';
+            const targetSection = (role === 'owner' && targetSelect) ? targetSelect.value : 'customer';
 
             const allowedEmailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|hotmail\.co\.th|outlook\.com)$/i;
             if (!allowedEmailRegex.test(email)) {
@@ -815,6 +947,7 @@
                     body: JSON.stringify({
                         action: "add",
                         code: code,
+                        category: targetSection === 'customer' ? category : '',
                         email: email,
                         status: "ว่าง",
                         expire: expire || "-",
@@ -836,48 +969,6 @@
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerText = 'บันทึกข้อมูลเข้าสต็อก';
-            }
-        }
-
-        async function deleteItemRow(rowId, code, itemType) {
-            if (!rowId) return;
-            const token = getAuthToken();
-            const role = getUserRole();
-            if (!token) return Swal.fire('Session หมดอายุ', 'กรุณาเข้าสู่ระบบใหม่', 'warning');
-
-            const confirmResult = await Swal.fire({
-                title: 'ยืนยันการลบรายการ?',
-                text: `ต้องการลบรายการ [${code}] ใช่หรือไม่?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e11d48',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: 'ลบรายการ',
-                cancelButtonText: 'ยกเลิก'
-            });
-
-            if (confirmResult.isConfirmed) {
-                try {
-                    const res = await fetch(WORKER_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'X-User-Role': role,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ action: "delete", row: rowId, type: itemType })
-                    });
-
-                    const resData = await res.json();
-                    if (resData.success) {
-                        Swal.fire({ icon: 'success', title: 'ลบสำเร็จ!', text: 'รายการถูกลบแล้ว', timer: 1500, showConfirmButton: false });
-                        loadStockData();
-                    } else {
-                        Swal.fire('เกิดข้อผิดพลาด', resData.message || 'ลบไม่สำเร็จ', 'error');
-                    }
-                } catch (err) {
-                    Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้', 'error');
-                }
             }
         }
 
