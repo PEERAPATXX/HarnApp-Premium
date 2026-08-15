@@ -507,7 +507,7 @@
 
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" onclick="closeAddModal()">ยกเลิก</button>
-                    <button type="submit" class="btn-submit">บันทึกข้อมูลเข้าสต็อก</button>
+                    <button type="submit" class="btn-submit" id="btnSubmitAdd">บันทึกข้อมูลเข้าสต็อก</button>
                 </div>
             </form>
         </div>
@@ -517,7 +517,6 @@
         const WORKER_URL = "https://harnapp-api.hay-peerapattx-co-th.workers.dev"; 
         
         let rawStockData = [];
-        let addedStockData = [];
         let currentCategory = 'ALL';
         let searchQuery = '';
 
@@ -560,21 +559,6 @@
             location.reload();
         }
 
-        function loadAddedStock() {
-            const saved = localStorage.getItem('harnapp_added_stock');
-            if (saved) {
-                try {
-                    addedStockData = JSON.parse(saved);
-                } catch (e) {
-                    addedStockData = [];
-                }
-            }
-        }
-
-        function saveAddedStock() {
-            localStorage.setItem('harnapp_added_stock', JSON.stringify(addedStockData));
-        }
-
         function toDateInputValue(str) {
             if (!str || str === '-' || str.trim() === '') return '';
             if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
@@ -611,10 +595,7 @@
 
             const tbody = document.getElementById('stock-list');
             tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">กำลังโหลดข้อมูล...</td></tr>`;
-            
-            loadAddedStock();
 
-            let apiItems = [];
             try {
                 const res = await fetch(WORKER_URL, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -628,14 +609,15 @@
 
                 if (res.ok) {
                     const data = await res.json();
-                    apiItems = (Array.isArray(data) ? data : []).map(item => ({ ...item, isCustom: false }));
+                    rawStockData = Array.isArray(data) ? data : [];
+                    renderTable();
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>`;
                 }
             } catch (err) {
-                console.warn("API Load failed:", err);
+                console.error("API Load failed:", err);
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">ไม่สามารถเชื่อมต่อกับฐานข้อมูลได้</td></tr>`;
             }
-
-            rawStockData = [...addedStockData, ...apiItems];
-            renderTable();
         }
 
         function renderTable() {
@@ -668,13 +650,12 @@
             }
 
             tbody.innerHTML = filtered.map(item => {
+                const rowId = item.row;
                 const code = item.code || item.id || '-';
                 const email = item.email || '-';
                 const status = item.status || 'ว่าง';
                 const expire = item.expire || item.expireDate || '';
                 const { text: dayText, cls: dayCls } = daysRemaining(expire);
-                const isCustom = item.isCustom === true;
-                const customId = item.customId || '';
 
                 return `
                     <tr>
@@ -686,11 +667,9 @@
                         <td data-label="จำนวนวัน"><span class="badge ${dayCls}">${dayText}</span></td>
                         <td data-label="วันหมดอายุ">${expire || '-'}</td>
                         <td data-label="จัดการ" class="text-center">
-                            ${isCustom ? `
-                                <button class="btn-delete-row" onclick="deleteCustomItem('${customId}')">
-                                    🗑️ ลบ
-                                </button>
-                            ` : `<span class="text-muted" style="font-size: 0.8rem;">-</span>`}
+                            <button class="btn-delete-row" onclick="deleteItemRow(${rowId}, '${code}')">
+                                🗑️ ลบ
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -718,39 +697,83 @@
             document.getElementById('addStockForm').reset();
         }
 
-        function handleAddSubmit(e) {
+        // ➕ บันทึกข้อมูลเข้า Google Sheets แบบ Real-time
+        async function handleAddSubmit(e) {
             e.preventDefault();
-            const category = document.getElementById('add-category').value;
+            const token = getAuthToken();
+            if (!token) return alert('Session หมดอายุ');
+
+            const submitBtn = document.getElementById('btnSubmitAdd');
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'กำลังบันทึก...';
+
             const code = document.getElementById('add-code').value.trim();
             const email = document.getElementById('add-email').value.trim();
             const expire = document.getElementById('add-expire').value;
 
-            const newItem = {
-                customId: 'custom_' + Date.now(),
-                category: category,
+            const newItemPayload = {
+                action: "add",
                 code: code,
                 email: email,
-                status: 'ว่าง',
-                expire: expire,
-                isCustom: true
+                status: "ว่าง",
+                expire: expire || "-"
             };
 
-            addedStockData.unshift(newItem);
-            saveAddedStock();
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newItemPayload)
+                });
 
-            rawStockData.unshift(newItem);
-            renderTable();
-
-            closeAddModal();
+                const resData = await res.json();
+                if (resData.success) {
+                    alert('✅ บันทึกข้อมูลเข้า Google Sheets เรียบร้อยแล้ว!');
+                    closeAddModal();
+                    loadStockData(); // รีโหลดข้อมูลล่าสุดจาก Sheets
+                } else {
+                    alert('❌ เกิดข้อผิดพลาด: ' + (resData.error || 'บันทึกไม่สำเร็จ'));
+                }
+            } catch (err) {
+                console.error("Add failed:", err);
+                alert('❌ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'บันทึกข้อมูลเข้าสต็อก';
+            }
         }
 
-        function deleteCustomItem(id) {
-            if (!id) return;
-            if (confirm('คุณต้องการลบรายการนี้ใช่หรือไม่?')) {
-                addedStockData = addedStockData.filter(item => item.customId !== id);
-                rawStockData = rawStockData.filter(item => item.customId !== id);
-                saveAddedStock();
-                renderTable();
+        // 🗑️ ลบรายการแถวออกจาก Google Sheets
+        async function deleteItemRow(rowId, code) {
+            if (!rowId) return;
+            const token = getAuthToken();
+            if (!token) return alert('Session หมดอายุ');
+
+            if (confirm(`คุณต้องการลบรายการรหัส [${code}] ในแถวที่ ${rowId} ใช่หรือไม่?`)) {
+                try {
+                    const res = await fetch(WORKER_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ action: "delete", row: rowId })
+                    });
+
+                    const resData = await res.json();
+                    if (resData.success) {
+                        alert('✅ ลบรายการเรียบร้อยแล้ว');
+                        loadStockData();
+                    } else {
+                        alert('❌ ลบรายการไม่สำเร็จ: ' + (resData.error || ''));
+                    }
+                } catch (err) {
+                    console.error("Delete failed:", err);
+                    alert('❌ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้');
+                }
             }
         }
 
