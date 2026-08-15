@@ -236,6 +236,7 @@
             outline: none;
         }
 
+        /* กล่องใส่วันที่ + ปุ่มลบ */
         .date-picker-group {
             display: inline-flex;
             align-items: center;
@@ -259,12 +260,13 @@
             border-color: var(--magenta-bright);
         }
 
+        /* ปุ่ม X สำหรับกดล้างวันที่ */
         .btn-clear-date {
             background: #ffe4e6;
             color: #be123c;
             border: none;
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             font-weight: bold;
             font-size: 14px;
@@ -529,7 +531,7 @@
                         <td data-label="รหัสสินค้า" class="font-code">${item.code}</td>
                         <td data-label="อีเมล"><b>${item.email}</b></td>
                         <td data-label="สถานะ">
-                            <select id="status-select-${item.row}" class="${item.status === 'ว่าง' ? 'free' : 'busy'}" 
+                            <select class="${item.status === 'ว่าง' ? 'free' : 'busy'}" 
                                     onchange="updateStatus(${item.row}, this.value)">
                                 <option value="ว่าง" ${item.status === 'ว่าง' ? 'selected' : ''}>ว่าง</option>
                                 <option value="ไม่ว่าง" ${item.status !== 'ว่าง' ? 'selected' : ''}>ไม่ว่าง</option>
@@ -543,8 +545,9 @@
                                 <input type="date"
                                        id="date-input-${item.row}"
                                        value="${toDateInputValue(item.expire)}"
-                                       onchange="onDateChanged(${item.row}, this.value)">
-                                <button type="button" class="btn-clear-date" title="ล้างวันที่และเปลี่ยนเป็นว่าง" onclick="clearDate(${item.row})">✕</button>
+                                       onchange="updateExpire(${item.row}, this.value)"
+                                       oninput="handleDateInput(${item.row}, this)">
+                                <button type="button" class="btn-clear-date" title="ล้างวันที่" onclick="clearDate(${item.row})">✕</button>
                             </div>
                         </td>
                     </tr>
@@ -559,42 +562,69 @@
             renderTable();
         }
 
-        /* 1. เมื่อกดเลือกวันที่ -> ปรับเป็น "ไม่ว่าง" อัตโนมัติ */
-        function onDateChanged(rowNum, newDate) {
-            if (newDate && newDate.trim() !== '') {
-                updateItemData(rowNum, { expire: newDate, status: 'ไม่ว่าง' });
-            } else {
-                updateItemData(rowNum, { expire: '-', status: 'ว่าง' });
-            }
-        }
-
-        /* 2. เมื่อกดปุ่ม ✕ (กากบาท) -> ล้างวันที่ + ปรับเป็น "ว่าง" อัตโนมัติ */
-        function clearDate(rowNum) {
-            const inputElem = document.getElementById(`date-input-${rowNum}`);
-            if (inputElem) inputElem.value = '';
-            updateItemData(rowNum, { expire: '-', status: 'ว่าง' });
-        }
-
-        /* ฟังก์ชันอัปเดตสถานะตรงๆ จากดรอปดาวน์ */
-        function updateStatus(rowNum, newStatus) {
-            updateItemData(rowNum, { status: newStatus });
-        }
-
-        /* ฟังก์ชันหลักในการส่งข้อมูลไปอัปเดตบน Cloudflare Worker */
-        async function updateItemData(rowNum, payload) {
+        async function updateStatus(rowNum, newStatus) {
             try {
-                const bodyData = { row: rowNum, ...payload };
                 const res = await fetch(WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(bodyData)
+                    body: JSON.stringify({ row: rowNum, status: newStatus })
                 });
 
                 const result = await res.json();
                 if (result.error) throw new Error(result.error);
                 loadStockData();
             } catch (err) {
-                alert('อัปเดตไม่สำเร็จ: ' + err.message);
+                alert('แก้ไขไม่สำเร็จ: ' + err.message);
+            }
+        }
+
+        /* รองรับการพิมพ์ลบด้วยมือหรือกดรีเซ็ตบน iOS */
+        function handleDateInput(rowNum, inputElem) {
+            if (!inputElem.value) {
+                updateExpire(rowNum, '-');
+            }
+        }
+
+        /* ปุ่ม ✕ กดล้างวันที่โดยตรง + เปลี่ยนสถานะเป็น "ว่าง" อัตโนมัติ */
+        async function clearDate(rowNum) {
+            const inputElem = document.getElementById(`date-input-${rowNum}`);
+            if (inputElem) {
+                inputElem.value = '';
+            }
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        row: rowNum, 
+                        expire: '-', 
+                        status: 'ว่าง' 
+                    })
+                });
+
+                const result = await res.json();
+                if (result.error) throw new Error(result.error);
+                loadStockData();
+            } catch (err) {
+                alert('แก้ไขไม่สำเร็จ: ' + err.message);
+            }
+        }
+
+        async function updateExpire(rowNum, newExpire) {
+            const expireValueToSend = (newExpire && newExpire.trim() !== '') ? newExpire : '-';
+
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ row: rowNum, expire: expireValueToSend })
+                });
+
+                const result = await res.json();
+                if (result.error) throw new Error(result.error);
+                loadStockData();
+            } catch (err) {
+                alert('แก้ไขไม่สำเร็จ: ' + err.message);
             }
         }
 
