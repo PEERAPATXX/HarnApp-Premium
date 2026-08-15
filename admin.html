@@ -785,7 +785,7 @@
             document.getElementById('addStockForm').reset();
         }
 
-        /* 🚀 ปรับปรุงระบบบันทึกและการแจ้งเตือนเมื่อเจออีเมลซ้ำ */
+        /* 🚀 ปรับแต่งข้อความแจ้งเตือนเมลซ้ำให้ตัดคำว่า " ในรายการ [...]" ออกอัตโนมัติ */
         async function handleAddSubmit(e) {
             e.preventDefault();
             const token = getAuthToken();
@@ -841,11 +841,14 @@
                     closeAddModal();
                     loadStockData();
                 } else {
-                    // ดึง resData.message จาก Worker มาโชว์สวยๆ ใน SweetAlert2
+                    // ✂️ ใช้ Regex ตัดส่วน " ในรายการ [...]" ออกตามที่ต้องการ
+                    let rawMessage = resData.message || resData.error || 'พบข้อผิดพลาดที่ไม่ทราบสาเหตุ';
+                    let cleanMessage = rawMessage.replace(/\s*ในรายการ\s*\[.*?\]/, '');
+
                     Swal.fire({
                         icon: 'error',
                         title: 'ไม่สามารถเพิ่มข้อมูลได้',
-                        text: resData.message || resData.error || 'พบข้อผิดพลาดที่ไม่ทราบสาเหตุ',
+                        text: cleanMessage,
                         confirmButtonColor: '#ff007f'
                     });
                 }
@@ -858,7 +861,6 @@
             }
         }
 
-        /* 🗑️ ปรับปรุงระบบยืนยันการลบแบบสวยๆ */
         async function deleteItemRow(rowId, code) {
             if (!rowId) return;
             const token = getAuthToken();
@@ -866,7 +868,7 @@
 
             const confirmResult = await Swal.fire({
                 title: 'ยืนยันการลบรายการ?',
-                text: `คุณต้องการลบรายการรหัส [${code}] ในแถวที่ ${rowId} ใช่หรือไม่?`,
+                text: `ต้องการลบรายการ [${code}] ใช่หรือไม่?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#e11d48',
