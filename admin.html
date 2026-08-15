@@ -122,7 +122,7 @@
             align-items: center;
         }
 
-        .btn-refresh, .btn-add {
+        .btn-refresh, .btn-add, .btn-logout {
             border: none;
             padding: 10px 20px;
             border-radius: 30px;
@@ -143,6 +143,9 @@
 
         .btn-add { background: var(--magenta-bright); color: #ffffff; box-shadow: 0 3px 10px rgba(255, 0, 127, 0.3); }
         .btn-add:hover { background: #e00070; }
+
+        .btn-logout { background: #ffe4e6; color: #e11d48; }
+        .btn-logout:hover { background: #e11d48; color: #ffffff; }
 
         .category-tabs {
             display: flex;
@@ -237,7 +240,7 @@
         .text-center { text-align: center; }
         .text-muted { color: #94a3b8; }
 
-        /* Modal */
+        /* Modal Base */
         .modal {
             display: none;
             position: fixed;
@@ -270,7 +273,7 @@
         .close-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #94a3b8; }
         .form-group { margin-bottom: 14px; }
         .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #475569; }
-        input[type="text"], input[type="date"], select.form-control { 
+        input[type="text"], input[type="password"], input[type="date"], select.form-control { 
             width: 100%;
             padding: 10px 12px; 
             border-radius: 8px; 
@@ -282,12 +285,63 @@
         .btn-submit { flex: 1; background: var(--magenta-bright); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
         .btn-cancel { flex: 1; background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
 
+        /* 🔒 Login Screen Overlay */
+        .login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--purple-dark);
+            background-image: 
+                radial-gradient(circle at 50% 0%, var(--magenta-bright) 0%, transparent 60%),
+                radial-gradient(circle at 100% 100%, var(--purple-witch) 0%, transparent 50%);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            padding: 32px 28px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            border: 1.5px solid rgba(255, 255, 255, 0.4);
+            text-align: center;
+        }
+
+        .login-card h2 {
+            font-size: 1.5rem;
+            color: #0f172a;
+            margin-bottom: 6px;
+            font-weight: 800;
+        }
+
+        .login-card p {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+        }
+
+        .error-msg {
+            background: #ffe4e6;
+            color: #e11d48;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 14px;
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .dashboard-card { padding: 16px; }
             .top-bar { flex-direction: column; align-items: stretch; gap: 10px; }
             .search-box { max-width: 100%; }
-            .action-btns { display: grid; grid-template-columns: 2fr 1fr; width: 100%; }
-            .btn-refresh, .btn-add { width: 100%; padding: 10px; }
+            .action-btns { display: grid; grid-template-columns: 2fr 1fr 1fr; width: 100%; }
+            .btn-refresh, .btn-add, .btn-logout { width: 100%; padding: 10px; }
             .category-tabs { width: 100%; overflow-x: auto; }
 
             table, thead, tbody, th, td, tr { display: block; }
@@ -325,6 +379,29 @@
 </head>
 <body>
 
+    <!-- 🔒 หน้าจอล็อกอิน -->
+    <div class="login-overlay" id="loginScreen">
+        <div class="login-card">
+            <h2>🔐 Harnapp Admin</h2>
+            <p>กรุณาเข้าสู่ระบบเพื่อจัดการสต็อก</p>
+            
+            <div class="error-msg" id="loginError">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</div>
+
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group" style="text-align: left;">
+                    <label>Username</label>
+                    <input type="text" id="login-username" placeholder="กรอกชื่อผู้ใช้งาน" required>
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="กรอกรหัสผ่าน" required>
+                </div>
+                <button type="submit" class="btn-submit" style="width: 100%; margin-top: 10px; padding: 12px;">เข้าสู่ระบบ</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 📊 Dashboard แอดมิน -->
     <div class="container">
         <div class="banner-slot">
             <img src="banner.png" alt="Harnapp Admin Banner">
@@ -342,8 +419,9 @@
                 </div>
 
                 <div class="action-btns">
-                    <button class="btn-add" onclick="openAddModal()">+ เพิ่มเมลเข้าสต็อก</button>
+                    <button class="btn-add" onclick="openAddModal()">+ เพิ่มเมล</button>
                     <button class="btn-refresh" onclick="loadStockData()">รีเฟรช</button>
+                    <button class="btn-logout" onclick="handleLogout()">ออก</button>
                 </div>
             </div>
 
@@ -385,7 +463,7 @@
                     </thead>
                     <tbody id="stock-list">
                         <tr>
-                            <td colspan="6" class="text-center text-muted">กำลังโหลดข้อมูล...</td>
+                            <td colspan="6" class="text-center text-muted">กรุณาเข้าสู่ระบบ...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -443,6 +521,45 @@
         let currentCategory = 'ALL';
         let searchQuery = '';
 
+        // Check Login Session
+        function getAuthToken() {
+            return sessionStorage.getItem('harnapp_auth_token');
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('login-username').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+            const errDiv = document.getElementById('loginError');
+
+            try {
+                const res = await fetch(`${WORKER_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+
+                const data = await res.json();
+                if (data.success && data.token) {
+                    sessionStorage.setItem('harnapp_auth_token', data.token);
+                    document.getElementById('loginScreen').style.display = 'none';
+                    errDiv.style.display = 'none';
+                    loadStockData();
+                } else {
+                    errDiv.innerText = data.message || "เข้าสู่ระบบไม่สำเร็จ";
+                    errDiv.style.display = 'block';
+                }
+            } catch (err) {
+                errDiv.innerText = "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้";
+                errDiv.style.display = 'block';
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('harnapp_auth_token');
+            location.reload();
+        }
+
         function loadAddedStock() {
             const saved = localStorage.getItem('harnapp_added_stock');
             if (saved) {
@@ -484,6 +601,14 @@
         }
 
         async function loadStockData() {
+            const token = getAuthToken();
+            if (!token) {
+                document.getElementById('loginScreen').style.display = 'flex';
+                return;
+            } else {
+                document.getElementById('loginScreen').style.display = 'none';
+            }
+
             const tbody = document.getElementById('stock-list');
             tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">กำลังโหลดข้อมูล...</td></tr>`;
             
@@ -491,7 +616,16 @@
 
             let apiItems = [];
             try {
-                const res = await fetch(WORKER_URL);
+                const res = await fetch(WORKER_URL, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.status === 401) {
+                    alert('Session หมดอายุ กรุณาเข้าสู่ระบบใหม่');
+                    handleLogout();
+                    return;
+                }
+
                 if (res.ok) {
                     const data = await res.json();
                     apiItems = (Array.isArray(data) ? data : []).map(item => ({ ...item, isCustom: false }));
@@ -500,7 +634,6 @@
                 console.warn("API Load failed:", err);
             }
 
-            // รวมข้อมูลที่เราเพิ่มเองไว้ด้านบนสุดเสมอ
             rawStockData = [...addedStockData, ...apiItems];
             renderTable();
         }
@@ -514,34 +647,18 @@
                 const cat = (item.category || item.type || item.service || '').toString().toUpperCase();
                 const q = searchQuery.toLowerCase().trim();
 
-                // รวมสตริงทั้งหมดไว้เช็ก ป้องกันกรณีข้อมูลตกหล่น
                 const combinedInfo = `${code} ${cat} ${email}`;
 
-                // เงื่อนไขการกรองแท็บหมวดหมู่แบบยืดหยุ่น
                 let matchCat = true;
                 if (currentCategory === 'NETFLIX') {
-                    matchCat = code.startsWith('NF') || 
-                               cat.includes('NF') || 
-                               cat.includes('NETFLIX') || 
-                               combinedInfo.includes('NETFLIX') || 
-                               code.includes('NF');
+                    matchCat = code.startsWith('NF') || cat.includes('NF') || cat.includes('NETFLIX') || combinedInfo.includes('NETFLIX') || code.includes('NF');
                 } else if (currentCategory === 'YOUTUBE') {
-                    matchCat = code.startsWith('YT') || 
-                               cat.includes('YT') || 
-                               cat.includes('YOUTUBE') || 
-                               combinedInfo.includes('YOUTUBE') || 
-                               code.includes('YT');
+                    matchCat = code.startsWith('YT') || cat.includes('YT') || cat.includes('YOUTUBE') || combinedInfo.includes('YOUTUBE') || code.includes('YT');
                 } else if (currentCategory === 'CUSTOMER') {
-                    matchCat = code.startsWith('CUST') || 
-                               cat.includes('CUST') || 
-                               cat.includes('CUSTOMER') || 
-                               combinedInfo.includes('CUSTOMER') || 
-                               code.includes('CUST');
+                    matchCat = code.startsWith('CUST') || cat.includes('CUST') || cat.includes('CUSTOMER') || combinedInfo.includes('CUSTOMER') || code.includes('CUST');
                 }
 
-                // เงื่อนไขช่องค้นหา
                 const matchSearch = !q || email.includes(q) || code.toLowerCase().includes(q) || cat.toLowerCase().includes(q);
-                
                 return matchCat && matchSearch;
             });
 
@@ -618,11 +735,9 @@
                 isCustom: true
             };
 
-            // บันทึกเข้า LocalStorage ของเครื่อง
             addedStockData.unshift(newItem);
             saveAddedStock();
 
-            // อัปเดตการแสดงผลทันที
             rawStockData.unshift(newItem);
             renderTable();
 
@@ -632,12 +747,9 @@
         function deleteCustomItem(id) {
             if (!id) return;
             if (confirm('คุณต้องการลบรายการนี้ใช่หรือไม่?')) {
-                // ลบออกจาก Memory และ LocalStorage
                 addedStockData = addedStockData.filter(item => item.customId !== id);
                 rawStockData = rawStockData.filter(item => item.customId !== id);
                 saveAddedStock();
-                
-                // วาดตารางใหม่
                 renderTable();
             }
         }
