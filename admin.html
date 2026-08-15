@@ -10,6 +10,7 @@
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
         th { background-color: #333; color: white; }
         select { padding: 5px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        input[type="date"] { padding: 5px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; font-family: inherit; }
         .free { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .busy { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     </style>
@@ -37,6 +38,19 @@
     <script>
         // ใส่ URL ของ Cloudflare Worker ของคุณแล้ว
         const WORKER_URL = "https://harnapp-api.hay-peerapattx-co-th.workers.dev"; 
+
+        // แปลงค่าวันที่จาก Google Sheet ให้เป็นรูปแบบ YYYY-MM-DD ที่ <input type="date"> ต้องการ
+        // รองรับทั้งกรณีที่ Sheet เก็บเป็น YYYY-MM-DD อยู่แล้ว และกรณี DD/MM/YYYY
+        function toDateInputValue(str) {
+            if (!str || str === '-') return '';
+            if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+            const match = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (match) {
+                const [, d, m, y] = match;
+                return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+            }
+            return '';
+        }
 
         async function loadStockData() {
             const tbody = document.getElementById('stock-list');
@@ -69,7 +83,11 @@
                                     <option value="ไม่ว่าง" ${item.status !== 'ว่าง' ? 'selected' : ''}>ไม่ว่าง</option>
                                 </select>
                             </td>
-                            <td>${item.expire}</td>
+                            <td>
+                                <input type="date"
+                                       value="${toDateInputValue(item.expire)}"
+                                       onchange="updateExpire(${item.row}, this.value)">
+                            </td>
                         </tr>
                     `;
                 });
@@ -94,6 +112,27 @@
                 if (result.error) throw new Error(result.error);
 
                 alert(`อัปเดตบรรทัดที่ ${rowNum} เป็น "${newStatus}" เรียบร้อย!`);
+                loadStockData();
+            } catch (err) {
+                alert('แก้ไขไม่สำเร็จ: ' + err.message);
+            }
+        }
+
+        async function updateExpire(rowNum, newExpire) {
+            try {
+                const res = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        row: rowNum,
+                        expire: newExpire
+                    })
+                });
+
+                const result = await res.json();
+                if (result.error) throw new Error(result.error);
+
+                alert(`อัปเดตวันหมดอายุบรรทัดที่ ${rowNum} เรียบร้อย!`);
                 loadStockData();
             } catch (err) {
                 alert('แก้ไขไม่สำเร็จ: ' + err.message);
