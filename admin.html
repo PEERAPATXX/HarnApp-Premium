@@ -17,11 +17,7 @@
             --card-bg: rgba(255, 255, 255, 0.96);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body { 
             font-family: 'Prompt', sans-serif; 
@@ -31,20 +27,25 @@
                 radial-gradient(circle at 100% 100%, var(--purple-witch) 0%, transparent 50%);
             background-attachment: fixed;
             color: #262626;
-            padding: 20px 12px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        .container {
-            max-width: 1050px;
+        /* 🌐 Global Top Navigation Bar */
+        .global-top-bar {
             width: 100%;
-            margin: 0 auto;
+            height: 60px;
+            padding: 0 24px;
             display: flex;
-            flex-direction: column;
-            gap: 16px;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+            z-index: 50;
         }
+
+        .main-wrapper { padding: 0 12px 20px 12px; flex: 1; }
+        .container { max-width: 1050px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
 
         .banner-slot {
             width: 100%;
@@ -56,13 +57,7 @@
             background: var(--purple-witch);
             flex-shrink: 0;
         }
-
-        .banner-slot img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
+        .banner-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
         .dashboard-card {
             background: var(--card-bg);
@@ -73,165 +68,140 @@
             border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        .top-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .search-box {
-            position: relative;
-            flex: 1;
-            max-width: 450px;
-        }
-
+        .top-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+        .search-box { position: relative; flex: 1; max-width: 450px; }
         .search-input {
-            width: 100%;
-            padding: 10px 16px 10px 48px !important;
-            border-radius: 30px;
-            border: 1.5px solid #cbd5e1;
-            font-family: inherit;
-            font-size: 0.9rem;
-            outline: none;
-            transition: all 0.2s ease;
-            background: #ffffff;
+            width: 100%; padding: 10px 16px 10px 48px !important;
+            border-radius: 30px; border: 1.5px solid #cbd5e1;
+            font-family: inherit; font-size: 0.9rem; outline: none; transition: all 0.2s ease; background: #ffffff;
         }
+        .search-input:focus { border-color: var(--magenta-bright); box-shadow: 0 0 8px rgba(255, 0, 127, 0.2); }
+        .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; stroke: #94a3b8; pointer-events: none; z-index: 5; }
 
-        .search-input:focus {
-            border-color: var(--magenta-bright);
-            box-shadow: 0 0 8px rgba(255, 0, 127, 0.2);
+        .action-btns { display: flex; gap: 10px; align-items: center; }
+        .btn-refresh, .btn-add {
+            border: none; padding: 10px 20px; border-radius: 30px;
+            font-family: inherit; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap;
         }
-
-        .search-icon {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
-            stroke: #94a3b8;
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        .action-btns {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .btn-refresh, .btn-add, .btn-logout {
-            border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-family: inherit;
-            font-size: 0.88rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-
         .btn-refresh { background: #0f172a; color: #ffffff; }
         .btn-refresh:hover { background: #1e293b; }
-
         .btn-add { background: var(--magenta-bright); color: #ffffff; box-shadow: 0 3px 10px rgba(255, 0, 127, 0.3); }
         .btn-add:hover { background: #e00070; }
 
-        .btn-logout { background: #ffe4e6; color: #e11d48; }
-        .btn-logout:hover { background: #e11d48; color: #ffffff; }
+        /* 👤 Profile Component & Avatar Support Image */
+        .profile-container { position: relative; display: inline-block; }
+
+        .profile-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--magenta-bright), #7928ca);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            user-select: none;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+        .profile-avatar:hover { transform: scale(1.06); box-shadow: 0 4px 16px rgba(255, 0, 127, 0.6); }
+
+        .profile-dropdown {
+            position: absolute; right: 0; top: 54px; width: 230px;
+            background: #ffffff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid #e2e8f0; padding: 8px; z-index: 99; display: none;
+            animation: fadeIn 0.15s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        .profile-dropdown.show { display: block; }
+
+        .profile-info { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 10px; }
+        .profile-info-avatar {
+            width: 36px; height: 36px; border-radius: 50%; background: #0f172a; color: #fff;
+            display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700;
+            overflow: hidden; background-size: cover; background-position: center; flex-shrink: 0;
+        }
+        .profile-info-text { display: flex; flex-direction: column; overflow: hidden; }
+        .profile-info-name { font-size: 0.88rem; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .profile-info-role { font-size: 0.72rem; color: #64748b; }
+
+        .dropdown-item {
+            width: 100%; padding: 10px 12px; background: none; border: none; border-radius: 10px;
+            text-align: left; font-family: inherit; font-size: 0.85rem; font-weight: 600;
+            color: #334155; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.15s ease; margin-top: 2px;
+        }
+        .dropdown-item:hover { background: #f1f5f9; }
+        .dropdown-item.logout { color: #e11d48; }
+        .dropdown-item.logout:hover { background: #ffe4e6; }
+
+        /* 🖼️ Upload Profile Modal Elements */
+        .avatar-preview-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .avatar-preview {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--magenta-bright), #7928ca);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            border: 3px solid #f1f5f9;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+        .btn-upload-label {
+            background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1;
+            padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-upload-label:hover { background: #e2e8f0; }
 
         .category-tabs {
-            display: flex;
-            gap: 8px;
-            background: #f1f5f9;
-            padding: 6px;
-            border-radius: 40px;
-            margin-bottom: 20px;
-            width: fit-content;
-            max-width: 100%;
-            overflow-x: auto;
+            display: flex; gap: 8px; background: #f1f5f9; padding: 6px; border-radius: 40px; margin-bottom: 20px;
+            width: fit-content; max-width: 100%; overflow-x: auto;
         }
-
         .tab-btn {
-            border: none;
-            background: transparent;
-            padding: 8px 18px;
-            border-radius: 30px;
-            font-family: inherit;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #64748b;
-            cursor: pointer;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
+            border: none; background: transparent; padding: 8px 18px; border-radius: 30px;
+            font-family: inherit; font-weight: 600; font-size: 0.85rem; color: #64748b; cursor: pointer;
+            white-space: nowrap; display: flex; align-items: center; gap: 6px; transition: all 0.2s;
         }
-
-        .tab-btn img.tab-icon {
-            width: 18px;
-            height: 18px;
-            object-fit: contain;
-        }
-
-        .tab-btn.active {
-            background: var(--magenta-bright);
-            color: #ffffff;
-            box-shadow: 0 3px 10px rgba(255, 0, 127, 0.35);
-        }
+        .tab-btn img.tab-icon { width: 18px; height: 18px; object-fit: contain; }
+        .tab-btn.active { background: var(--magenta-bright); color: #ffffff; box-shadow: 0 3px 10px rgba(255, 0, 127, 0.35); }
 
         .table-wrapper { width: 100%; overflow-x: auto; }
-
         table { width: 100%; border-collapse: collapse; }
-
-        th { 
-            background: var(--purple-witch);
-            color: #ffffff; 
-            font-weight: 600;
-            padding: 12px 16px;
-            text-align: left;
-        }
-
+        th { background: var(--purple-witch); color: #ffffff; font-weight: 600; padding: 12px 16px; text-align: left; }
         th:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
         th:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
-
-        td { 
-            padding: 14px 16px; 
-            border-bottom: 1px solid #f1f5f9;
-            vertical-align: middle;
-        }
+        td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
 
         .btn-delete-row {
-            background: #ffe4e6;
-            color: #e11d48;
-            border: 1px solid #fecdd3;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+            background: #ffe4e6; color: #e11d48; border: 1px solid #fecdd3; padding: 6px 14px;
+            border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 4px;
         }
-
-        .btn-delete-row:hover {
-            background: #e11d48;
-            color: #ffffff;
-        }
+        .btn-delete-row:hover { background: #e11d48; color: #ffffff; }
 
         .free { background-color: #dcfce7; color: #166534; }
         .busy { background-color: #ffe4e6; color: #9f1239; }
-
         .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
         .badge-normal { background-color: #f1f5f9; color: #475569; }
         .expired { background-color: #ffe4e6; color: #be123c; font-weight: 700; }
@@ -242,138 +212,60 @@
 
         /* Modal Base */
         .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 100;
+            justify-content: center; align-items: center; padding: 16px;
         }
         .modal.open { display: flex; }
         .modal-content {
-            background: #fff;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 450px;
-            padding: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            background: #fff; border-radius: 20px; width: 100%; max-width: 450px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f1f5f9;
-        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #f1f5f9; }
         .modal-header h3 { font-size: 1.1rem; color: #0f172a; font-weight: 700; }
         .close-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #94a3b8; }
         .form-group { margin-bottom: 14px; }
         .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #475569; }
         input[type="text"], input[type="password"], input[type="date"], select.form-control { 
-            width: 100%;
-            padding: 10px 12px; 
-            border-radius: 8px; 
-            border: 1.5px solid #cbd5e1; 
-            font-family: inherit; 
-            font-size: 0.88rem;
+            width: 100%; padding: 10px 12px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-family: inherit; font-size: 0.88rem;
         }
         .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
         .btn-submit { flex: 1; background: var(--magenta-bright); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
         .btn-cancel { flex: 1; background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
 
-        /* 🔒 Login Screen Overlay */
+        /* 🔒 Login Overlay */
         .login-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--purple-dark);
             background-image: 
                 radial-gradient(circle at 50% 0%, var(--magenta-bright) 0%, transparent 60%),
                 radial-gradient(circle at 100% 100%, var(--purple-witch) 0%, transparent 50%);
-            z-index: 999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            z-index: 999; display: flex; justify-content: center; align-items: center; padding: 20px;
         }
-
         .login-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(16px);
-            border-radius: 24px;
-            width: 100%;
-            max-width: 400px;
-            padding: 32px 28px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            border: 1.5px solid rgba(255, 255, 255, 0.4);
-            text-align: center;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px);
+            border-radius: 24px; width: 100%; max-width: 400px; padding: 32px 28px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5); border: 1.5px solid rgba(255, 255, 255, 0.4); text-align: center;
         }
-
-        .login-card h2 {
-            font-size: 1.5rem;
-            color: #0f172a;
-            margin-bottom: 6px;
-            font-weight: 800;
-        }
-
-        .login-card p {
-            color: #64748b;
-            font-size: 0.85rem;
-            margin-bottom: 24px;
-        }
-
-        .error-msg {
-            background: #ffe4e6;
-            color: #e11d48;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            margin-bottom: 14px;
-            display: none;
-        }
+        .login-card h2 { font-size: 1.5rem; color: #0f172a; margin-bottom: 6px; font-weight: 800; }
+        .login-card p { color: #64748b; font-size: 0.85rem; margin-bottom: 24px; }
+        .error-msg { background: #ffe4e6; color: #e11d48; padding: 10px; border-radius: 10px; font-size: 0.82rem; font-weight: 600; margin-bottom: 14px; display: none; }
 
         @media (max-width: 768px) {
             .dashboard-card { padding: 16px; }
             .top-bar { flex-direction: column; align-items: stretch; gap: 10px; }
             .search-box { max-width: 100%; }
-            .action-btns { display: grid; grid-template-columns: 2fr 1fr 1fr; width: 100%; }
-            .btn-refresh, .btn-add, .btn-logout { width: 100%; padding: 10px; }
+            .action-btns { display: flex; width: 100%; justify-content: space-between; align-items: center; }
+            .btn-refresh, .btn-add { flex: 1; padding: 10px; }
             .category-tabs { width: 100%; overflow-x: auto; }
 
             table, thead, tbody, th, td, tr { display: block; }
             thead tr { position: absolute; top: -9999px; left: -9999px; }
             tr { 
-                background: #ffffff;
-                border: 1.5px solid #e2e8f0;
-                border-radius: 16px;
-                margin-bottom: 12px;
-                padding: 14px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+                background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; margin-bottom: 12px; padding: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
             }
-            td { 
-                border: none;
-                padding: 6px 0;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 10px;
-            }
-            td::before { 
-                content: attr(data-label);
-                font-weight: 600;
-                color: #64748b;
-                font-size: 0.82rem;
-                flex-shrink: 0;
-            }
-            td[data-label="รหัสสินค้า"] {
-                border-bottom: 1px dashed #e2e8f0;
-                padding-bottom: 10px;
-                margin-bottom: 6px;
-            }
+            td { border: none; padding: 6px 0; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+            td::before { content: attr(data-label); font-weight: 600; color: #64748b; font-size: 0.82rem; flex-shrink: 0; }
+            td[data-label="รหัสสินค้า"] { border-bottom: 1px dashed #e2e8f0; padding-bottom: 10px; margin-bottom: 6px; }
         }
     </style>
 </head>
@@ -390,7 +282,7 @@
             <form onsubmit="handleLogin(event)">
                 <div class="form-group" style="text-align: left;">
                     <label>Username</label>
-                    <input type="text" id="login-username" placeholder="กรอกชื่อผู้ใช้งาน" required>
+                    <input type="text" id="login-username" placeholder="กรอกชื่อผู้ใช้งาน (admin / admin2)" required>
                 </div>
                 <div class="form-group" style="text-align: left;">
                     <label>Password</label>
@@ -401,78 +293,149 @@
         </div>
     </div>
 
-    <!-- 📊 Dashboard แอดมิน -->
-    <div class="container">
-        <div class="banner-slot">
-            <img src="banner.png" alt="Harnapp Admin Banner">
-        </div>
+    <!-- 🌐 แถบ Header ด้านบนสุด (มีรูปโปรไฟล์อยู่มุมขวาบนสุด) -->
+    <div class="global-top-bar">
+        <div class="profile-container">
+            <div class="profile-avatar" id="avatarBtn" onclick="toggleProfileMenu()">A</div>
+            <div class="profile-dropdown" id="profileDropdown">
+                <div class="profile-info">
+                    <div class="profile-info-avatar" id="menuAvatar">A</div>
+                    <div class="profile-info-text">
+                        <span class="profile-info-name" id="menuDisplayName">Admin</span>
+                        <span class="profile-info-role" id="menuUsername">@admin</span>
+                    </div>
+                </div>
 
-        <div class="dashboard-card">
-            
-            <div class="top-bar">
-                <div class="search-box">
-                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                <button class="dropdown-item" onclick="openProfileModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
                     </svg>
-                    <input type="text" id="search-input" class="search-input" placeholder="ค้นหาอีเมล หรือ รหัสสินค้า..." oninput="handleSearch()">
-                </div>
-
-                <div class="action-btns">
-                    <button class="btn-add" onclick="openAddModal()">+ เพิ่มเมล</button>
-                    <button class="btn-refresh" onclick="loadStockData()">รีเฟรช</button>
-                    <button class="btn-logout" onclick="handleLogout()">ออก</button>
-                </div>
-            </div>
-
-            <!-- แท็บหมวดหมู่ -->
-            <div class="category-tabs">
-                <button class="tab-btn active" onclick="switchCategory('ALL', this)">
-                    <img src="https://cdn-icons-png.flaticon.com/512/839/839888.png" alt="All" class="tab-icon">
-                    ทั้งหมด
+                    ข้อมูลส่วนตัว
                 </button>
 
-                <button class="tab-btn" onclick="switchCategory('NETFLIX', this)">
-                    <img src="https://cdn-icons-png.flaticon.com/512/732/732228.png" alt="Netflix" class="tab-icon">
-                    Netflix
-                </button>
-
-                <button class="tab-btn" onclick="switchCategory('YOUTUBE', this)">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" class="tab-icon">
-                    YouTube
-                </button>
-
-                <button class="tab-btn" onclick="switchCategory('CUSTOMER', this)">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="Customer" class="tab-icon">
-                    เมลลูกค้า
+                <button class="dropdown-item logout" onclick="handleLogout()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    ออกจากระบบ
                 </button>
             </div>
-
-            <!-- ตารางรายการ -->
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>รหัสสินค้า</th>
-                            <th>อีเมล</th>
-                            <th>สถานะ</th>
-                            <th>จำนวนวัน</th>
-                            <th>วันหมดอายุ</th>
-                            <th class="text-center">จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="stock-list">
-                        <tr>
-                            <td colspan="6" class="text-center text-muted">กรุณาเข้าสู่ระบบ...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
         </div>
     </div>
 
-    <!-- Modal ฟอร์มเพิ่มสินค้า (ปรับปรุงตามเงื่อนไขใหม่แล้ว) -->
+    <!-- 📊 Dashboard แอดมินหลัก -->
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="banner-slot">
+                <img src="banner.png" alt="Harnapp Admin Banner">
+            </div>
+
+            <div class="dashboard-card">
+                
+                <div class="top-bar">
+                    <div class="search-box">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="search-input" class="search-input" placeholder="ค้นหาอีเมล หรือ รหัสสินค้า..." oninput="handleSearch()">
+                    </div>
+
+                    <div class="action-btns">
+                        <button class="btn-add" onclick="openAddModal()">+ เพิ่มเมล</button>
+                        <button class="btn-refresh" onclick="loadStockData()">รีเฟรช</button>
+                    </div>
+                </div>
+
+                <!-- แท็บหมวดหมู่ -->
+                <div class="category-tabs">
+                    <button class="tab-btn active" onclick="switchCategory('ALL', this)">
+                        <img src="https://cdn-icons-png.flaticon.com/512/839/839888.png" alt="All" class="tab-icon">
+                        ทั้งหมด
+                    </button>
+                    <button class="tab-btn" onclick="switchCategory('NETFLIX', this)">
+                        <img src="https://cdn-icons-png.flaticon.com/512/732/732228.png" alt="Netflix" class="tab-icon">
+                        Netflix
+                    </button>
+                    <button class="tab-btn" onclick="switchCategory('YOUTUBE', this)">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" class="tab-icon">
+                        YouTube
+                    </button>
+                    <button class="tab-btn" onclick="switchCategory('CUSTOMER', this)">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="Customer" class="tab-icon">
+                        เมลลูกค้า
+                    </button>
+                </div>
+
+                <!-- ตารางรายการ -->
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>รหัสสินค้า</th>
+                                <th>อีเมล</th>
+                                <th>สถานะ</th>
+                                <th>จำนวนวัน</th>
+                                <th>วันหมดอายุ</th>
+                                <th class="text-center">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stock-list">
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">กรุณาเข้าสู่ระบบ...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal ฟอร์มแก้ไขข้อมูลส่วนตัว (Edit Profile) -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>👤 แก้ไขข้อมูลส่วนตัว</h3>
+                <button class="close-btn" onclick="closeProfileModal()">✕</button>
+            </div>
+            <form onsubmit="handleSaveProfile(event)">
+                
+                <div class="avatar-preview-wrapper">
+                    <div class="avatar-preview" id="modalAvatarPreview">A</div>
+                    <label class="btn-upload-label">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        เลือกรูปโปรไฟล์
+                        <input type="file" id="profile-img-input" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>ชื่อที่ต้องการให้แสดง (Display Name)</label>
+                    <input type="text" id="edit-display-name" placeholder="เช่น แอดมินมิว, Harnapp Official" required>
+                </div>
+
+                <div class="form-group">
+                    <label>ชื่อผู้ใช้งาน (Username เข้าระบบ)</label>
+                    <input type="text" id="edit-username-readonly" disabled style="background: #f1f5f9; color: #64748b;">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeProfileModal()">ยกเลิก</button>
+                    <button type="submit" class="btn-submit">บันทึกข้อมูล</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal ฟอร์มเพิ่มสินค้า -->
     <div class="modal" id="addModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -480,8 +443,6 @@
                 <button class="close-btn" onclick="closeAddModal()">✕</button>
             </div>
             <form id="addStockForm" onsubmit="handleAddSubmit(event)">
-                
-                <!-- รหัสสินค้าแบบ Select Dropdown -->
                 <div class="form-group">
                     <label>รหัสสินค้า (Code)</label>
                     <select id="add-code" class="form-control" required>
@@ -492,17 +453,14 @@
                         <option value="YT 30D (เมลลูกค้าไม่ต่อเมล)">YT 30D (เมลลูกค้าไม่ต่อเมล)</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label>อีเมลลูกค้า / ไอดีใช้งาน</label>
                     <input type="text" id="add-email" placeholder="customer@gmail.com" required>
                 </div>
-
                 <div class="form-group">
                     <label>วันหมดอายุ</label>
                     <input type="date" id="add-expire" class="form-control">
                 </div>
-
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" onclick="closeAddModal()">ยกเลิก</button>
                     <button type="submit" class="btn-submit" id="btnSubmitAdd">บันทึกข้อมูลเข้าสต็อก</button>
@@ -517,9 +475,134 @@
         let rawStockData = [];
         let currentCategory = 'ALL';
         let searchQuery = '';
+        let tempBase64Image = null;
 
         function getAuthToken() {
             return sessionStorage.getItem('harnapp_auth_token');
+        }
+
+        // 👤 โหลดและอัปเดตข้อมูล UI Profile (ชื่อ & รูป)
+        function updateProfileUI() {
+            const user = sessionStorage.getItem('harnapp_admin_user') || 'admin';
+            const displayName = localStorage.getItem(`profile_name_${user}`) || sessionStorage.getItem('harnapp_admin_name') || user;
+            const profileImg = localStorage.getItem(`profile_img_${user}`);
+
+            const topAvatar = document.getElementById('avatarBtn');
+            const menuAvatar = document.getElementById('menuAvatar');
+
+            document.getElementById('menuDisplayName').innerText = displayName;
+            document.getElementById('menuUsername').innerText = `@${user}`;
+
+            if (profileImg) {
+                topAvatar.style.backgroundImage = `url('${profileImg}')`;
+                topAvatar.innerText = '';
+                menuAvatar.style.backgroundImage = `url('${profileImg}')`;
+                menuAvatar.innerText = '';
+            } else {
+                const initial = displayName.charAt(0).toUpperCase();
+                topAvatar.style.backgroundImage = 'none';
+                topAvatar.innerText = initial;
+                menuAvatar.style.backgroundImage = 'none';
+                menuAvatar.innerText = initial;
+            }
+        }
+
+        function toggleProfileMenu() {
+            document.getElementById('profileDropdown').classList.toggle('show');
+        }
+
+        window.addEventListener('click', function(e) {
+            const container = document.querySelector('.profile-container');
+            if (container && !container.contains(e.target)) {
+                document.getElementById('profileDropdown').classList.remove('show');
+            }
+        });
+
+        /* 🖼️ Profile Modal Actions */
+        function openProfileModal() {
+            document.getElementById('profileDropdown').classList.remove('show');
+            const user = sessionStorage.getItem('harnapp_admin_user') || 'admin';
+            const displayName = localStorage.getItem(`profile_name_${user}`) || sessionStorage.getItem('harnapp_admin_name') || user;
+            const profileImg = localStorage.getItem(`profile_img_${user}`);
+
+            document.getElementById('edit-display-name').value = displayName;
+            document.getElementById('edit-username-readonly').value = user;
+
+            const preview = document.getElementById('modalAvatarPreview');
+            if (profileImg) {
+                preview.style.backgroundImage = `url('${profileImg}')`;
+                preview.innerText = '';
+            } else {
+                preview.style.backgroundImage = 'none';
+                preview.innerText = displayName.charAt(0).toUpperCase();
+            }
+            tempBase64Image = null;
+            document.getElementById('profileModal').classList.add('open');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.remove('open');
+        }
+
+        // อ่านไฟล์รูปภาพจากมือถือ/คอม แล้วย่อขนาดแปลงเป็น Base64
+        function handleImageSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 300;
+                    const MAX_HEIGHT = 300;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    tempBase64Image = canvas.toDataURL('image/jpeg', 0.85);
+                    const preview = document.getElementById('modalAvatarPreview');
+                    preview.style.backgroundImage = `url('${tempBase64Image}')`;
+                    preview.innerText = '';
+                };
+                img.src = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleSaveProfile(e) {
+            e.preventDefault();
+            const user = sessionStorage.getItem('harnapp_admin_user') || 'admin';
+            const newName = document.getElementById('edit-display-name').value.trim();
+
+            if (newName) {
+                localStorage.setItem(`profile_name_${user}`, newName);
+                sessionStorage.setItem('harnapp_admin_name', newName);
+            }
+
+            if (tempBase64Image) {
+                localStorage.setItem(`profile_img_${user}`, tempBase64Image);
+            }
+
+            updateProfileUI();
+            closeProfileModal();
+            alert('✅ บันทึกข้อมูลส่วนตัวเรียบร้อยแล้ว!');
         }
 
         async function handleLogin(e) {
@@ -539,8 +622,11 @@
                 if (data.success && data.token) {
                     sessionStorage.setItem('harnapp_auth_token', data.token);
                     sessionStorage.setItem('harnapp_admin_user', data.username || user);
+                    sessionStorage.setItem('harnapp_admin_name', data.displayName || user);
+
                     document.getElementById('loginScreen').style.display = 'none';
                     errDiv.style.display = 'none';
+                    updateProfileUI();
                     loadStockData();
                 } else {
                     errDiv.innerText = data.message || "เข้าสู่ระบบไม่ถูกต้อง";
@@ -555,6 +641,7 @@
         function handleLogout() {
             sessionStorage.removeItem('harnapp_auth_token');
             sessionStorage.removeItem('harnapp_admin_user');
+            sessionStorage.removeItem('harnapp_admin_name');
             location.reload();
         }
 
@@ -590,6 +677,7 @@
                 return;
             } else {
                 document.getElementById('loginScreen').style.display = 'none';
+                updateProfileUI();
             }
 
             const tbody = document.getElementById('stock-list');
@@ -636,7 +724,7 @@
                 } else if (currentCategory === 'YOUTUBE') {
                     matchCat = code.startsWith('YT') || cat.includes('YT') || cat.includes('YOUTUBE') || combinedInfo.includes('YOUTUBE') || code.includes('YT');
                 } else if (currentCategory === 'CUSTOMER') {
-                    matchCat = code.startsWith('CUST') || cat.includes('CUST') || cat.includes('CUSTOMER') || combinedInfo.includes('CUSTOMER') || code.includes('CUST');
+                    matchCat = code.startsWith('CUST') || cat.includes('CUST') || cat.includes('CUSTOMER') || combinedInfo.includes('CUSTOMER') || code.includes('CUST') || item.type === 'customer';
                 }
 
                 const matchSearch = !q || email.includes(q) || code.toLowerCase().includes(q) || cat.toLowerCase().includes(q);
@@ -696,13 +784,13 @@
             document.getElementById('addStockForm').reset();
         }
 
-        // ➕ บันทึกข้อมูลลงในคอลัมน์ G:L
         async function handleAddSubmit(e) {
             e.preventDefault();
             const token = getAuthToken();
             if (!token) return alert('Session หมดอายุ');
 
             const currentUser = sessionStorage.getItem('harnapp_admin_user') || 'Admin';
+            const currentDisplayName = sessionStorage.getItem('harnapp_admin_name') || currentUser;
 
             const submitBtn = document.getElementById('btnSubmitAdd');
             submitBtn.disabled = true;
@@ -725,7 +813,7 @@
                 email: email,
                 status: "ว่าง",
                 expire: expire || "-",
-                addedBy: currentUser
+                addedBy: currentDisplayName
             };
 
             try {
@@ -755,7 +843,6 @@
             }
         }
 
-        // 🗑️ ล้างข้อมูลเฉพาะฝั่ง G-L
         async function deleteItemRow(rowId, code) {
             if (!rowId) return;
             const token = getAuthToken();
