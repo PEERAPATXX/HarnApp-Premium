@@ -414,7 +414,7 @@
 
                 <div class="form-group">
                     <label>รหัสสินค้า (Code)</label>
-                    <input type="text" id="add-code" placeholder="เช่น CUST-01, YT-01" required>
+                    <input type="text" id="add-code" placeholder="เช่น CUST-01, YT-01, NF-01" required>
                 </div>
 
                 <div class="form-group">
@@ -510,21 +510,38 @@
             
             const filtered = rawStockData.filter(item => {
                 const code = (item.code || item.id || '').toString().toUpperCase();
-                const email = (item.email || '').toLowerCase();
-                const cat = (item.category || '').toUpperCase();
-                const q = searchQuery.toLowerCase();
+                const email = (item.email || '').toString().toLowerCase();
+                const cat = (item.category || item.type || item.service || '').toString().toUpperCase();
+                const q = searchQuery.toLowerCase().trim();
 
-                // ปรับเงื่อนไขเช็กหมวดหมู่ให้ยืดหยุ่นขึ้น
+                // รวมสตริงทั้งหมดไว้เช็ก ป้องกันกรณีข้อมูลตกหล่น
+                const combinedInfo = `${code} ${cat} ${email}`;
+
+                // เงื่อนไขการกรองแท็บหมวดหมู่แบบยืดหยุ่น
                 let matchCat = true;
                 if (currentCategory === 'NETFLIX') {
-                    matchCat = code.startsWith('NF') || cat.includes('NF') || cat.includes('NETFLIX');
+                    matchCat = code.startsWith('NF') || 
+                               cat.includes('NF') || 
+                               cat.includes('NETFLIX') || 
+                               combinedInfo.includes('NETFLIX') || 
+                               code.includes('NF');
                 } else if (currentCategory === 'YOUTUBE') {
-                    matchCat = code.startsWith('YT') || cat.includes('YT') || cat.includes('YOUTUBE');
+                    matchCat = code.startsWith('YT') || 
+                               cat.includes('YT') || 
+                               cat.includes('YOUTUBE') || 
+                               combinedInfo.includes('YOUTUBE') || 
+                               code.includes('YT');
                 } else if (currentCategory === 'CUSTOMER') {
-                    matchCat = code.startsWith('CUST') || cat.includes('CUST') || cat.includes('CUSTOMER');
+                    matchCat = code.startsWith('CUST') || 
+                               cat.includes('CUST') || 
+                               cat.includes('CUSTOMER') || 
+                               combinedInfo.includes('CUSTOMER') || 
+                               code.includes('CUST');
                 }
 
-                const matchSearch = !q || email.includes(q) || code.includes(q);
+                // เงื่อนไขช่องค้นหา
+                const matchSearch = !q || email.includes(q) || code.toLowerCase().includes(q) || cat.toLowerCase().includes(q);
+                
                 return matchCat && matchSearch;
             });
 
