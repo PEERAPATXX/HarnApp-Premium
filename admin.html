@@ -31,7 +31,7 @@
                 radial-gradient(circle at 100% 100%, var(--purple-witch) 0%, transparent 50%);
             background-attachment: fixed;
             color: #262626;
-            padding: 12px;
+            padding: 20px 12px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -43,7 +43,7 @@
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
         }
 
         /* 1. แบนเนอร์หลัก */
@@ -70,35 +70,40 @@
             background: var(--card-bg);
             backdrop-filter: blur(12px);
             border-radius: 20px;
-            padding: 16px;
+            padding: 24px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.3);
             border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        /* จัดระเบียบ Top Bar ใหม่บนมือถือ */
+        /* -------------------------------------------------- */
+        /* 💻 DESKTOP LAYOUT (หน้าจอคอมพิวเตอร์) */
+        /* -------------------------------------------------- */
+
         .top-bar {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 12px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
         }
 
-        /* แก้ไขช่องค้นหา Real-time ไม่ให้ไอคอนซ้อนตัวหนังสือ */
+        /* ช่องค้นหา - แก้ไขไม่ให้ตัวอักษรจมแว่นขยาย */
         .search-box {
             position: relative;
-            width: 100%;
+            flex: 1;
+            max-width: 450px;
         }
 
-        .search-icon {
-            position: absolute;
-            left: 16px; /* ขยับแว่นขยายมาทางซ้ายนิดนึง */
-            top: 50%;
-            transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
-            stroke: #94a3b8;
-            pointer-events: none;
-            z-index: 5;
+        .search-input {
+            width: 100%;
+            padding: 10px 16px 10px 48px !important; /* เว้นระยะด้านซ้ายหนีไอคอน */
+            border-radius: 30px;
+            border: 1.5px solid #cbd5e1;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s ease;
+            background: #ffffff;
         }
 
         .search-input:focus {
@@ -108,33 +113,32 @@
 
         .search-icon {
             position: absolute;
-            left: 14px;
+            left: 16px;
             top: 50%;
             transform: translateY(-50%);
             width: 18px;
             height: 18px;
             stroke: #94a3b8;
             pointer-events: none;
+            z-index: 5;
         }
 
-        /* ปุ่มกดแถนบนแบ่งเป็น 2 ฝั่งเท่ากันสวยๆ บนมือถือ */
         .action-btns {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 8px;
-            width: 100%;
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
         .btn-refresh, .btn-add {
             border: none;
-            padding: 10px 14px;
+            padding: 10px 20px;
             border-radius: 30px;
             font-family: inherit;
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
@@ -142,7 +146,10 @@
         }
 
         .btn-refresh { background: #0f172a; color: #ffffff; }
+        .btn-refresh:hover { background: #1e293b; }
+
         .btn-add { background: var(--magenta-bright); color: #ffffff; box-shadow: 0 3px 10px rgba(255, 0, 127, 0.3); }
+        .btn-add:hover { background: #e00070; }
 
         /* Tabs หมวดหมู่ */
         .category-tabs {
@@ -151,17 +158,14 @@
             background: #f1f5f9;
             padding: 6px;
             border-radius: 40px;
-            overflow-x: auto;
-            margin-bottom: 14px;
-            -webkit-overflow-scrolling: touch;
+            margin-bottom: 20px;
+            width: fit-content;
         }
-
-        .category-tabs::-webkit-scrollbar { display: none; }
 
         .tab-btn {
             border: none;
             background: transparent;
-            padding: 8px 16px;
+            padding: 8px 18px;
             border-radius: 30px;
             font-family: inherit;
             font-weight: 600;
@@ -172,7 +176,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            flex-shrink: 0;
+            transition: all 0.2s;
         }
 
         .tab-btn img.tab-icon {
@@ -187,8 +191,8 @@
             box-shadow: 0 3px 10px rgba(255, 0, 127, 0.35);
         }
 
-        /* Table Desktop / Card Mobile */
-        .table-wrapper { width: 100%; }
+        /* Table จอคอม */
+        .table-wrapper { width: 100%; overflow-x: auto; }
 
         table { width: 100%; border-collapse: collapse; }
 
@@ -200,20 +204,24 @@
             text-align: left;
         }
 
+        th:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+        th:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+
         td { 
-            padding: 12px 16px; 
+            padding: 14px 16px; 
             border-bottom: 1px solid #f1f5f9;
             vertical-align: middle;
         }
 
         select { 
-            padding: 6px 10px; 
+            padding: 6px 12px; 
             border-radius: 16px; 
             font-weight: 700; 
             font-family: inherit;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             border: none;
             outline: none;
+            cursor: pointer;
         }
 
         .date-picker-group { display: inline-flex; align-items: center; gap: 6px; }
@@ -232,11 +240,11 @@
             background: #ffe4e6;
             color: #be123c;
             border: none;
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -251,7 +259,7 @@
         .badge-normal { background-color: #f1f5f9; color: #475569; }
         .expired { background-color: #ffe4e6; color: #be123c; font-weight: 700; }
         .soon { background-color: #fef3c7; color: #b45309; font-weight: 700; }
-        .font-code { font-family: monospace; font-size: 0.9rem; font-weight: 700; color: #0f172a; word-break: break-word; }
+        .font-code { font-family: monospace; font-size: 0.9rem; font-weight: 700; color: #0f172a; }
         .text-center { text-align: center; }
         .text-muted { color: #94a3b8; }
 
@@ -267,18 +275,15 @@
             align-items: center;
             padding: 16px;
         }
-
         .modal.open { display: flex; }
-
         .modal-content {
             background: #fff;
             border-radius: 20px;
             width: 100%;
             max-width: 450px;
-            padding: 20px;
+            padding: 24px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
-
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -287,27 +292,60 @@
             padding-bottom: 10px;
             border-bottom: 2px solid #f1f5f9;
         }
-
         .modal-header h3 { font-size: 1.1rem; color: #0f172a; font-weight: 700; }
         .close-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #94a3b8; }
-
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: #475569; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #475569; }
         input[type="text"], select.form-control { 
             width: 100%;
-            padding: 8px 12px; 
+            padding: 10px 12px; 
             border-radius: 8px; 
             border: 1.5px solid #cbd5e1; 
             font-family: inherit; 
             font-size: 0.88rem;
         }
+        .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
+        .btn-submit { flex: 1; background: var(--magenta-bright); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+        .btn-cancel { flex: 1; background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
 
-        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-submit { flex: 1; background: var(--magenta-bright); color: #fff; border: none; padding: 10px; border-radius: 10px; font-weight: 600; cursor: pointer; }
-        .btn-cancel { flex: 1; background: #f1f5f9; color: #475569; border: none; padding: 10px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+        /* -------------------------------------------------- */
+        /* 📱 MOBILE LAYOUT (เฉพาะหน้าจอมือถือ จอเล็กกว่า 768px) */
+        /* -------------------------------------------------- */
 
-        /* 📱 ปรับการแสดงผลพิเศษสำหรับ Mobile Screen เท่านั้น */
-        @media (max-width: 650px) {
+        @media (max-width: 768px) {
+            .dashboard-card { padding: 16px; }
+
+            .top-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .search-box { max-width: 100%; }
+
+            .search-input {
+                padding-left: 48px !important;
+            }
+
+            .action-btns {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                width: 100%;
+            }
+
+            .btn-refresh, .btn-add {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .category-tabs {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .category-tabs::-webkit-scrollbar { display: none; }
+
+            /* แปลงตารางเป็น Card บนมือถือ */
             table, thead, tbody, th, td, tr { display: block; }
             thead tr { position: absolute; top: -9999px; left: -9999px; }
 
@@ -329,7 +367,6 @@
                 gap: 10px;
             }
 
-            /* ปรับแต่ง Label ฝั่งซ้าย */
             td::before { 
                 content: attr(data-label);
                 font-weight: 600;
@@ -338,7 +375,6 @@
                 flex-shrink: 0;
             }
 
-            /* แก้ไขส่วนรหัสสินค้า ให้แสดงชื่อเต็มได้โดยไม่ติดกัน */
             td[data-label="รหัสสินค้า"] {
                 border-bottom: 1px dashed #e2e8f0;
                 padding-bottom: 10px;
@@ -349,6 +385,7 @@
             td[data-label="รหัสสินค้า"] .font-code {
                 text-align: right;
                 max-width: 65%;
+                word-break: break-word;
             }
 
             td.empty-row { justify-content: center; }
