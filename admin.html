@@ -520,7 +520,6 @@
         let currentCategory = 'ALL';
         let searchQuery = '';
 
-        // Check Login Session
         function getAuthToken() {
             return sessionStorage.getItem('harnapp_auth_token');
         }
@@ -541,11 +540,12 @@
                 const data = await res.json();
                 if (data.success && data.token) {
                     sessionStorage.setItem('harnapp_auth_token', data.token);
+                    sessionStorage.setItem('harnapp_admin_user', data.username || user);
                     document.getElementById('loginScreen').style.display = 'none';
                     errDiv.style.display = 'none';
                     loadStockData();
                 } else {
-                    errDiv.innerText = data.message || "เข้าสู่ระบบไม่สำเร็จ";
+                    errDiv.innerText = data.message || "เข้าสู่ระบบไม่ถูกต้อง";
                     errDiv.style.display = 'block';
                 }
             } catch (err) {
@@ -556,6 +556,7 @@
 
         function handleLogout() {
             sessionStorage.removeItem('harnapp_auth_token');
+            sessionStorage.removeItem('harnapp_admin_user');
             location.reload();
         }
 
@@ -697,11 +698,13 @@
             document.getElementById('addStockForm').reset();
         }
 
-        // ➕ บันทึกข้อมูลเข้า Google Sheets แบบ Real-time
+        // ➕ บันทึกข้อมูลเข้า G:L + บันทึกชื่อคนเพิ่มไปคอลัมน์ L หลังบ้าน
         async function handleAddSubmit(e) {
             e.preventDefault();
             const token = getAuthToken();
             if (!token) return alert('Session หมดอายุ');
+
+            const currentUser = sessionStorage.getItem('harnapp_admin_user') || 'Admin';
 
             const submitBtn = document.getElementById('btnSubmitAdd');
             submitBtn.disabled = true;
@@ -716,7 +719,8 @@
                 code: code,
                 email: email,
                 status: "ว่าง",
-                expire: expire || "-"
+                expire: expire || "-",
+                addedBy: currentUser
             };
 
             try {
@@ -733,7 +737,7 @@
                 if (resData.success) {
                     alert('✅ บันทึกข้อมูลเข้า Google Sheets เรียบร้อยแล้ว!');
                     closeAddModal();
-                    loadStockData(); // รีโหลดข้อมูลล่าสุดจาก Sheets
+                    loadStockData();
                 } else {
                     alert('❌ เกิดข้อผิดพลาด: ' + (resData.error || 'บันทึกไม่สำเร็จ'));
                 }
@@ -746,7 +750,7 @@
             }
         }
 
-        // 🗑️ ลบรายการแถวออกจาก Google Sheets
+        // 🗑️ ล้างข้อมูลเฉพาะฝั่ง G-L
         async function deleteItemRow(rowId, code) {
             if (!rowId) return;
             const token = getAuthToken();
