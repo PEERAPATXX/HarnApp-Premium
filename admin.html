@@ -46,7 +46,6 @@
             gap: 16px;
         }
 
-        /* 1. แบนเนอร์หลัก */
         .banner-slot {
             width: 100%;
             aspect-ratio: 1983 / 793;
@@ -65,7 +64,6 @@
             display: block;
         }
 
-        /* 2. Main Dashboard Card */
         .dashboard-card {
             background: var(--card-bg);
             backdrop-filter: blur(12px);
@@ -74,10 +72,6 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.3);
             border: 1px solid rgba(255, 255, 255, 0.4);
         }
-
-        /* -------------------------------------------------- */
-        /* 💻 DESKTOP LAYOUT (หน้าจอคอมพิวเตอร์) */
-        /* -------------------------------------------------- */
 
         .top-bar {
             display: flex;
@@ -150,7 +144,6 @@
         .btn-add { background: var(--magenta-bright); color: #ffffff; box-shadow: 0 3px 10px rgba(255, 0, 127, 0.3); }
         .btn-add:hover { background: #e00070; }
 
-        /* Tabs หมวดหมู่ */
         .category-tabs {
             display: flex;
             gap: 8px;
@@ -192,7 +185,6 @@
             box-shadow: 0 3px 10px rgba(255, 0, 127, 0.35);
         }
 
-        /* Table จอคอม */
         .table-wrapper { width: 100%; overflow-x: auto; }
 
         table { width: 100%; border-collapse: collapse; }
@@ -214,53 +206,14 @@
             vertical-align: middle;
         }
 
-        select { 
-            padding: 6px 12px; 
-            border-radius: 16px; 
-            font-weight: 700; 
-            font-family: inherit;
-            font-size: 0.82rem;
-            border: none;
-            outline: none;
-            cursor: pointer;
-        }
-
-        .date-picker-group { display: inline-flex; align-items: center; gap: 6px; }
-
-        input[type="date"] { 
-            padding: 6px 10px; 
-            border-radius: 8px; 
-            border: 1.5px solid #cbd5e1; 
-            font-family: inherit; 
-            font-size: 0.85rem;
-            color: #334155;
-            outline: none;
-        }
-
-        .btn-clear-date {
-            background: #ffe4e6;
-            color: #be123c;
-            border: none;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            font-weight: bold;
-            font-size: 13px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
         .btn-delete-row {
             background: #ffe4e6;
             color: #e11d48;
             border: 1px solid #fecdd3;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
@@ -317,7 +270,7 @@
         .close-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #94a3b8; }
         .form-group { margin-bottom: 14px; }
         .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #475569; }
-        input[type="text"], select.form-control { 
+        input[type="text"], input[type="date"], select.form-control { 
             width: 100%;
             padding: 10px 12px; 
             border-radius: 8px; 
@@ -329,47 +282,16 @@
         .btn-submit { flex: 1; background: var(--magenta-bright); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
         .btn-cancel { flex: 1; background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
 
-        /* -------------------------------------------------- */
-        /* 📱 MOBILE LAYOUT (เฉพาะหน้าจอมือถือ จอเล็กกว่า 768px) */
-        /* -------------------------------------------------- */
-
         @media (max-width: 768px) {
             .dashboard-card { padding: 16px; }
-
-            .top-bar {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 10px;
-            }
-
+            .top-bar { flex-direction: column; align-items: stretch; gap: 10px; }
             .search-box { max-width: 100%; }
+            .action-btns { display: grid; grid-template-columns: 2fr 1fr; width: 100%; }
+            .btn-refresh, .btn-add { width: 100%; padding: 10px; }
+            .category-tabs { width: 100%; overflow-x: auto; }
 
-            .search-input {
-                padding-left: 48px !important;
-            }
-
-            .action-btns {
-                display: grid;
-                grid-template-columns: 2fr 1fr;
-                width: 100%;
-            }
-
-            .btn-refresh, .btn-add {
-                width: 100%;
-                padding: 10px;
-            }
-
-            .category-tabs {
-                width: 100%;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            .category-tabs::-webkit-scrollbar { display: none; }
-
-            /* แปลงตารางเป็น Card บนมือถือ */
             table, thead, tbody, th, td, tr { display: block; }
             thead tr { position: absolute; top: -9999px; left: -9999px; }
-
             tr { 
                 background: #ffffff;
                 border: 1.5px solid #e2e8f0;
@@ -378,7 +300,6 @@
                 padding: 14px;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.03);
             }
-
             td { 
                 border: none;
                 padding: 6px 0;
@@ -387,7 +308,6 @@
                 align-items: center;
                 gap: 10px;
             }
-
             td::before { 
                 content: attr(data-label);
                 font-weight: 600;
@@ -395,38 +315,24 @@
                 font-size: 0.82rem;
                 flex-shrink: 0;
             }
-
             td[data-label="รหัสสินค้า"] {
                 border-bottom: 1px dashed #e2e8f0;
                 padding-bottom: 10px;
                 margin-bottom: 6px;
-                align-items: flex-start;
             }
-
-            td[data-label="รหัสสินค้า"] .font-code {
-                text-align: right;
-                max-width: 65%;
-                word-break: break-word;
-            }
-
-            td.empty-row { justify-content: center; }
-            td.empty-row::before { display: none; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- ป้าย Banner หลัก -->
         <div class="banner-slot">
             <img src="banner.png" alt="Harnapp Admin Banner">
         </div>
 
-        <!-- Main Dashboard Card -->
         <div class="dashboard-card">
             
             <div class="top-bar">
-                <!-- 🔍 ช่องค้นหา Real-Time -->
                 <div class="search-box">
                     <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8"></circle>
@@ -479,7 +385,7 @@
                     </thead>
                     <tbody id="stock-list">
                         <tr>
-                            <td colspan="6" class="text-center text-muted empty-row">กำลังโหลดข้อมูล...</td>
+                            <td colspan="6" class="text-center text-muted">กำลังโหลดข้อมูล...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -488,7 +394,7 @@
         </div>
     </div>
 
-    <!-- ➕ Modal ฟอร์มเพิ่มสินค้า -->
+    <!-- Modal ฟอร์มเพิ่มสินค้า -->
     <div class="modal" id="addModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -499,16 +405,16 @@
                 <div class="form-group">
                     <label>หมวดหมู่บริการ</label>
                     <select id="add-category" class="form-control">
+                        <option value="CUSTOMER">เมลลูกค้า (CUSTOMER)</option>
                         <option value="YT">YouTube (YT)</option>
                         <option value="NF">Netflix (NF)</option>
-                        <option value="CUST">เมลลูกค้า (CUSTOMER)</option>
                         <option value="OTHER">อื่นๆ</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label>รหัสสินค้า (Code)</label>
-                    <input type="text" id="add-code" placeholder="เช่น YT-01, NF-01 หรือ CUST-01" required>
+                    <input type="text" id="add-code" placeholder="เช่น CUST-01, YT-01" required>
                 </div>
 
                 <div class="form-group">
@@ -517,7 +423,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>วันหมดอายุ (ถ้ายังไม่กำหนดสามารถเว้นว่างได้)</label>
+                    <label>วันหมดอายุ</label>
                     <input type="date" id="add-expire" class="form-control">
                 </div>
 
@@ -533,11 +439,10 @@
         const WORKER_URL = "https://harnapp-api.hay-peerapattx-co-th.workers.dev"; 
         
         let rawStockData = [];
-        let addedStockData = []; // เก็บเฉพาะข้อมูลที่เราเพิ่มใหม่เพื่อระบุตัวลบ
+        let addedStockData = [];
         let currentCategory = 'ALL';
         let searchQuery = '';
 
-        // โหลดรายการที่เราเคยเพิ่มไว้ใน LocalStorage
         function loadAddedStock() {
             const saved = localStorage.getItem('harnapp_added_stock');
             if (saved) {
@@ -580,29 +485,24 @@
 
         async function loadStockData() {
             const tbody = document.getElementById('stock-list');
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted empty-row">กำลังโหลดข้อมูล...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">กำลังโหลดข้อมูล...</td></tr>`;
             
             loadAddedStock();
 
+            let apiItems = [];
             try {
                 const res = await fetch(WORKER_URL);
-                if (!res.ok) throw new Error("ไม่สามารถดึงข้อมูลได้");
-                const apiData = await res.json();
-                
-                // กำหนด flag isCustom = false สำหรับข้อมูล API
-                const formattedApiData = (Array.isArray(apiData) ? apiData : []).map(item => ({
-                    ...item,
-                    isCustom: false
-                }));
-
-                // รวมข้อมูลจาก API กับ ข้อมูลที่เราเพิ่มเองเข้าด้วยกัน
-                rawStockData = [...addedStockData, ...formattedApiData];
-                renderTable();
+                if (res.ok) {
+                    const data = await res.json();
+                    apiItems = (Array.isArray(data) ? data : []).map(item => ({ ...item, isCustom: false }));
+                }
             } catch (err) {
-                // หาก API มีปัญหา ยังแสดงข้อมูลที่เราเพิ่มไว้เองได้
-                rawStockData = [...addedStockData];
-                renderTable();
+                console.warn("API Load failed:", err);
             }
+
+            // รวมข้อมูลที่เราเพิ่มเองไว้ด้านบนสุดเสมอ
+            rawStockData = [...addedStockData, ...apiItems];
+            renderTable();
         }
 
         function renderTable() {
@@ -611,26 +511,25 @@
             const filtered = rawStockData.filter(item => {
                 const code = (item.code || item.id || '').toString().toUpperCase();
                 const email = (item.email || '').toLowerCase();
+                const cat = (item.category || '').toUpperCase();
                 const q = searchQuery.toLowerCase();
 
-                // กรองตามหมวดหมู่
+                // ปรับเงื่อนไขเช็กหมวดหมู่ให้ยืดหยุ่นขึ้น
                 let matchCat = true;
                 if (currentCategory === 'NETFLIX') {
-                    matchCat = code.startsWith('NF') || item.category === 'NF';
+                    matchCat = code.startsWith('NF') || cat.includes('NF') || cat.includes('NETFLIX');
                 } else if (currentCategory === 'YOUTUBE') {
-                    matchCat = code.startsWith('YT') || item.category === 'YT';
+                    matchCat = code.startsWith('YT') || cat.includes('YT') || cat.includes('YOUTUBE');
                 } else if (currentCategory === 'CUSTOMER') {
-                    matchCat = code.startsWith('CUST') || item.category === 'CUST' || item.category === 'CUSTOMER';
+                    matchCat = code.startsWith('CUST') || cat.includes('CUST') || cat.includes('CUSTOMER');
                 }
 
-                // กรองตามคำค้นหา
                 const matchSearch = !q || email.includes(q) || code.includes(q);
-
                 return matchCat && matchSearch;
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted empty-row">ไม่พบข้อมูลที่ตรงเงื่อนไข</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">ไม่พบข้อมูลที่ตรงเงื่อนไข</td></tr>`;
                 return;
             }
 
@@ -641,7 +540,7 @@
                 const expire = item.expire || item.expireDate || '';
                 const { text: dayText, cls: dayCls } = daysRemaining(expire);
                 const isCustom = item.isCustom === true;
-                const uniqueId = item.customId || '';
+                const customId = item.customId || '';
 
                 return `
                     <tr>
@@ -654,7 +553,7 @@
                         <td data-label="วันหมดอายุ">${expire || '-'}</td>
                         <td data-label="จัดการ" class="text-center">
                             ${isCustom ? `
-                                <button class="btn-delete-row" onclick="deleteCustomItem('${uniqueId}')">
+                                <button class="btn-delete-row" onclick="deleteCustomItem('${customId}')">
                                     🗑️ ลบ
                                 </button>
                             ` : `<span class="text-muted" style="font-size: 0.8rem;">-</span>`}
@@ -702,29 +601,30 @@
                 isCustom: true
             };
 
-            // บันทึกลงในรายการที่เราเพิ่ม
+            // บันทึกเข้า LocalStorage ของเครื่อง
             addedStockData.unshift(newItem);
             saveAddedStock();
 
-            // อัปเดตตาราง
+            // อัปเดตการแสดงผลทันที
             rawStockData.unshift(newItem);
             renderTable();
 
             closeAddModal();
-            alert('เพิ่มข้อมูลเข้าสต็อกเรียบร้อยแล้ว!');
         }
 
-        function deleteCustomItem(customId) {
+        function deleteCustomItem(id) {
+            if (!id) return;
             if (confirm('คุณต้องการลบรายการนี้ใช่หรือไม่?')) {
-                addedStockData = addedStockData.filter(item => item.customId !== customId);
+                // ลบออกจาก Memory และ LocalStorage
+                addedStockData = addedStockData.filter(item => item.customId !== id);
+                rawStockData = rawStockData.filter(item => item.customId !== id);
                 saveAddedStock();
                 
-                rawStockData = rawStockData.filter(item => item.customId !== customId);
+                // วาดตารางใหม่
                 renderTable();
             }
         }
 
-        // โหลดข้อมูลเมื่อเปิดหน้าเว็บ
         window.onload = loadStockData;
     </script>
 </body>
