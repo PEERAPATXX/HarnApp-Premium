@@ -13,6 +13,8 @@
         input[type="date"] { padding: 5px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; font-family: inherit; }
         .free { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .busy { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .expired { color: #a94442; font-weight: bold; }
+        .soon { color: #b8860b; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -25,12 +27,13 @@
                 <th>รหัสสินค้า (Code)</th>
                 <th>อีเมล (Email)</th>
                 <th>สถานะ (Status)</th>
+                <th>จำนวนวัน (Days Left)</th>
                 <th>วันหมดอายุ (Expire)</th>
             </tr>
         </thead>
         <tbody id="stock-list">
             <tr>
-                <td colspan="4" style="text-align:center;">กำลังโหลด...</td>
+                <td colspan="5" style="text-align:center;">กำลังโหลด...</td>
             </tr>
         </tbody>
     </table>
@@ -52,11 +55,25 @@
             return '';
         }
 
+        // คำนวณจำนวนวันที่เหลือจากวันนี้ถึงวันหมดอายุ (คำนวณสดทุกครั้งที่โหลดหน้า)
+        function daysRemaining(expireStr) {
+            const iso = toDateInputValue(expireStr);
+            if (!iso) return { text: '-', cls: '' };
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const expireDate = new Date(iso + 'T00:00:00');
+            const diff = Math.round((expireDate - today) / (1000 * 60 * 60 * 24));
+            if (diff < 0) return { text: `หมดอายุแล้ว ${Math.abs(diff)} วัน`, cls: 'expired' };
+            if (diff === 0) return { text: 'หมดอายุวันนี้', cls: 'expired' };
+            if (diff <= 3) return { text: `เหลือ ${diff} วัน`, cls: 'soon' };
+            return { text: `เหลือ ${diff} วัน`, cls: '' };
+        }
+
         async function loadStockData() {
             const tbody = document.getElementById('stock-list');
             if (!tbody) return;
             
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>';
 
             try {
                 const res = await fetch(WORKER_URL);
@@ -67,7 +84,7 @@
                 tbody.innerHTML = '';
                 
                 if (!Array.isArray(data) || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">ไม่มีข้อมูลในระบบ</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">ไม่มีข้อมูลในระบบ</td></tr>';
                     return;
                 }
 
@@ -83,6 +100,7 @@
                                     <option value="ไม่ว่าง" ${item.status !== 'ว่าง' ? 'selected' : ''}>ไม่ว่าง</option>
                                 </select>
                             </td>
+                            <td class="${daysRemaining(item.expire).cls}">${daysRemaining(item.expire).text}</td>
                             <td>
                                 <input type="date"
                                        value="${toDateInputValue(item.expire)}"
@@ -93,7 +111,7 @@
                 });
             } catch (err) {
                 console.error(err);
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:red;">ดึงข้อมูลไม่สำเร็จ: ${err.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">ดึงข้อมูลไม่สำเร็จ: ${err.message}</td></tr>`;
             }
         }
 
