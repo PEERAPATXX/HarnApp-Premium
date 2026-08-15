@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- 🎨 SweetAlert2 สำหรับแจ้งเตือนแบบ UI สวยงาม -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
@@ -30,96 +29,85 @@
                 radial-gradient(circle at 100% 100%, var(--purple-witch) 0%, transparent 50%);
             background-attachment: fixed;
             color: #262626;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
+        /* Top Bar ด้านบนสุด */
         .global-top-bar {
             width: 100%;
-            height: 60px;
-            padding: 0 24px;
+            max-width: 1050px;
+            margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: flex-end;
             position: relative;
             z-index: 50;
+            flex-shrink: 0;
         }
 
-        .main-wrapper { padding: 0 12px 20px 12px; flex: 1; }
-        .container { max-width: 1050px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+        .main-wrapper { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        .container { 
+            max-width: 1050px; 
+            width: 100%; 
+            margin: 0 auto; 
+            display: flex; 
+            flex-direction: column; 
+        }
 
         .banner-slot {
-            width: 100%;
-            aspect-ratio: 1983 / 793;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 25px rgba(236, 0, 140, 0.35);
-            background: var(--purple-witch);
-            flex-shrink: 0;
+            width: 100%; aspect-ratio: 1983 / 793; border-radius: 16px; overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 25px rgba(236, 0, 140, 0.35);
+            background: var(--purple-witch); flex-shrink: 0;
         }
         .banner-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
         .dashboard-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: var(--card-bg); backdrop-filter: blur(12px); border-radius: 20px;
+            padding: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); border: 1px solid rgba(255, 255, 255, 0.4);
+            display: flex; flex-direction: column;
         }
 
-        .top-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+        .top-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-shrink: 0; }
         .search-box { position: relative; flex: 1; max-width: 450px; }
         .search-input {
-            width: 100%; padding: 10px 16px 10px 48px !important;
-            border-radius: 30px; border: 1.5px solid #cbd5e1;
-            font-family: inherit; font-size: 0.9rem; outline: none; transition: all 0.2s ease; background: #ffffff;
+            width: 100%; padding: 10px 16px 10px 48px !important; border-radius: 30px;
+            border: 1.5px solid #cbd5e1; font-family: inherit; font-size: 0.9rem; outline: none; transition: all 0.2s ease; background: #ffffff;
         }
         .search-input:focus { border-color: var(--magenta-bright); box-shadow: 0 0 8px rgba(255, 0, 127, 0.2); }
         .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; stroke: #94a3b8; pointer-events: none; z-index: 5; }
 
         .action-btns { display: flex; gap: 10px; align-items: center; }
         .btn-refresh, .btn-add {
-            border: none; padding: 10px 20px; border-radius: 30px;
-            font-family: inherit; font-size: 0.88rem; font-weight: 600; cursor: pointer;
-            transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap;
+            border: none; padding: 10px 20px; border-radius: 30px; font-family: inherit;
+            font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap;
         }
         .btn-refresh { background: #0f172a; color: #ffffff; }
         .btn-refresh:hover { background: #1e293b; }
         .btn-add { background: var(--magenta-bright); color: #ffffff; box-shadow: 0 3px 10px rgba(255, 0, 127, 0.3); }
         .btn-add:hover { background: #e00070; }
 
+        /* ปุ่มโปรไฟล์ */
         .profile-container { position: relative; display: inline-block; }
-
         .profile-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--magenta-bright), #7928ca);
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.1rem;
-            cursor: pointer;
-            border: 2px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            user-select: none;
-            overflow: hidden;
-            background-size: cover;
-            background-position: center;
+            width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--magenta-bright), #7928ca);
+            color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700;
+            font-size: 1rem; cursor: pointer; border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); transition: transform 0.2s ease, box-shadow 0.2s ease; user-select: none;
+            overflow: hidden; background-size: cover; background-position: center;
         }
-        .profile-avatar:hover { transform: scale(1.06); box-shadow: 0 4px 16px rgba(255, 0, 127, 0.6); }
+        .profile-avatar:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(255, 0, 127, 0.6); }
 
         .profile-dropdown {
-            position: absolute; right: 0; top: 54px; width: 230px;
-            background: #ffffff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border: 1px solid #e2e8f0; padding: 8px; z-index: 99; display: none;
-            animation: fadeIn 0.15s ease-out;
+            position: absolute; right: 0; top: 52px; width: 230px; background: #ffffff;
+            border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid #e2e8f0;
+            padding: 8px; z-index: 99; display: none; animation: fadeIn 0.15s ease-out;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
         .profile-dropdown.show { display: block; }
@@ -143,52 +131,28 @@
         .dropdown-item.logout { color: #e11d48; }
         .dropdown-item.logout:hover { background: #ffe4e6; }
 
-        .avatar-preview-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        .avatar-preview {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--magenta-bright), #7928ca);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2rem;
-            font-weight: 700;
-            border: 3px solid #f1f5f9;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            overflow: hidden;
-            background-size: cover;
-            background-position: center;
-        }
-        .btn-upload-label {
-            background: #f1f5f9; color: #0f172a; border: 1px solid #cbd5e1;
-            padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;
-            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;
-        }
-        .btn-upload-label:hover { background: #e2e8f0; }
-
         .category-tabs {
             display: flex; gap: 8px; background: #f1f5f9; padding: 6px; border-radius: 40px; margin-bottom: 20px;
-            width: fit-content; max-width: 100%; overflow-x: auto;
+            width: fit-content; max-width: 100%; overflow-x: auto; align-items: center; flex-shrink: 0;
         }
         .tab-btn {
             border: none; background: transparent; padding: 8px 18px; border-radius: 30px;
-            font-family: inherit; font-weight: 600; font-size: 0.85rem; color: #64748b; cursor: pointer;
-            white-space: nowrap; display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+            font-family: inherit; font-weight: 700; font-size: 0.9rem; color: #475569; cursor: pointer;
+            white-space: nowrap; display: flex; align-items: center; gap: 8px; transition: all 0.2s;
         }
-        .tab-btn img.tab-icon { width: 18px; height: 18px; object-fit: contain; }
-        .tab-btn.active { background: var(--magenta-bright); color: #ffffff; box-shadow: 0 3px 10px rgba(255, 0, 127, 0.35); }
+        .tab-btn.active { background: var(--magenta-bright); color: #ffffff; box-shadow: 0 4px 12px rgba(255, 0, 127, 0.4); }
 
-        .table-wrapper { width: 100%; overflow-x: auto; }
+        .table-wrapper { width: 100%; border-radius: 12px; }
+        .table-wrapper::-webkit-scrollbar { width: 6px; height: 6px; }
+        .table-wrapper::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        .table-wrapper::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .table-wrapper::-webkit-scrollbar-thumb:hover { background: var(--magenta-bright); }
+
         table { width: 100%; border-collapse: collapse; }
-        th { background: var(--purple-witch); color: #ffffff; font-weight: 600; padding: 12px 16px; text-align: left; }
+        th { 
+            background: var(--purple-witch); color: #ffffff; font-weight: 600; padding: 12px 16px; text-align: left;
+            position: sticky; top: 0; z-index: 10;
+        }
         th:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
         th:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
         td { padding: 14px 16px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
@@ -209,6 +173,7 @@
         .font-code { font-family: monospace; font-size: 0.9rem; font-weight: 700; color: #0f172a; }
         .text-center { text-align: center; }
         .text-muted { color: #94a3b8; }
+        .lock-icon { font-size: 1.1rem; opacity: 0.8; }
 
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -220,16 +185,31 @@
             background: #fff; border-radius: 20px; width: 100%; max-width: 450px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #f1f5f9; }
-        .modal-header h3 { font-size: 1.1rem; color: #0f172a; font-weight: 700; }
+        .modal-header h3 { font-size: 1.1rem; color: #0f172a; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .close-btn { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #94a3b8; }
         .form-group { margin-bottom: 14px; }
         .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: #475569; }
         input[type="text"], input[type="email"], input[type="password"], input[type="date"], select.form-control { 
             width: 100%; padding: 10px 12px; border-radius: 8px; border: 1.5px solid #cbd5e1; font-family: inherit; font-size: 0.88rem;
         }
+        input:disabled { background: #f8fafc; color: #94a3b8; cursor: not-allowed; }
         .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
         .btn-submit { flex: 1; background: var(--magenta-bright); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
         .btn-cancel { flex: 1; background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
+
+        .profile-upload-area { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
+        .profile-preview-avatar {
+            width: 90px; height: 90px; border-radius: 50%; background: #0f172a; color: #fff;
+            display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 700;
+            margin-bottom: 12px; overflow: hidden; background-size: cover; background-position: center;
+            border: 3px solid #f1f5f9; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .btn-upload-avatar {
+            background: #f1f5f9; color: #334155; border: 1.5px solid #cbd5e1; padding: 8px 16px;
+            border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;
+        }
+        .btn-upload-avatar:hover { background: #e2e8f0; }
 
         .login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -248,22 +228,87 @@
         .login-card p { color: #64748b; font-size: 0.85rem; margin-bottom: 24px; }
         .error-msg { background: #ffe4e6; color: #e11d48; padding: 10px; border-radius: 10px; font-size: 0.82rem; font-weight: 600; margin-bottom: 14px; display: none; }
 
-        @media (max-width: 768px) {
-            .dashboard-card { padding: 16px; }
-            .top-bar { flex-direction: column; align-items: stretch; gap: 10px; }
-            .search-box { max-width: 100%; }
-            .action-btns { display: flex; width: 100%; justify-content: space-between; align-items: center; }
-            .btn-refresh, .btn-add { flex: 1; padding: 10px; }
-            .category-tabs { width: 100%; overflow-x: auto; }
+/* 1. ปรับ Top Bar ให้ขยายเต็มความกว้างจอ และชิดขอบขวา */
+        .global-top-bar {
+            width: 100%;
+            max-width: none; /* เอาการจำกัดความกว้างออกเพื่อให้ชิดขอบจอ */
+            padding: 12px 24px 0 24px; /* ระยะห่างจากขอบจอขวาและบน */
+            display: flex;
+            align-items: center;
+            justify-content: flex-end; /* ชิดขวาสุด */
+            position: relative;
+            z-index: 50;
+            flex-shrink: 0;
+        }
 
-            table, thead, tbody, th, td, tr { display: block; }
-            thead tr { position: absolute; top: -9999px; left: -9999px; }
-            tr { 
-                background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; margin-bottom: 12px; padding: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        /* 💻 สำหรับ Computer และ iPad / Tablet (หน้าจอกว้างตั้งแต่ 769px ขึ้นไป) */
+        @media (min-width: 769px) {
+            html, body {
+                min-height: 100vh;
+                overflow-x: hidden;
+                overflow-y: auto;
             }
-            td { border: none; padding: 6px 0; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-            td::before { content: attr(data-label); font-weight: 600; color: #64748b; font-size: 0.82rem; flex-shrink: 0; }
-            td[data-label="รหัสสินค้า"] { border-bottom: 1px dashed #e2e8f0; padding-bottom: 10px; margin-bottom: 6px; }
+
+            .global-top-bar {
+                height: 60px;
+                padding: 12px 24px 0 24px;
+                justify-content: flex-end;
+            }
+
+            .dashboard-card {
+                overflow: visible;
+            }
+
+            .table-wrapper {
+                overflow: visible;
+            }
+        }
+
+        /* 📱 สำหรับโทรศัพท์มือถือเท่านั้น (หน้าจอแคบกว่าหรือเท่ากับ 768px) */
+        @media (max-width: 768px) {
+            html, body {
+                height: 100vh;
+                height: 100dvh;
+                overflow: hidden;
+            }
+
+            .global-top-bar {
+                height: 52px;
+                padding: 8px 16px 0 16px;
+                align-items: center;
+                justify-content: flex-end;
+            }
+
+            .profile-avatar {
+                width: 38px;
+                height: 38px;
+                font-size: 0.95rem;
+            }
+
+            .main-wrapper { 
+                padding: 0 10px 10px 10px; 
+                min-height: 0;
+            }
+
+            .container { 
+                height: 100%; 
+                min-height: 0; 
+                gap: 12px;
+            }
+
+            .dashboard-card {
+                flex: 1;
+                min-height: 0;
+                padding: 16px;
+                overflow: hidden;
+            }
+
+            .table-wrapper {
+                flex: 1;
+                min-height: 0;
+                overflow-y: auto;
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
@@ -274,9 +319,7 @@
         <div class="login-card">
             <h2>🔐 Harnapp Admin</h2>
             <p>กรุณาเข้าสู่ระบบเพื่อจัดการสต็อก</p>
-            
             <div class="error-msg" id="loginError">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</div>
-
             <form onsubmit="handleLogin(event)">
                 <div class="form-group" style="text-align: left;">
                     <label>Username</label>
@@ -305,7 +348,7 @@
                 </div>
 
                 <button class="dropdown-item" onclick="openProfileModal()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
@@ -313,7 +356,7 @@
                 </button>
 
                 <button class="dropdown-item logout" onclick="handleLogout()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                         <polyline points="16 17 21 12 16 7"></polyline>
                         <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -347,27 +390,25 @@
                     </div>
                 </div>
 
-                <!-- แท็บหมวดหมู่ -->
                 <div class="category-tabs">
                     <button class="tab-btn active" onclick="switchCategory('ALL', this)">
-                        <img src="https://cdn-icons-png.flaticon.com/512/839/839888.png" alt="All" class="tab-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><polygon points="12 12 13.5 15 17 15.5 14.5 18 15 21.5 12 19.5 9 21.5 9.5 18 7 15.5 10.5 15 12 12"></polygon></svg>
                         ทั้งหมด
                     </button>
                     <button class="tab-btn" onclick="switchCategory('NETFLIX', this)">
-                        <img src="https://cdn-icons-png.flaticon.com/512/732/732228.png" alt="Netflix" class="tab-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#E50914"><path d="M5.398 0v24h4.155l.006-9.847 4.962 9.847h4.081V0h-4.148v9.805L9.5 0H5.398z"/></svg>
                         Netflix
                     </button>
                     <button class="tab-btn" onclick="switchCategory('YOUTUBE', this)">
-                        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" class="tab-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                         YouTube
                     </button>
                     <button class="tab-btn" onclick="switchCategory('CUSTOMER', this)">
-                        <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="Customer" class="tab-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z" fill="#3B82F6"/></svg>
                         เมลลูกค้า
                     </button>
                 </div>
 
-                <!-- ตารางรายการ -->
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -392,37 +433,42 @@
         </div>
     </div>
 
-    <!-- Modal ฟอร์มแก้ไขข้อมูลส่วนตัว -->
+    <!-- 👤 Modal แก้ไขข้อมูลส่วนตัว -->
     <div class="modal" id="profileModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>👤 แก้ไขข้อมูลส่วนตัว</h3>
+                <h3>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    แก้ไขข้อมูลส่วนตัว
+                </h3>
                 <button class="close-btn" onclick="closeProfileModal()">✕</button>
             </div>
-            <form onsubmit="handleSaveProfile(event)">
-                <div class="avatar-preview-wrapper">
-                    <div class="avatar-preview" id="modalAvatarPreview">A</div>
-                    <label class="btn-upload-label">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                        เลือกรูปโปรไฟล์
-                        <input type="file" id="profile-img-input" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
-                    </label>
-                </div>
+            
+            <div class="profile-upload-area">
+                <div class="profile-preview-avatar" id="editAvatarPreview">A</div>
+                <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="handleAvatarSelected(event)">
+                <button class="btn-upload-avatar" onclick="document.getElementById('avatarFileInput').click()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    เลือกรูปโปรไฟล์
+                </button>
+            </div>
 
+            <form onsubmit="handleSaveProfile(event)">
                 <div class="form-group">
                     <label>ชื่อที่ต้องการให้แสดง (Display Name)</label>
-                    <input type="text" id="edit-display-name" placeholder="เช่น แอดมินมิว, Harnapp Official" required>
+                    <input type="text" id="edit-display-name" placeholder="กรอกชื่อที่ต้องการให้แสดง" required>
                 </div>
-
                 <div class="form-group">
                     <label>ชื่อผู้ใช้งาน (Username เข้าระบบ)</label>
-                    <input type="text" id="edit-username-readonly" disabled style="background: #f1f5f9; color: #64748b;">
+                    <input type="text" id="edit-username-readonly" disabled>
                 </div>
-
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" onclick="closeProfileModal()">ยกเลิก</button>
                     <button type="submit" class="btn-submit">บันทึกข้อมูล</button>
@@ -431,7 +477,7 @@
         </div>
     </div>
 
-    <!-- Modal ฟอร์มเพิ่มสินค้า (ปรับปรุงดักอีเมลเฉพาะ @gmail หรือ @hotmail) -->
+    <!-- Modal เพิ่มสินค้า -->
     <div class="modal" id="addModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -439,6 +485,13 @@
                 <button class="close-btn" onclick="closeAddModal()">✕</button>
             </div>
             <form id="addStockForm" onsubmit="handleAddSubmit(event)">
+                <div class="form-group" id="ownerTargetGroup" style="display: none;">
+                    <label>บันทึกลงในฐานข้อมูลฝั่ง</label>
+                    <select id="add-target" class="form-control">
+                        <option value="customer" selected>ฝั่ง Admin (G:L)</option>
+                        <option value="owner">ฝั่ง Owner (A:E)</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label>รหัสสินค้า (Code)</label>
                     <select id="add-code" class="form-control" required>
@@ -471,34 +524,39 @@
         let rawStockData = [];
         let currentCategory = 'ALL';
         let searchQuery = '';
-        let tempBase64Image = null;
+        let tempAvatarBase64 = null;
 
-        function getAuthToken() {
-            return sessionStorage.getItem('harnapp_auth_token');
-        }
+        function getAuthToken() { return sessionStorage.getItem('harnapp_auth_token'); }
+        function getUserRole() { return sessionStorage.getItem('harnapp_user_role') || 'admin'; }
 
         function updateProfileUI() {
             const user = sessionStorage.getItem('harnapp_admin_user') || 'admin';
-            const displayName = localStorage.getItem(`profile_name_${user}`) || sessionStorage.getItem('harnapp_admin_name') || user;
-            const profileImg = localStorage.getItem(`profile_img_${user}`);
-
-            const topAvatar = document.getElementById('avatarBtn');
-            const menuAvatar = document.getElementById('menuAvatar');
+            const displayName = sessionStorage.getItem('harnapp_admin_name') || user;
+            const role = getUserRole();
+            const storedAvatar = localStorage.getItem(`harnapp_avatar_${user}`);
 
             document.getElementById('menuDisplayName').innerText = displayName;
             document.getElementById('menuUsername').innerText = `@${user}`;
 
-            if (profileImg) {
-                topAvatar.style.backgroundImage = `url('${profileImg}')`;
-                topAvatar.innerText = '';
-                menuAvatar.style.backgroundImage = `url('${profileImg}')`;
+            const mainAvatar = document.getElementById('avatarBtn');
+            const menuAvatar = document.getElementById('menuAvatar');
+
+            if (storedAvatar) {
+                mainAvatar.style.backgroundImage = `url(${storedAvatar})`;
+                mainAvatar.innerText = '';
+                menuAvatar.style.backgroundImage = `url(${storedAvatar})`;
                 menuAvatar.innerText = '';
             } else {
                 const initial = displayName.charAt(0).toUpperCase();
-                topAvatar.style.backgroundImage = 'none';
-                topAvatar.innerText = initial;
+                mainAvatar.style.backgroundImage = 'none';
+                mainAvatar.innerText = initial;
                 menuAvatar.style.backgroundImage = 'none';
                 menuAvatar.innerText = initial;
+            }
+
+            const targetGroup = document.getElementById('ownerTargetGroup');
+            if (targetGroup) {
+                targetGroup.style.display = role === 'owner' ? 'block' : 'none';
             }
         }
 
@@ -506,31 +564,25 @@
             document.getElementById('profileDropdown').classList.toggle('show');
         }
 
-        window.addEventListener('click', function(e) {
-            const container = document.querySelector('.profile-container');
-            if (container && !container.contains(e.target)) {
-                document.getElementById('profileDropdown').classList.remove('show');
-            }
-        });
-
         function openProfileModal() {
             document.getElementById('profileDropdown').classList.remove('show');
             const user = sessionStorage.getItem('harnapp_admin_user') || 'admin';
-            const displayName = localStorage.getItem(`profile_name_${user}`) || sessionStorage.getItem('harnapp_admin_name') || user;
-            const profileImg = localStorage.getItem(`profile_img_${user}`);
+            const displayName = sessionStorage.getItem('harnapp_admin_name') || user;
+            const storedAvatar = localStorage.getItem(`harnapp_avatar_${user}`);
 
             document.getElementById('edit-display-name').value = displayName;
             document.getElementById('edit-username-readonly').value = user;
 
-            const preview = document.getElementById('modalAvatarPreview');
-            if (profileImg) {
-                preview.style.backgroundImage = `url('${profileImg}')`;
-                preview.innerText = '';
+            const editAvatarPreview = document.getElementById('editAvatarPreview');
+            if (storedAvatar) {
+                editAvatarPreview.style.backgroundImage = `url(${storedAvatar})`;
+                editAvatarPreview.innerText = '';
             } else {
-                preview.style.backgroundImage = 'none';
-                preview.innerText = displayName.charAt(0).toUpperCase();
+                editAvatarPreview.style.backgroundImage = 'none';
+                editAvatarPreview.innerText = displayName.charAt(0).toUpperCase();
             }
-            tempBase64Image = null;
+
+            tempAvatarBase64 = null;
             document.getElementById('profileModal').classList.add('open');
         }
 
@@ -538,71 +590,39 @@
             document.getElementById('profileModal').classList.remove('open');
         }
 
-        function handleImageSelect(e) {
+        function handleAvatarSelected(e) {
             const file = e.target.files[0];
             if (!file) return;
 
+            if (file.size > 2 * 1024 * 1024) {
+                return Swal.fire('ไฟล์ใหญ่เกินไป', 'กรุณาเลือกรูปภาพที่มีขนาดไม่เกิน 2MB', 'warning');
+            }
+
             const reader = new FileReader();
             reader.onload = function(evt) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 300;
-                    const MAX_HEIGHT = 300;
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > height) {
-                        if (width > MAX_WIDTH) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        }
-                    } else {
-                        if (height > MAX_HEIGHT) {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    tempBase64Image = canvas.toDataURL('image/jpeg', 0.85);
-                    const preview = document.getElementById('modalAvatarPreview');
-                    preview.style.backgroundImage = `url('${tempBase64Image}')`;
-                    preview.innerText = '';
-                };
-                img.src = evt.target.result;
+                tempAvatarBase64 = evt.target.result;
+                const editAvatarPreview = document.getElementById('editAvatarPreview');
+                editAvatarPreview.style.backgroundImage = `url(${tempAvatarBase64})`;
+                editAvatarPreview.innerText = '';
             };
             reader.readAsDataURL(file);
         }
 
         function handleSaveProfile(e) {
             e.preventDefault();
+            const newDisplayName = document.getElementById('edit-display-name').value.trim();
             const user = sessionStorage.getItem('harnapp_admin_user') || 'admin';
-            const newName = document.getElementById('edit-display-name').value.trim();
 
-            if (newName) {
-                localStorage.setItem(`profile_name_${user}`, newName);
-                sessionStorage.setItem('harnapp_admin_name', newName);
-            }
+            if (!newDisplayName) return;
 
-            if (tempBase64Image) {
-                localStorage.setItem(`profile_img_${user}`, tempBase64Image);
+            sessionStorage.setItem('harnapp_admin_name', newDisplayName);
+            if (tempAvatarBase64) {
+                localStorage.setItem(`harnapp_avatar_${user}`, tempAvatarBase64);
             }
 
             updateProfileUI();
             closeProfileModal();
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'สำเร็จ!',
-                text: 'บันทึกข้อมูลส่วนตัวเรียบร้อยแล้ว',
-                timer: 1500,
-                showConfirmButton: false
-            });
+            Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ!', text: 'อัปเดตข้อมูลส่วนตัวเรียบร้อยแล้ว', timer: 1500, showConfirmButton: false });
         }
 
         async function handleLogin(e) {
@@ -623,6 +643,7 @@
                     sessionStorage.setItem('harnapp_auth_token', data.token);
                     sessionStorage.setItem('harnapp_admin_user', data.username || user);
                     sessionStorage.setItem('harnapp_admin_name', data.displayName || user);
+                    sessionStorage.setItem('harnapp_user_role', data.role || 'admin');
 
                     document.getElementById('loginScreen').style.display = 'none';
                     errDiv.style.display = 'none';
@@ -639,33 +660,19 @@
         }
 
         function handleLogout() {
-            sessionStorage.removeItem('harnapp_auth_token');
-            sessionStorage.removeItem('harnapp_admin_user');
-            sessionStorage.removeItem('harnapp_admin_name');
+            sessionStorage.clear();
             location.reload();
         }
 
-        function toDateInputValue(str) {
-            if (!str || str === '-' || str.trim() === '') return '';
-            if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
-            const match = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-            if (match) {
-                const [, d, m, y] = match;
-                return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-            }
-            return '';
-        }
-
         function daysRemaining(expireStr) {
-            const iso = toDateInputValue(expireStr);
-            if (!iso) return { text: '-', cls: 'badge-normal' };
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const expireDate = new Date(iso + 'T00:00:00');
+            if (!expireStr || expireStr === '-' || expireStr.trim() === '') return { text: '-', cls: 'badge-normal' };
+            const today = new Date(); today.setHours(0,0,0,0);
+            const expireDate = new Date(expireStr + 'T00:00:00');
             const diff = Math.round((expireDate - today) / (1000 * 60 * 60 * 24));
             
-            if (diff < 0) return { text: `หมดอายุแล้ว ${Math.abs(diff)} วัน`, cls: 'expired' };
-            if (diff === 0) return { text: 'หมดอายุวันนี้', cls: 'expired' };
+            if (isNaN(diff)) return { text: expireStr, cls: 'badge-normal' };
+            if (diff < 0) return { text: `หมดอายุ ${Math.abs(diff)} วัน`, cls: 'expired' };
+            if (diff === 0) return { text: 'หมดวันนี้', cls: 'expired' };
             if (diff <= 3) return { text: `เหลือ ${diff} วัน`, cls: 'soon' };
             return { text: `เหลือ ${diff} วัน`, cls: 'badge-normal' };
         }
@@ -689,75 +696,68 @@
                 });
 
                 if (res.status === 401) {
-                    Swal.fire('Session หมดอายุ', 'กรุณาเข้าสู่ระบบใหม่อีกครั้ง', 'warning').then(() => {
-                        handleLogout();
-                    });
+                    Swal.fire('Session หมดอายุ', 'กรุณาเข้าสู่ระบบใหม่', 'warning').then(() => handleLogout());
                     return;
                 }
 
                 if (res.ok) {
-                    const data = await res.json();
-                    rawStockData = Array.isArray(data) ? data : [];
+                    rawStockData = await res.json();
                     renderTable();
                 } else {
                     tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>`;
                 }
             } catch (err) {
-                console.error("API Load failed:", err);
                 tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">ไม่สามารถเชื่อมต่อกับฐานข้อมูลได้</td></tr>`;
             }
         }
 
         function renderTable() {
             const tbody = document.getElementById('stock-list');
-            
+            const role = getUserRole();
+
             const filtered = rawStockData.filter(item => {
-                const code = (item.code || item.id || '').toString().toUpperCase();
+                const code = (item.code || '').toString().toUpperCase();
                 const email = (item.email || '').toString().toLowerCase();
-                const cat = (item.category || item.type || item.service || '').toString().toUpperCase();
                 const q = searchQuery.toLowerCase().trim();
 
-                const combinedInfo = `${code} ${cat} ${email}`;
-
                 let matchCat = true;
-                if (currentCategory === 'NETFLIX') {
-                    matchCat = code.startsWith('NF') || cat.includes('NF') || cat.includes('NETFLIX') || combinedInfo.includes('NETFLIX') || code.includes('NF');
-                } else if (currentCategory === 'YOUTUBE') {
-                    matchCat = code.startsWith('YT') || cat.includes('YT') || cat.includes('YOUTUBE') || combinedInfo.includes('YOUTUBE') || code.includes('YT');
-                } else if (currentCategory === 'CUSTOMER') {
-                    matchCat = code.startsWith('CUST') || cat.includes('CUST') || cat.includes('CUSTOMER') || combinedInfo.includes('CUSTOMER') || code.includes('CUST') || item.type === 'customer';
-                }
+                if (currentCategory === 'NETFLIX') matchCat = code.includes('NF') || code.includes('NETFLIX');
+                else if (currentCategory === 'YOUTUBE') matchCat = code.includes('YT') || code.includes('YOUTUBE');
+                else if (currentCategory === 'CUSTOMER') matchCat = item.type === 'customer';
 
-                const matchSearch = !q || email.includes(q) || code.toLowerCase().includes(q) || cat.toLowerCase().includes(q);
+                const matchSearch = !q || email.includes(q) || code.toLowerCase().includes(q);
                 return matchCat && matchSearch;
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">ไม่พบข้อมูลที่ตรงเงื่อนไข</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">ไม่พบข้อมูล</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = filtered.map(item => {
                 const rowId = item.row;
-                const code = item.code || item.id || '-';
+                const code = item.code || '-';
                 const email = item.email || '-';
                 const status = item.status || 'ว่าง';
-                const expire = item.expire || item.expireDate || '';
+                const expire = item.expire || '';
+                const itemType = item.type;
                 const { text: dayText, cls: dayCls } = daysRemaining(expire);
+
+                const canDelete = itemType === 'customer' || (itemType === 'owner' && role === 'owner');
 
                 return `
                     <tr>
                         <td data-label="รหัสสินค้า"><span class="font-code">${code}</span></td>
                         <td data-label="อีเมล">${email}</td>
-                        <td data-label="สถานะ">
-                            <span class="badge ${status === 'ว่าง' ? 'free' : 'busy'}">${status}</span>
-                        </td>
+                        <td data-label="สถานะ"><span class="badge ${status === 'ว่าง' ? 'free' : 'busy'}">${status}</span></td>
                         <td data-label="จำนวนวัน"><span class="badge ${dayCls}">${dayText}</span></td>
                         <td data-label="วันหมดอายุ">${expire || '-'}</td>
                         <td data-label="จัดการ" class="text-center">
-                            <button class="btn-delete-row" onclick="deleteItemRow(${rowId}, '${code}')">
-                                🗑️ ลบ
-                            </button>
+                            ${canDelete ? `
+                                <button class="btn-delete-row" onclick="deleteItemRow(${rowId}, '${code}', '${itemType}')">
+                                    🗑️ ลบ
+                                </button>
+                            ` : `<span class="lock-icon">🔒</span>`}
                         </td>
                     </tr>
                 `;
@@ -776,95 +776,62 @@
             renderTable();
         }
 
-        function openAddModal() {
-            document.getElementById('addModal').classList.add('open');
-        }
-
+        function openAddModal() { document.getElementById('addModal').classList.add('open'); }
         function closeAddModal() {
             document.getElementById('addModal').classList.remove('open');
             document.getElementById('addStockForm').reset();
         }
 
-        /* 🚀 เพิ่มการตรวจสอบ Regex ป้องกันแอดมินใส่อีเมลโดเมนอื่นมั่วๆ */
         async function handleAddSubmit(e) {
             e.preventDefault();
             const token = getAuthToken();
+            const role = getUserRole();
             if (!token) return Swal.fire('Session หมดอายุ', 'กรุณาเข้าสู่ระบบใหม่', 'warning');
 
-            const currentUser = sessionStorage.getItem('harnapp_admin_user') || 'Admin';
-            const currentDisplayName = sessionStorage.getItem('harnapp_admin_name') || currentUser;
-
             const submitBtn = document.getElementById('btnSubmitAdd');
-
             const code = document.getElementById('add-code').value;
             const email = document.getElementById('add-email').value.trim().toLowerCase();
             const expire = document.getElementById('add-expire').value;
-
-            if (!code) {
-                Swal.fire('ข้อผิดพลาด', 'กรุณาเลือกรหัสสินค้าก่อนบันทึก', 'warning');
-                return;
-            }
-
-            // 🔒 ตรวจสอบว่าต้องเป็น @gmail หรือ @hotmail (รวมถึง .co.th และ outlook) เท่านั้น
-            const allowedEmailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|hotmail\.co\.th|outlook\.com)$/i;
+            const targetSelect = document.getElementById('add-target');
             
+            const targetSection = role === 'owner' && targetSelect ? targetSelect.value : 'customer';
+
+            const allowedEmailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|hotmail\.co\.th|outlook\.com)$/i;
             if (!allowedEmailRegex.test(email)) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'รูปแบบอีเมลไม่ถูกต้อง',
-                    text: 'อนุญาตให้ใช้อีเมลโดเมน @gmail.com หรือ @hotmail.com เท่านั้น!',
-                    confirmButtonColor: '#ff007f'
-                });
-                return;
+                return Swal.fire('รูปแบบอีเมลไม่ถูกต้อง', 'อนุญาตให้ใช้อีเมล @gmail.com หรือ @hotmail.com เท่านั้น', 'warning');
             }
 
             submitBtn.disabled = true;
             submitBtn.innerText = 'กำลังบันทึก...';
-
-            const newItemPayload = {
-                action: "add",
-                code: code,
-                email: email,
-                status: "ว่าง",
-                expire: expire || "-",
-                addedBy: currentDisplayName
-            };
 
             try {
                 const res = await fetch(WORKER_URL, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
+                        'X-User-Role': role,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(newItemPayload)
+                    body: JSON.stringify({
+                        action: "add",
+                        code: code,
+                        email: email,
+                        status: "ว่าง",
+                        expire: expire || "-",
+                        targetSection: targetSection,
+                        addedBy: sessionStorage.getItem('harnapp_admin_name')
+                    })
                 });
 
                 const resData = await res.json();
-                
                 if (resData.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'สำเร็จ!',
-                        text: 'บันทึกข้อมูลเข้า Google Sheets เรียบร้อยแล้ว',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
+                    Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: 'เพิ่มสต็อกเรียบร้อยแล้ว', timer: 1500, showConfirmButton: false });
                     closeAddModal();
                     loadStockData();
                 } else {
-                    let rawMessage = resData.message || resData.error || 'พบข้อผิดพลาดที่ไม่ทราบสาเหตุ';
-                    let cleanMessage = rawMessage.replace(/\s*ในรายการ\s*\[.*?\]/, '');
-
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'ไม่สามารถเพิ่มข้อมูลได้',
-                        text: cleanMessage,
-                        confirmButtonColor: '#ff007f'
-                    });
+                    Swal.fire('เกิดข้อผิดพลาด', resData.message || 'บันทึกข้อมูลไม่สำเร็จ', 'error');
                 }
             } catch (err) {
-                console.error("Add failed:", err);
                 Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้', 'error');
             } finally {
                 submitBtn.disabled = false;
@@ -872,9 +839,10 @@
             }
         }
 
-        async function deleteItemRow(rowId, code) {
+        async function deleteItemRow(rowId, code, itemType) {
             if (!rowId) return;
             const token = getAuthToken();
+            const role = getUserRole();
             if (!token) return Swal.fire('Session หมดอายุ', 'กรุณาเข้าสู่ระบบใหม่', 'warning');
 
             const confirmResult = await Swal.fire({
@@ -894,30 +862,31 @@
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${token}`,
+                            'X-User-Role': role,
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ action: "delete", row: rowId })
+                        body: JSON.stringify({ action: "delete", row: rowId, type: itemType })
                     });
 
                     const resData = await res.json();
                     if (resData.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'ลบสำเร็จ!',
-                            text: 'รายการถูกลบออกจากระบบเรียบร้อยแล้ว',
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
+                        Swal.fire({ icon: 'success', title: 'ลบสำเร็จ!', text: 'รายการถูกลบแล้ว', timer: 1500, showConfirmButton: false });
                         loadStockData();
                     } else {
-                        Swal.fire('เกิดข้อผิดพลาด', 'ลบรายการไม่สำเร็จ: ' + (resData.error || resData.message || ''), 'error');
+                        Swal.fire('เกิดข้อผิดพลาด', resData.message || 'ลบไม่สำเร็จ', 'error');
                     }
                 } catch (err) {
-                    console.error("Delete failed:", err);
                     Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้', 'error');
                 }
             }
         }
+
+        document.addEventListener('click', function(e) {
+            const container = document.querySelector('.profile-container');
+            if (container && !container.contains(e.target)) {
+                document.getElementById('profileDropdown').classList.remove('show');
+            }
+        });
 
         window.onload = loadStockData;
     </script>
