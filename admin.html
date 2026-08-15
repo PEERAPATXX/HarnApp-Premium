@@ -37,7 +37,7 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* ป้องกันไม่ให้เลื่อนทั้งหน้าจอใหญ่ */
+            overflow: hidden;
         }
 
         .container {
@@ -59,7 +59,7 @@
             border: 2px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 10px 30px rgba(236, 0, 140, 0.35);
             background: var(--purple-witch);
-            flex-shrink: 0; /* ล็อกขนาดรูป ไม่ให้หดเวลาตารางยาว */
+            flex-shrink: 0;
         }
 
         .banner-slot img {
@@ -80,7 +80,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            min-height: 0; /* สำคัญ: เพื่อให้ child ภายในเลื่อน Scrollbar ได้ */
+            min-height: 0;
         }
 
         /* Bar แถบบน Card */
@@ -167,11 +167,11 @@
             transform: translateY(-1px);
         }
 
-        /* 4. Scrollable Table Wrapper (เฉพาะพื้นที่ตารางเลื่อนได้) */
+        /* 4. Table Wrapper */
         .table-wrapper {
             width: 100%;
             flex: 1;
-            overflow-y: auto; /* เลื่อนเฉพาะในส่วนรายการสินค้า */
+            overflow-y: auto;
             overflow-x: auto;
             border-radius: 12px;
             border: 1px solid #e2e8f0;
@@ -179,7 +179,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* ตกแต่ง Scrollbar ให้ดูละมุน */
         .table-wrapper::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -212,7 +211,7 @@
             font-weight: 600;
             padding: 14px 16px;
             white-space: nowrap;
-            position: sticky; /* Sticky Header ให้หัวตารางค้างไว้ขณะเลื่อนลง */
+            position: sticky;
             top: 0;
             z-index: 2;
         }
@@ -227,7 +226,6 @@
         tr:last-child td { border-bottom: none; }
         tr:hover { background-color: #fff1f7; }
 
-        /* Status & Date Selects */
         select { 
             padding: 5px 10px; 
             border-radius: 16px; 
@@ -249,6 +247,7 @@
             color: #334155;
             background-color: #fff;
             outline: none;
+            min-height: 32px;
         }
 
         input[type="date"]:focus {
@@ -274,7 +273,7 @@
         .text-center { text-align: center; }
         .text-muted { color: #94a3b8; }
 
-        /* 📱 5. MOBILE RESPONSIVE DESIGN (การ์ดในมือถือเลื่อนขึ้นลงได้เฉพาะพื้นที่สินค้า) */
+        /* 📱 MOBILE RESPONSIVE DESIGN */
         @media (max-width: 650px) {
             body {
                 padding: 10px 8px;
@@ -373,7 +372,7 @@
 
     <div class="container">
 
-        <!-- ป้าย Banner หลัก (ล็อกอยู่กับที่) -->
+        <!-- ป้าย Banner หลัก -->
         <div class="banner-slot">
             <img src="banner.png" alt="Harnapp Admin Banner">
         </div>
@@ -381,7 +380,6 @@
         <!-- Main Dashboard Card -->
         <div class="dashboard-card">
             
-            <!-- แถบเมนูด้านบน (ล็อกอยู่กับที่) -->
             <div class="top-bar">
                 <div class="category-tabs">
                     <button class="tab-btn active" onclick="switchCategory('ALL', this)">
@@ -403,7 +401,7 @@
                 <button class="btn-refresh" onclick="loadStockData()">รีเฟรช</button>
             </div>
 
-            <!-- ส่วนตารางแสดงสินค้า (เลื่อนสโครลขึ้น-ลง เฉพาะโซนนี้) -->
+            <!-- ส่วนตารางแสดงสินค้า -->
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -433,7 +431,7 @@
         let currentCategory = 'ALL';
 
         function toDateInputValue(str) {
-            if (!str || str === '-') return '';
+            if (!str || str === '-' || str.trim() === '') return '';
             if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
             const match = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
             if (match) {
@@ -546,12 +544,15 @@
             }
         }
 
+        /* ปรับปรุงฟังก์ชัน updateExpire ให้ส่งค่าว่าง หรือ '-' ไปยัง Worker เมื่อกดปุ่มรีเซ็ต */
         async function updateExpire(rowNum, newExpire) {
+            const expireValueToSend = (newExpire && newExpire.trim() !== '') ? newExpire : '-';
+
             try {
                 const res = await fetch(WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ row: rowNum, expire: newExpire })
+                    body: JSON.stringify({ row: rowNum, expire: expireValueToSend })
                 });
 
                 const result = await res.json();
