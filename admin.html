@@ -32,7 +32,6 @@
             flex-direction: column;
         }
 
-        /* 🌐 Global Top Navigation Bar */
         .global-top-bar {
             width: 100%;
             height: 60px;
@@ -89,7 +88,6 @@
         .btn-add { background: var(--magenta-bright); color: #ffffff; box-shadow: 0 3px 10px rgba(255, 0, 127, 0.3); }
         .btn-add:hover { background: #e00070; }
 
-        /* 👤 Profile Component & Avatar Support Image */
         .profile-container { position: relative; display: inline-block; }
 
         .profile-avatar {
@@ -142,7 +140,6 @@
         .dropdown-item.logout { color: #e11d48; }
         .dropdown-item.logout:hover { background: #ffe4e6; }
 
-        /* 🖼️ Upload Profile Modal Elements */
         .avatar-preview-wrapper {
             display: flex;
             flex-direction: column;
@@ -210,7 +207,6 @@
         .text-center { text-align: center; }
         .text-muted { color: #94a3b8; }
 
-        /* Modal Base */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 100;
@@ -232,7 +228,6 @@
         .btn-submit { flex: 1; background: var(--magenta-bright); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
         .btn-cancel { flex: 1; background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; }
 
-        /* 🔒 Login Overlay */
         .login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--purple-dark);
@@ -282,7 +277,7 @@
             <form onsubmit="handleLogin(event)">
                 <div class="form-group" style="text-align: left;">
                     <label>Username</label>
-                    <input type="text" id="login-username" placeholder="กรอกชื่อผู้ใช้งาน (admin / admin2)" required>
+                    <input type="text" id="login-username" placeholder="กรอกชื่อผู้ใช้งาน" required>
                 </div>
                 <div class="form-group" style="text-align: left;">
                     <label>Password</label>
@@ -293,7 +288,7 @@
         </div>
     </div>
 
-    <!-- 🌐 แถบ Header ด้านบนสุด (มีรูปโปรไฟล์อยู่มุมขวาบนสุด) -->
+    <!-- 🌐 Header Bar -->
     <div class="global-top-bar">
         <div class="profile-container">
             <div class="profile-avatar" id="avatarBtn" onclick="toggleProfileMenu()">A</div>
@@ -326,7 +321,7 @@
         </div>
     </div>
 
-    <!-- 📊 Dashboard แอดมินหลัก -->
+    <!-- 📊 Dashboard Main -->
     <div class="main-wrapper">
         <div class="container">
             <div class="banner-slot">
@@ -334,7 +329,6 @@
             </div>
 
             <div class="dashboard-card">
-                
                 <div class="top-bar">
                     <div class="search-box">
                         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -395,7 +389,7 @@
         </div>
     </div>
 
-    <!-- Modal ฟอร์มแก้ไขข้อมูลส่วนตัว (Edit Profile) -->
+    <!-- Modal ฟอร์มแก้ไขข้อมูลส่วนตัว -->
     <div class="modal" id="profileModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -403,7 +397,6 @@
                 <button class="close-btn" onclick="closeProfileModal()">✕</button>
             </div>
             <form onsubmit="handleSaveProfile(event)">
-                
                 <div class="avatar-preview-wrapper">
                     <div class="avatar-preview" id="modalAvatarPreview">A</div>
                     <label class="btn-upload-label">
@@ -481,7 +474,6 @@
             return sessionStorage.getItem('harnapp_auth_token');
         }
 
-        // 👤 โหลดและอัปเดตข้อมูล UI Profile (ชื่อ & รูป)
         function updateProfileUI() {
             const user = sessionStorage.getItem('harnapp_admin_user') || 'admin';
             const displayName = localStorage.getItem(`profile_name_${user}`) || sessionStorage.getItem('harnapp_admin_name') || user;
@@ -518,7 +510,6 @@
             }
         });
 
-        /* 🖼️ Profile Modal Actions */
         function openProfileModal() {
             document.getElementById('profileDropdown').classList.remove('show');
             const user = sessionStorage.getItem('harnapp_admin_user') || 'admin';
@@ -544,7 +535,6 @@
             document.getElementById('profileModal').classList.remove('open');
         }
 
-        // อ่านไฟล์รูปภาพจากมือถือ/คอม แล้วย่อขนาดแปลงเป็น Base64
         function handleImageSelect(e) {
             const file = e.target.files[0];
             if (!file) return;
