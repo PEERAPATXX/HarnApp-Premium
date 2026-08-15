@@ -177,6 +177,12 @@
         }
         .btn-delete:hover { background: #fecdd3; color: #9f1239; }
 
+        .lock-icon {
+            font-size: 1.1rem;
+            opacity: 0.7;
+            user-select: none;
+        }
+
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 100;
@@ -423,24 +429,19 @@
             <form id="addStockForm" onsubmit="handleAddSubmit(event)">
                 <div class="form-group" id="ownerTargetGroup" style="display: none;">
                     <label>บันทึกลงในฐานข้อมูลฝั่ง</label>
-                    <select id="add-target" class="form-control" onchange="toggleCategoryField()">
+                    <select id="add-target" class="form-control">
                         <option value="customer" selected>ฝั่ง เมลลูกค้า (G:L)</option>
                         <option value="owner">ฝั่ง Owner (A:E)</option>
                     </select>
                 </div>
 
-                <div class="form-group" id="categoryGroup">
-                    <label>หมวดหมู่</label>
-                    <select id="add-category" class="form-control">
-                        <option value="YouTube">YouTube</option>
-                        <option value="Netflix">Netflix</option>
-                        <option value="อื่นๆ">อื่นๆ</option>
-                    </select>
-                </div>
-
                 <div class="form-group">
                     <label>รหัสสินค้า (Code)</label>
-                    <input type="text" id="add-code-input" class="form-control" placeholder="กรอกรหัสสินค้า / ชื่อแพ็กเกจ" required>
+                    <select id="add-code-input" class="form-control" required>
+                        <option value="" disabled selected>-- เลือกรหัสสินค้า --</option>
+                        <option value="Youtube (ต่อเมลลูกค้า)">Youtube (ต่อเมลลูกค้า)</option>
+                        <option value="Youtube (ไม่ต่อเมลลูกค้า)">Youtube (ไม่ต่อเมลลูกค้า)</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -475,18 +476,6 @@
         function hasAdminAccess() {
             const role = getUserRole();
             return role === 'admin' || role === 'owner';
-        }
-
-        function toggleCategoryField() {
-            const role = getUserRole();
-            const targetSelect = document.getElementById('add-target');
-            const categoryGroup = document.getElementById('categoryGroup');
-            
-            const isCustomer = (role !== 'owner') || (targetSelect && targetSelect.value === 'customer');
-            
-            if (categoryGroup) {
-                categoryGroup.style.display = isCustomer ? 'block' : 'none';
-            }
         }
 
         function updateProfileUI() {
@@ -680,6 +669,7 @@
         function renderTable() {
             const tbody = document.getElementById('stock-list');
             const isAdmin = hasAdminAccess();
+            const role = getUserRole();
             const colSpan = isAdmin ? 6 : 5;
 
             const filtered = rawStockData.filter(item => {
@@ -707,42 +697,52 @@
                 const email = item.email || '-';
                 const status = item.status || 'ว่าง';
                 const expire = item.expire || '';
-                const itemType = item.type;
+                const itemType = item.type; // 'owner' (คอลัมน์ A:E) หรือ 'customer' (คอลัมน์ G:L)
                 const { text: dayText, cls: dayCls } = daysRemaining(expire);
 
-                // ✏️ Admin และ Owner แก้ไขอีเมลได้เหมือนกันทุกแถว
-                let emailEditBtn = '';
-                if (isAdmin) {
-                    emailEditBtn = `<span class="btn-icon-edit" onclick="editEmail(${rowId}, '${itemType}', '${email}')" title="แก้ไขอีเมล">✏️</span>`;
-                }
+                // สิทธิ์แก้ไขอีเมลและลบสินค้า: ต้องเป็น owner เท่านั้นหากรายการนั้นเป็นฝั่ง owner
+                const canManageFull = isOwner() || (role === 'admin' && itemType !== 'owner');
 
-                // 📅 Admin และ Owner เปิดปฏิทินเปลี่ยนวันหมดอายุได้เหมือนกันทุกแถว
+                // สิทธิ์แก้ไขสถานะและวันหมดอายุ: ให้ Admin ทุกคน (admin/owner) ปรับได้ทั้ง 2 ฝั่ง
+                const canEditStatusAndExpire = isAdmin;
+
+                // อีเมลแสดงปกติเสมอ หากได้รับสิทธิ์ canManageFull จะมีปุ่ม ✏️ เพิ่มเข้ามา
+                const emailEditBtn = canManageFull ? `<span class="btn-icon-edit" onclick="editEmail(${rowId}, '${itemType}', '${email}')" title="แก้ไขอีเมล">✏️</span>` : '';
+                const emailCellContent = `<span>${email}</span>${emailEditBtn}`;
+
+                // แสดงปุ่มแก้ไขวันหมดอายุ (Admin และ Owner สามารถแก้ไขได้ทุกรายการ)
                 let expireEditBtn = '';
-                if (isAdmin) {
+                if (canEditStatusAndExpire) {
                     expireEditBtn = `
                         <span class="btn-icon-edit" onclick="editExpireDate(event, ${rowId}, '${itemType}')" title="แก้ไขวันหมดอายุ">✏️</span>
                         <input type="date" id="dateInput_${itemType}_${rowId}" value="${expire !== '-' ? expire : ''}" style="position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0;" onchange="handleDateDirectChange(${rowId}, '${itemType}', this.value)">
                     `;
                 }
 
-                // 🗑️ Admin และ Owner ลบรายการได้เหมือนกันทุกแถว
+                // แสดงปุ่มลบ หรือ ไอคอนแม่กุญแจ 🔒 (ปุ่มลบสงวนสิทธิ์เฉพาะ owner สำหรับฝั่ง owner)
                 let actionTd = '';
                 if (isAdmin) {
-                    actionTd = `<td data-label="จัดการ" class="text-center">
-                        <button class="btn-delete" onclick="deleteStock(${rowId}, '${itemType}', '${email}')">ลบ</button>
-                       </td>`;
+                    if (canManageFull) {
+                        actionTd = `<td data-label="จัดการ" class="text-center">
+                            <button class="btn-delete" onclick="deleteStock(${rowId}, '${itemType}', '${email}')">ลบ</button>
+                           </td>`;
+                    } else {
+                        actionTd = `<td data-label="จัดการ" class="text-center">
+                            <span class="lock-icon" title="รายการนี้สงวนสิทธิ์การแก้ไขอีเมลและลบไว้เฉพาะ Owner เท่านั้น">🔒</span>
+                           </td>`;
+                    }
                 }
 
                 return `
                     <tr>
                         <td data-label="รหัสสินค้า"><span class="font-code">${code}</span></td>
                         <td data-label="อีเมล">
-                            <span>${email}</span>${emailEditBtn}
+                            ${emailCellContent}
                         </td>
                         <td data-label="สถานะ">
-                            <span class="badge ${status === 'ว่าง' ? 'free' : 'busy'} ${isAdmin ? 'clickable' : ''}" 
-                                  onclick="${isAdmin ? `toggleStatus(${rowId}, '${itemType}', '${status}')` : ''}" 
-                                  title="${isAdmin ? 'คลิกเพื่อเปลี่ยนสถานะ' : ''}">
+                            <span class="badge ${status === 'ว่าง' ? 'free' : 'busy'} ${canEditStatusAndExpire ? 'clickable' : ''}" 
+                                  onclick="${canEditStatusAndExpire ? `toggleStatus(${rowId}, '${itemType}', '${status}')` : ''}" 
+                                  title="${canEditStatusAndExpire ? 'คลิกเพื่อเปลี่ยนสถานะ' : 'สิทธิ์ไม่พอ'}">
                                 ${status} 
                             </span>
                         </td>
@@ -905,7 +905,6 @@
 
         function openAddModal() { 
             document.getElementById('addModal').classList.add('open');
-            toggleCategoryField();
         }
 
         function closeAddModal() {
@@ -920,13 +919,16 @@
             if (!token) return Swal.fire('Session หมดอายุ', 'กรุณาเข้าสู่ระบบใหม่', 'warning');
 
             const submitBtn = document.getElementById('btnSubmitAdd');
-            const code = document.getElementById('add-code-input').value.trim();
-            const category = document.getElementById('add-category').value;
+            const code = document.getElementById('add-code-input').value;
             const email = document.getElementById('add-email').value.trim().toLowerCase();
             const expire = document.getElementById('add-expire').value;
             const targetSelect = document.getElementById('add-target');
             
             const targetSection = (role === 'owner' && targetSelect) ? targetSelect.value : 'customer';
+
+            if (!code) {
+                return Swal.fire('กรุณาเลือกรหัสสินค้า', 'กรุณาเลือกรหัสสินค้าจากรายการ', 'warning');
+            }
 
             const allowedEmailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|hotmail\.co\.th|outlook\.com)$/i;
             if (!allowedEmailRegex.test(email)) {
@@ -947,7 +949,7 @@
                     body: JSON.stringify({
                         action: "add",
                         code: code,
-                        category: targetSection === 'customer' ? category : '',
+                        category: "",
                         email: email,
                         status: "ว่าง",
                         expire: expire || "-",
