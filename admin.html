@@ -3,47 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดการสต็อก - Admin</title>
+    <title>Harnapp Admin - ระบบจัดการสต็อก</title>
+    <!-- นำเข้าฟอนต์ Prompt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f9; }
-        table { width: 100%; border-collapse: collapse; background: #fff; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background-color: #333; color: white; }
-        select { padding: 5px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-        input[type="date"] { padding: 5px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; font-family: inherit; }
-        .free { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .busy { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .expired { color: #a94442; font-weight: bold; }
-        .soon { color: #b8860b; font-weight: bold; }
+        :root {
+            --magenta-bg: #050505;
+            --magenta-bright: #ff007f;
+            --purple-witch: #050505;
+            --purple-dark: #23082a;
+            --blue-hair: #38bdf8;
+            --card-bg: rgba(255, 255, 255, 0.96);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body { 
+            font-family: 'Prompt', sans-serif; 
+            background-color: var(--purple-dark);
+            background-image: 
+                radial-gradient(circle at 50% 0%, var(--magenta-bg) 0%, transparent 75%),
+                radial-gradient(circle at 100% 100%, var(--purple-witch) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: #262626;
+            padding: 24px 16px 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* 1. แบนเนอร์หลัก ปรับตามอัตราส่วน 1983 x 793 แสดงครบทุกรายละเอียด */
+        .banner-slot {
+            width: 100%;
+            aspect-ratio: 1983 / 793; /* ล็อกสัดส่วนภาพจริง ไม่โดนตัดขอบ */
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(236, 0, 140, 0.35);
+            background: var(--purple-witch);
+        }
+
+        .banner-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* 2. Main Dashboard Card */
+        .dashboard-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        /* Bar แถบบน Card มีปุ่ม Refresh และ หมวดหมู่ */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        /* 3. Category Tabs (หมวดหมู่พร้อมช่องใส่รูป Icon) */
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 40px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            border: none;
+            background: transparent;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.88rem;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* สไตล์รูป Icon ในปุ่มหมวดหมู่ */
+        .tab-btn img.tab-icon {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .tab-btn.active {
+            background: var(--magenta-bright);
+            color: #ffffff;
+            box-shadow: 0 3px 12px rgba(255, 0, 127, 0.35);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--purple-witch);
+            background: rgba(255, 0, 127, 0.1);
+        }
+
+        /* ปุ่ม Refresh สไตล์นุ่มตา */
+        .btn-refresh {
+            background: var(--purple-witch);
+            color: #ffffff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-refresh:hover {
+            background: var(--magenta-bright);
+            transform: translateY(-1px);
+        }
+
+        /* 4. Table Styling */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th { 
+            background: var(--purple-witch);
+            color: #ffffff; 
+            font-weight: 600;
+            padding: 14px 16px;
+            white-space: nowrap;
+        }
+
+        td { 
+            padding: 12px 16px; 
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e293b;
+            vertical-align: middle;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background-color: #fff1f7; }
+
+        /* Status & Date Selects */
+        select { 
+            padding: 5px 10px; 
+            border-radius: 16px; 
+            font-weight: 700; 
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer; 
+            border: none;
+            outline: none;
+        }
+
+        input[type="date"] { 
+            padding: 5px 10px; 
+            border-radius: 6px; 
+            border: 1px solid #cbd5e1; 
+            cursor: pointer; 
+            font-family: inherit; 
+            font-size: 0.85rem;
+            color: #334155;
+            background-color: #fff;
+            outline: none;
+        }
+
+        input[type="date"]:focus {
+            border-color: var(--magenta-bright);
+        }
+
+        .free { background-color: #dcfce7; color: #166534; }
+        .busy { background-color: #ffe4e6; color: #9f1239; }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-normal { background-color: #f1f5f9; color: #475569; }
+        .expired { background-color: #ffe4e6; color: #be123c; font-weight: 700; }
+        .soon { background-color: #fef3c7; color: #b45309; font-weight: 700; }
+
+        .font-code { font-family: monospace; font-size: 0.95rem; font-weight: 700; color: var(--purple-witch); }
+        .text-center { text-align: center; }
+        .text-muted { color: #94a3b8; }
     </style>
 </head>
 <body>
 
-    <h2>รายการสินค้าในสต็อก</h2>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>รหัสสินค้า (Code)</th>
-                <th>อีเมล (Email)</th>
-                <th>สถานะ (Status)</th>
-                <th>จำนวนวัน (Days Left)</th>
-                <th>วันหมดอายุ (Expire)</th>
-            </tr>
-        </thead>
-        <tbody id="stock-list">
-            <tr>
-                <td colspan="5" style="text-align:center;">กำลังโหลด...</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="container">
+
+        <!-- ป้าย Banner หลัก (ปรับสัดส่วน 1983x793 ให้แล้ว ใส่ URL ภาพเดิมได้เลย) -->
+        <div class="banner-slot">
+            <img src="banner.png" alt="Harnapp Admin Banner">
+        </div>
+
+        <!-- Main Dashboard Card -->
+        <div class="dashboard-card">
+            
+            <div class="top-bar">
+                <!-- แท็บแยกหมวดหมู่ พร้อมช่องใส่รูป Icon (ใส่ path/URL รูปใน src ได้เลย) -->
+                <div class="category-tabs">
+                    <button class="tab-btn active" onclick="switchCategory('ALL', this)">
+                        <!-- รูปไอคอนทั้งหมด (ถ้าไม่อยากใส่รูปกดลบแท็ก <img> ได้) -->
+                        <img src="https://cdn-icons-png.flaticon.com/512/839/839888.png" alt="All" class="tab-icon">
+                        ทั้งหมด
+                    </button>
+
+                    <button class="tab-btn" onclick="switchCategory('NETFLIX', this)">
+                        <!-- ใส่รูป Icon Netflix ของมึงตรงนี้ -->
+                        <img src="https://cdn-icons-png.flaticon.com/512/732/732228.png" alt="Netflix" class="tab-icon">
+                        Netflix
+                    </button>
+
+                    <button class="tab-btn" onclick="switchCategory('YOUTUBE', this)">
+                        <!-- ใส่รูป Icon YouTube ของมึงตรงนี้ -->
+                        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube" class="tab-icon">
+                        YouTube
+                    </button>
+
+                </div>
+
+                <button class="btn-refresh" onclick="loadStockData()">รีเฟรช</button>
+            </div>
+
+            <!-- ตารางแสดงผลสต็อก -->
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>รหัสสินค้า</th>
+                            <th>อีเมล</th>
+                            <th>สถานะ</th>
+                            <th>จำนวนวัน</th>
+                            <th>วันหมดอายุ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stock-list">
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">กำลังโหลดข้อมูล...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
 
     <script>
-        // ใส่ URL ของ Cloudflare Worker ของคุณแล้ว
         const WORKER_URL = "https://harnapp-api.hay-peerapattx-co-th.workers.dev"; 
+        
+        let rawStockData = [];
+        let currentCategory = 'ALL';
 
-        // แปลงค่าวันที่จาก Google Sheet ให้เป็นรูปแบบ YYYY-MM-DD ที่ <input type="date"> ต้องการ
-        // รองรับทั้งกรณีที่ Sheet เก็บเป็น YYYY-MM-DD อยู่แล้ว และกรณี DD/MM/YYYY
         function toDateInputValue(str) {
             if (!str || str === '-') return '';
             if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
@@ -55,25 +309,25 @@
             return '';
         }
 
-        // คำนวณจำนวนวันที่เหลือจากวันนี้ถึงวันหมดอายุ (คำนวณสดทุกครั้งที่โหลดหน้า)
         function daysRemaining(expireStr) {
             const iso = toDateInputValue(expireStr);
-            if (!iso) return { text: '-', cls: '' };
+            if (!iso) return { text: '-', cls: 'badge-normal' };
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const expireDate = new Date(iso + 'T00:00:00');
             const diff = Math.round((expireDate - today) / (1000 * 60 * 60 * 24));
+            
             if (diff < 0) return { text: `หมดอายุแล้ว ${Math.abs(diff)} วัน`, cls: 'expired' };
             if (diff === 0) return { text: 'หมดอายุวันนี้', cls: 'expired' };
             if (diff <= 3) return { text: `เหลือ ${diff} วัน`, cls: 'soon' };
-            return { text: `เหลือ ${diff} วัน`, cls: '' };
+            return { text: `เหลือ ${diff} วัน`, cls: 'badge-normal' };
         }
 
         async function loadStockData() {
             const tbody = document.getElementById('stock-list');
             if (!tbody) return;
             
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">กำลังโหลดข้อมูล...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">กำลังโหลดข้อมูล...</td></tr>';
 
             try {
                 const res = await fetch(WORKER_URL);
@@ -81,38 +335,65 @@
                 
                 if (data.error) throw new Error(data.error);
 
-                tbody.innerHTML = '';
-                
-                if (!Array.isArray(data) || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">ไม่มีข้อมูลในระบบ</td></tr>';
-                    return;
-                }
+                rawStockData = Array.isArray(data) ? data : [];
+                renderTable();
 
-                data.forEach((item) => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><b>${item.code}</b></td>
-                            <td>${item.email}</td>
-                            <td>
-                                <select class="${item.status === 'ว่าง' ? 'free' : 'busy'}" 
-                                        onchange="updateStatus(${item.row}, this.value)">
-                                    <option value="ว่าง" ${item.status === 'ว่าง' ? 'selected' : ''}>ว่าง</option>
-                                    <option value="ไม่ว่าง" ${item.status !== 'ว่าง' ? 'selected' : ''}>ไม่ว่าง</option>
-                                </select>
-                            </td>
-                            <td class="${daysRemaining(item.expire).cls}">${daysRemaining(item.expire).text}</td>
-                            <td>
-                                <input type="date"
-                                       value="${toDateInputValue(item.expire)}"
-                                       onchange="updateExpire(${item.row}, this.value)">
-                            </td>
-                        </tr>
-                    `;
-                });
             } catch (err) {
                 console.error(err);
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">ดึงข้อมูลไม่สำเร็จ: ${err.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center" style="color:var(--magenta-bright);">ดึงข้อมูลไม่สำเร็จ: ${err.message}</td></tr>`;
             }
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('stock-list');
+            tbody.innerHTML = '';
+
+            let filteredData = rawStockData.filter(item => {
+                if (currentCategory === 'ALL') return true;
+                
+                const searchStr = `${item.code} ${item.email}`.toUpperCase();
+                if (currentCategory === 'NETFLIX') return searchStr.includes('NETFLIX') || searchStr.includes('NF');
+                if (currentCategory === 'YOUTUBE') return searchStr.includes('YOUTUBE') || searchStr.includes('YT');
+                if (currentCategory === 'DISNEY') return searchStr.includes('DISNEY') || searchStr.includes('DIS');
+                return true;
+            });
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">ไม่มีข้อมูลในหมวดหมู่นี้</td></tr>';
+                return;
+            }
+
+            filteredData.forEach((item) => {
+                const statusObj = daysRemaining(item.expire);
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="font-code">${item.code}</td>
+                        <td><b>${item.email}</b></td>
+                        <td>
+                            <select class="${item.status === 'ว่าง' ? 'free' : 'busy'}" 
+                                    onchange="updateStatus(${item.row}, this.value)">
+                                <option value="ว่าง" ${item.status === 'ว่าง' ? 'selected' : ''}>ว่าง</option>
+                                <option value="ไม่ว่าง" ${item.status !== 'ว่าง' ? 'selected' : ''}>ไม่ว่าง</option>
+                            </select>
+                        </td>
+                        <td>
+                            <span class="badge ${statusObj.cls}">${statusObj.text}</span>
+                        </td>
+                        <td>
+                            <input type="date"
+                                   value="${toDateInputValue(item.expire)}"
+                                   onchange="updateExpire(${item.row}, this.value)">
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function switchCategory(category, btnElement) {
+            currentCategory = category;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderTable();
         }
 
         async function updateStatus(rowNum, newStatus) {
@@ -120,16 +401,11 @@
                 const res = await fetch(WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        row: rowNum,
-                        status: newStatus
-                    })
+                    body: JSON.stringify({ row: rowNum, status: newStatus })
                 });
 
                 const result = await res.json();
                 if (result.error) throw new Error(result.error);
-
-                alert(`อัปเดตบรรทัดที่ ${rowNum} เป็น "${newStatus}" เรียบร้อย!`);
                 loadStockData();
             } catch (err) {
                 alert('แก้ไขไม่สำเร็จ: ' + err.message);
@@ -141,16 +417,11 @@
                 const res = await fetch(WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        row: rowNum,
-                        expire: newExpire
-                    })
+                    body: JSON.stringify({ row: rowNum, expire: newExpire })
                 });
 
                 const result = await res.json();
                 if (result.error) throw new Error(result.error);
-
-                alert(`อัปเดตวันหมดอายุบรรทัดที่ ${rowNum} เรียบร้อย!`);
                 loadStockData();
             } catch (err) {
                 alert('แก้ไขไม่สำเร็จ: ' + err.message);
