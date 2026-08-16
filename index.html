@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harnapp Premium - Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', sans-serif; }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            color: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 410px;
+            background: #ffffff;
+            min-height: 840px;
+            border-radius: 36px;
+            padding-bottom: 90px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header Header */
+        .header {
+            text-align: center;
+            padding: 32px 20px 24px;
+            background: linear-gradient(135deg, #fce7f3 0%, #f3e8ff 100%);
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+            position: relative;
+        }
+        
+        .logo-img {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 3px solid #ffffff;
+            object-fit: cover;
+            margin: 0 auto 12px;
+            display: block;
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.25);
+        }
+        
+        .brand-name { font-size: 22px; font-weight: 700; color: #0f172a; letter-spacing: -0.5px; }
+        .brand-sub { font-size: 13px; color: #64748b; margin-top: 4px; }
+
+        /* Content Area */
+        .content { padding: 20px 18px; }
+        .section-title { font-size: 15px; font-weight: 700; color: #334155; margin: 18px 0 12px; display: flex; align-items: center; gap: 6px; }
+
+        /* Card Component */
+        .card {
+            background: #ffffff;
+            border: 1px solid #f1f5f9;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+        .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .prod-name { font-size: 15px; font-weight: 600; color: #0f172a; }
+        
+        /* Badges */
+        .stock-tag { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+        .st-ready { background: #dcfce7; color: #166534; }
+
+        /* Radio Options */
+        .opt-list { display: flex; flex-direction: column; gap: 10px; }
+        .opt-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            border: 1.5px solid #f1f5f9;
+            background: #fafafa;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .opt-item:hover { border-color: #f472b6; background: #fff5f9; transform: translateY(-1px); }
+        .opt-item.disabled { opacity: 0.4; cursor: not-allowed; background: #f1f5f9; border-color: #e2e8f0; transform: none; }
+        .opt-item input[type="radio"] { accent-color: #ec4899; width: 18px; height: 18px; cursor: pointer; }
+        .opt-label { font-size: 14px; color: #334155; font-weight: 500; margin-left: 10px; }
+        .opt-price { font-size: 15px; font-weight: 700; color: #ec4899; }
+
+        /* Bottom Fixed Bar */
+        .bottom-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #ffffff;
+            border-top: 1px solid #f1f5f9;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -10px 25px rgba(0,0,0,0.05);
+        }
+        .summary-label { font-size: 11px; color: #64748b; font-weight: 500; }
+        .summary-price { font-size: 22px; font-weight: 800; color: #ec4899; line-height: 1.2; }
+
+        .btn-send-line {
+            background: linear-gradient(135deg, #06c755 0%, #05b34c 100%);
+            color: #ffffff;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 18px rgba(6, 199, 85, 0.35);
+            transition: all 0.2s;
+        }
+        .btn-send-line:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(6, 199, 85, 0.45); }
+        .btn-send-line:active { transform: scale(0.96); }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <img src="logo.png" alt="Harnapp Logo" class="logo-img">
+        <div class="brand-name">Harnapp Premium</div>
+        <div class="brand-sub">เลือกแพ็กเกจที่ต้องการ แล้วกดสั่งซื้อได้เลยครับ ✨</div>
+    </div>
+
+    <div class="content">
+
+        <!-- NETFLIX -->
+        <div class="section-title">🎬 Netflix Premium (4K)</div>
+        <div class="card">
+            <div class="card-head">
+                <div class="prod-name">เลือกระยะเวลา</div>
+                <span class="stock-tag st-ready" id="netflix-status">พร้อมส่ง</span>
+            </div>
+            <div class="opt-list">
+                <label class="opt-item" id="opt-nf-1d">
+                    <div style="display:flex; align-items:center;">
+                        <input type="radio" name="product" value="Netflix Premium (1 วัน)" data-price="17" id="radio-nf-1d" onclick="updateTotal()">
+                        <span class="opt-label" id="label-nf-1d">Netflix 1 วัน</span>
+                    </div>
+                    <span class="opt-price">17.-</span>
+                </label>
+                <label class="opt-item" id="opt-nf-7d">
+                    <div style="display:flex; align-items:center;">
+                        <input type="radio" name="product" value="Netflix Premium (7 วัน)" data-price="45" id="radio-nf-7d" onclick="updateTotal()">
+                        <span class="opt-label" id="label-nf-7d">Netflix 7 วัน</span>
+                    </div>
+                    <span class="opt-price">45.-</span>
+                </label>
+                <label class="opt-item" id="opt-nf-30d">
+                    <div style="display:flex; align-items:center;">
+                        <input type="radio" name="product" value="Netflix Premium (30 วัน)" data-price="110" id="radio-nf-30d" onclick="updateTotal()">
+                        <span class="opt-label" id="label-nf-30d">Netflix 30 วัน</span>
+                    </div>
+                    <span class="opt-price">110.-</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- YOUTUBE -->
+        <div class="section-title">▶️ YouTube Premium (30 วัน)</div>
+        <div class="card">
+            <div class="card-head">
+                <div class="prod-name">เลือกประเภทเมล</div>
+                <span class="stock-tag st-ready" id="yt-status">พร้อมส่ง</span>
+            </div>
+            <div class="opt-list">
+                <label class="opt-item" id="opt-yt-no-custom">
+                    <div style="display:flex; align-items:center;">
+                        <input type="radio" name="product" value="YouTube ไม่ต่อเมล (เมลลูกค้า)" data-price="39" id="radio-yt-no-custom" onclick="updateTotal()">
+                        <span class="opt-label" id="label-yt-no-custom">ไม่ต่อเมล • เมลลูกค้า</span>
+                    </div>
+                    <span class="opt-price">39.-</span>
+                </label>
+                <label class="opt-item" id="opt-yt-no-shop">
+                    <div style="display:flex; align-items:center;">
+                        <input type="radio" name="product" value="YouTube ไม่ต่อเมล (เมลร้าน)" data-price="55" id="radio-yt-no-shop" onclick="updateTotal()">
+                        <span class="opt-label" id="label-yt-no-shop">ไม่ต่อเมล • เมลร้าน</span>
+                    </div>
+                    <span class="opt-price">55.-</span>
+                </label>
+                <label class="opt-item" id="opt-yt-yes-custom">
+                    <div style="display:flex; align-items:center;">
+                        <input type="radio" name="product" value="YouTube ต่อเมลเดิม (เมลลูกค้า)" data-price="99" id="radio-yt-yes-custom" onclick="updateTotal()">
+                        <span class="opt-label" id="label-yt-yes-custom">ต่อเมลเดิม • เมลลูกค้า</span>
+                    </div>
+                    <span class="opt-price">99.-</span>
+                </label>
+                <label class="opt-item" id="opt-yt-yes-shop">
+                    <div style="display:flex; align-items:center;">
+                        <input type="radio" name="product" value="YouTube ต่อเมลเดิม (เมลร้าน)" data-price="115" id="radio-yt-yes-shop" onclick="updateTotal()">
+                        <span class="opt-label" id="label-yt-yes-shop">ต่อเมลเดิม • เมลร้าน</span>
+                    </div>
+                    <span class="opt-price">115.-</span>
+                </label>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- BOTTOM BAR -->
+    <div class="bottom-bar">
+        <div>
+            <div class="summary-label">ยอดชำระทั้งหมด</div>
+            <div class="summary-price" id="total-display">0 บาท</div>
+        </div>
+        <button class="btn-send-line" onclick="sendToLine()">
+            💬 สั่งซื้อผ่าน LINE
+        </button>
+    </div>
+
+</div>
+
+<script>
+    let selectedProduct = "";
+    let selectedPrice = 0;
+
+    const GOOGLE_API_KEY = "AIzaSyD_g7dNqVR6YSGegipQ6cYC32IFfLCAwoI"; 
+    const SPREADSHEET_ID = "13sccO907Q2SyWybrt226m9zesCFX-szqTP2rSMF3K8Y"; 
+
+    async function fetchStock() {
+        const range = "Sheet1!A2:B8"; 
+        const url = `https://sheets.googleapis.com/v1/spreadsheets/${SPREADSHEET_ID}/values/${range}?key=${GOOGLE_API_KEY}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data.values) {
+                data.values.forEach(row => {
+                    const itemCode = row[0];
+                    const stockQty = parseInt(row[1]) || 0; 
+                    applyStockToUI(itemCode, stockQty);
+                });
+            }
+        } catch (err) {
+            console.error("ดึงสต็อกไม่สำเร็จ:", err);
+        }
+    }
+
+    function applyStockToUI(code, qty) {
+        const radio = document.getElementById(`radio-${code}`);
+        const optContainer = document.getElementById(`opt-${code}`);
+        const label = document.getElementById(`label-${code}`);
+        
+        if (radio && optContainer && label) {
+            if (qty <= 0) {
+                radio.disabled = true;
+                optContainer.classList.add('disabled');
+                if (!label.innerText.includes('(หมด)')) {
+                    label.innerText += " (หมด)";
+                }
+            }
+        }
+    }
+
+    function updateTotal() {
+        const radios = document.getElementsByName('product');
+        for (const radio of radios) {
+            if (radio.checked) {
+                selectedProduct = radio.value;
+                selectedPrice = radio.getAttribute('data-price');
+                break;
+            }
+        }
+        document.getElementById('total-display').innerText = selectedPrice + " บาท";
+    }
+
+    function sendToLine() {
+        if (!selectedProduct) {
+            alert("กรุณาเลือกสินค้าที่ต้องการก่อนครับ 🙏");
+            return;
+        }
+
+        const message = `🛒 สนใจสั่งซื้อสินค้าครับ!\n------------------\nรายการ: ${selectedProduct}\nราคาทั้งหมด: ${selectedPrice} บาท\n------------------\nขอเลขบัญชี / QR Code โอนเงินหน่อยครับ`;
+        const finalUrl = `https://line.me/R/share?text=${encodeURIComponent(message)}`;
+        
+        window.location.href = finalUrl;
+    }
+
+    window.onload = fetchStock;
+</script>
+
+</body>
+</html>
