@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
@@ -176,12 +175,6 @@
             font-family: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
         }
         .btn-delete:hover { background: #fecdd3; color: #9f1239; }
-
-        .lock-icon {
-            font-size: 1.1rem;
-            opacity: 0.7;
-            user-select: none;
-        }
 
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -481,7 +474,6 @@
         function updateProfileUI() {
             const user = sessionStorage.getItem('harnapp_admin_user') || 'admin';
             const displayName = sessionStorage.getItem('harnapp_admin_name') || user;
-            const role = getUserRole();
             const storedAvatar = localStorage.getItem(`harnapp_avatar_${user}`);
 
             document.getElementById('menuDisplayName').innerText = displayName;
@@ -505,12 +497,7 @@
 
             const targetGroup = document.getElementById('ownerTargetGroup');
             if (targetGroup) {
-                targetGroup.style.display = role === 'owner' ? 'block' : 'none';
-            }
-
-            const thAction = document.getElementById('thAction');
-            if (thAction) {
-                thAction.style.display = hasAdminAccess() ? 'table-cell' : 'none';
+                targetGroup.style.display = isOwner() ? 'block' : 'none';
             }
         }
 
@@ -642,8 +629,7 @@
             }
 
             const tbody = document.getElementById('stock-list');
-            const colSpan = hasAdminAccess() ? 6 : 5;
-            tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center text-muted">กำลังโหลดข้อมูล...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">กำลังโหลดข้อมูล...</td></tr>`;
 
             try {
                 const res = await fetch(WORKER_URL, {
@@ -659,18 +645,18 @@
                     rawStockData = await res.json();
                     renderTable();
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center text-muted">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>`;
                 }
             } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center text-muted">ไม่สามารถเชื่อมต่อกับฐานข้อมูลได้</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">ไม่สามารถเชื่อมต่อกับฐานข้อมูลได้</td></tr>`;
             }
         }
 
         function renderTable() {
             const tbody = document.getElementById('stock-list');
             const isAdmin = hasAdminAccess();
-            const role = getUserRole();
-            const colSpan = isAdmin ? 6 : 5;
+            const isOwnerRole = isOwner();
+            const currentAdminName = (sessionStorage.getItem('harnapp_admin_name') || sessionStorage.getItem('harnapp_admin_user') || '').trim();
 
             const filtered = rawStockData.filter(item => {
                 const code = (item.code || '').toString().toUpperCase();
@@ -686,6 +672,19 @@
                 return matchCat && matchSearch;
             });
 
+            // ตัดคำว่า "Added by:" ออกเพื่อเช็กชื่อเพียวๆ แบบยืดหยุ่น
+            const hasAnyDeletePermission = isOwnerRole || filtered.some(item => {
+                const cleanAddedBy = (item.addedBy || '').replace(/^Added by:\s*/i, '').trim();
+                return cleanAddedBy.toLowerCase() === currentAdminName.toLowerCase();
+            });
+
+            const colSpan = hasAnyDeletePermission ? 6 : 5;
+
+            const thAction = document.getElementById('thAction');
+            if (thAction) {
+                thAction.style.display = hasAnyDeletePermission ? 'table-cell' : 'none';
+            }
+
             if (filtered.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="${colSpan}" class="text-center text-muted">ไม่พบข้อมูล</td></tr>`;
                 return;
@@ -697,20 +696,22 @@
                 const email = item.email || '-';
                 const status = item.status || 'ว่าง';
                 const expire = item.expire || '';
-                const itemType = item.type; // 'owner' (คอลัมน์ A:E) หรือ 'customer' (คอลัมน์ G:L)
+                const itemType = item.type;
+                const rawAddedBy = item.addedBy || '';
+                
+                // 🛠️ จุดแก้ไขหลัก: ตัดคำว่า "Added by:" ออกอัตโนมัติก่อนเปรียบเทียบชื่อ
+                const cleanAddedBy = rawAddedBy.replace(/^Added by:\s*/i, '').trim();
                 const { text: dayText, cls: dayCls } = daysRemaining(expire);
 
-                // สิทธิ์แก้ไขอีเมลและลบสินค้า: ต้องเป็น owner เท่านั้นหากรายการนั้นเป็นฝั่ง owner
-                const canManageFull = isOwner() || (role === 'admin' && itemType !== 'owner');
-
-                // สิทธิ์แก้ไขสถานะและวันหมดอายุ: ให้ Admin ทุกคน (admin/owner) ปรับได้ทั้ง 2 ฝั่ง
+                // 🔒 เช็กสิทธิ์ลบ: Owner หรือ Admin คนที่ตรงกับชื่อในคอลัมน์ L
+                const isMyItem = cleanAddedBy.toLowerCase() === currentAdminName.toLowerCase();
+                const canEditEmail = isOwnerRole;
+                const canDelete = isOwnerRole || (isAdmin && cleanAddedBy !== '' && isMyItem);
                 const canEditStatusAndExpire = isAdmin;
 
-                // อีเมลแสดงปกติเสมอ หากได้รับสิทธิ์ canManageFull จะมีปุ่ม ✏️ เพิ่มเข้ามา
-                const emailEditBtn = canManageFull ? `<span class="btn-icon-edit" onclick="editEmail(${rowId}, '${itemType}', '${email}')" title="แก้ไขอีเมล">✏️</span>` : '';
+                const emailEditBtn = canEditEmail ? `<span class="btn-icon-edit" onclick="editEmail(${rowId}, '${itemType}', '${email}')" title="แก้ไขอีเมล">✏️</span>` : '';
                 const emailCellContent = `<span>${email}</span>${emailEditBtn}`;
 
-                // แสดงปุ่มแก้ไขวันหมดอายุ (Admin และ Owner สามารถแก้ไขได้ทุกรายการ)
                 let expireEditBtn = '';
                 if (canEditStatusAndExpire) {
                     expireEditBtn = `
@@ -719,26 +720,17 @@
                     `;
                 }
 
-                // แสดงปุ่มลบ หรือ ไอคอนแม่กุญแจ 🔒 (ปุ่มลบสงวนสิทธิ์เฉพาะ owner สำหรับฝั่ง owner)
                 let actionTd = '';
-                if (isAdmin) {
-                    if (canManageFull) {
-                        actionTd = `<td data-label="จัดการ" class="text-center">
-                            <button class="btn-delete" onclick="deleteStock(${rowId}, '${itemType}', '${email}')">ลบ</button>
-                           </td>`;
-                    } else {
-                        actionTd = `<td data-label="จัดการ" class="text-center">
-                            <span class="lock-icon" title="รายการนี้สงวนสิทธิ์การแก้ไขอีเมลและลบไว้เฉพาะ Owner เท่านั้น">🔒</span>
-                           </td>`;
-                    }
+                if (hasAnyDeletePermission) {
+                    actionTd = `<td data-label="จัดการ" class="text-center">
+                        ${canDelete ? `<button class="btn-delete" onclick="deleteStock(${rowId}, '${itemType}', '${email}', '${cleanAddedBy}')">ลบ</button>` : '-'}
+                    </td>`;
                 }
 
                 return `
                     <tr>
                         <td data-label="รหัสสินค้า"><span class="font-code">${code}</span></td>
-                        <td data-label="อีเมล">
-                            ${emailCellContent}
-                        </td>
+                        <td data-label="อีเมล">${emailCellContent}</td>
                         <td data-label="สถานะ">
                             <span class="badge ${status === 'ว่าง' ? 'free' : 'busy'} ${canEditStatusAndExpire ? 'clickable' : ''}" 
                                   onclick="${canEditStatusAndExpire ? `toggleStatus(${rowId}, '${itemType}', '${status}')` : ''}" 
@@ -757,7 +749,9 @@
         }
 
         async function editEmail(rowId, itemType, currentEmail) {
-            if (!hasAdminAccess()) return;
+            if (!isOwner()) {
+                return Swal.fire('ไม่มีสิทธิ์', 'เฉพาะ Owner เท่านั้นที่แก้ไขอีเมลได้', 'warning');
+            }
 
             const { value: newEmail } = await Swal.fire({
                 title: '✏️ แก้ไขอีเมล',
@@ -840,8 +834,16 @@
             }
         }
 
-        async function deleteStock(rowId, itemType, email) {
-            if (!hasAdminAccess()) return;
+        async function deleteStock(rowId, itemType, email, itemAddedBy) {
+            const isOwnerRole = isOwner();
+            const currentAdminName = (sessionStorage.getItem('harnapp_admin_name') || sessionStorage.getItem('harnapp_admin_user') || '').trim();
+
+            const cleanAddedBy = (itemAddedBy || '').replace(/^Added by:\s*/i, '').trim();
+            const canDelete = isOwnerRole || (cleanAddedBy !== '' && cleanAddedBy.toLowerCase() === currentAdminName.toLowerCase());
+
+            if (!canDelete) {
+                return Swal.fire('ไม่มีสิทธิ์', 'คุณสามารถลบได้เฉพาะรายการที่คุณเป็นคนเพิ่มเท่านั้น', 'warning');
+            }
 
             const confirm = await Swal.fire({
                 title: 'ยืนยันการลบข้อมูล?',
