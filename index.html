@@ -9,16 +9,20 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', sans-serif; }
 
-        body {
+        html, body {
             background-color: #0d0819;
             color: #ffffff;
             min-height: 100vh;
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden; /* ป้องกันหน้าจอล้นและเลื่อนออกข้าง */
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 24px 20px;
+            width: 100%;
         }
 
         /* HERO BANNER */
@@ -43,12 +47,13 @@
             color: #ffffff;
         }
 
-        /* REVIEWS GRID (3 COLUMNS FOR DESKTOP) */
+        /* REVIEWS GRID */
         .reviews-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             margin-bottom: 24px;
+            width: 100%;
         }
 
         .review-card {
@@ -59,6 +64,7 @@
             display: flex;
             gap: 14px;
             align-items: flex-start;
+            width: 100%;
         }
 
         .review-avatar {
@@ -72,7 +78,7 @@
 
         .review-content h5 { font-size: 15px; color: #fff; }
         .stars { color: #facc15; font-size: 12px; margin: 2px 0; }
-        .review-content p { font-size: 13px; color: #cbd5e1; line-height: 1.4; }
+        .review-content p { font-size: 13px; color: #cbd5e1; line-height: 1.4; word-break: break-word; }
 
         /* LINE LOGIN & REVIEW FORM BOX */
         .review-box {
@@ -81,6 +87,7 @@
             border-radius: 20px;
             padding: 24px;
             margin-bottom: 36px;
+            width: 100%;
         }
 
         .btn-line-auth {
@@ -138,13 +145,15 @@
             font-weight: 600;
             cursor: pointer;
             font-size: 14px;
+            width: 100%;
         }
 
-        /* PRODUCTS GRID (3 COLUMNS FOR DESKTOP) */
+        /* PRODUCTS GRID */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 24px;
+            width: 100%;
         }
 
         .product-card-large {
@@ -156,6 +165,7 @@
             flex-direction: column;
             justify-content: space-between;
             transition: border-color 0.3s;
+            width: 100%;
         }
 
         .product-card-large:hover {
@@ -270,6 +280,50 @@
         }
 
         .brand-text-lg { font-size: 18px; font-weight: 800; color: #a855f7; }
+
+        /* ========================================================
+           RESPONSIVE DESIGN (ปรับแต่งพิเศษสำหรับหน้าจอมือถือ)
+        ======================================================== */
+        @media (max-width: 992px) {
+            .reviews-grid, 
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px 12px;
+            }
+
+            .hero-banner-placeholder,
+            .banner3-section {
+                border-radius: 16px;
+                margin-bottom: 20px;
+            }
+
+            .section-header {
+                font-size: 18px;
+                margin: 20px 0 12px;
+            }
+
+            /* บังคับการ์ดทั้งหมดให้ปรับเป็น 1 คอลัมน์ เลื่อนลงล่างอย่างเดียว */
+            .reviews-grid, 
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .product-card-large {
+                padding: 16px;
+                border-radius: 18px;
+            }
+
+            .btn-action-placeholder button {
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -509,7 +563,7 @@
         const rating = document.getElementById('ratingSelect').value;
 
         if (!comment.trim()) {
-            alert('กรุณากรอกข้อความรีวิวก่อนส่งครับ');
+            alert('กรุณากรอกข้อความรีวิวิก่อนส่งครับ');
             return;
         }
 
