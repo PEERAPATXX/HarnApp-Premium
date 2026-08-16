@@ -166,7 +166,7 @@
 
         .btn-icon-edit {
             cursor: pointer; opacity: 0.7; transition: opacity 0.2s, transform 0.2s; margin-left: 6px;
-            font-size: 0.9rem; vertical-align: middle; display: inline-block;
+            font-size: 0.9rem; vertical-align: middle; display: inline-block; user-select: none;
         }
         .btn-icon-edit:hover { opacity: 1; transform: scale(1.2); }
 
@@ -339,7 +339,7 @@
                         YouTube
                     </button>
                     <button class="tab-btn" onclick="switchCategory('CUSTOMER', this)">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z" fill="#3B82F6"/></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 2.24 5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z" fill="#3B82F6"/></svg>
                         เมลลูกค้า
                     </button>
                 </div>
@@ -672,7 +672,6 @@
                 return matchCat && matchSearch;
             });
 
-            // ตัดคำว่า "Added by:" ออกเพื่อเช็กชื่อเพียวๆ แบบยืดหยุ่น
             const hasAnyDeletePermission = isOwnerRole || filtered.some(item => {
                 const cleanAddedBy = (item.addedBy || '').replace(/^Added by:\s*/i, '').trim();
                 return cleanAddedBy.toLowerCase() === currentAdminName.toLowerCase();
@@ -699,11 +698,9 @@
                 const itemType = item.type;
                 const rawAddedBy = item.addedBy || '';
                 
-                // 🛠️ จุดแก้ไขหลัก: ตัดคำว่า "Added by:" ออกอัตโนมัติก่อนเปรียบเทียบชื่อ
                 const cleanAddedBy = rawAddedBy.replace(/^Added by:\s*/i, '').trim();
                 const { text: dayText, cls: dayCls } = daysRemaining(expire);
 
-                // 🔒 เช็กสิทธิ์ลบ: Owner หรือ Admin คนที่ตรงกับชื่อในคอลัมน์ L
                 const isMyItem = cleanAddedBy.toLowerCase() === currentAdminName.toLowerCase();
                 const canEditEmail = isOwnerRole;
                 const canDelete = isOwnerRole || (isAdmin && cleanAddedBy !== '' && isMyItem);
@@ -712,12 +709,10 @@
                 const emailEditBtn = canEditEmail ? `<span class="btn-icon-edit" onclick="editEmail(${rowId}, '${itemType}', '${email}')" title="แก้ไขอีเมล">✏️</span>` : '';
                 const emailCellContent = `<span>${email}</span>${emailEditBtn}`;
 
+                // 🛠️ แก้ไข UI วันหมดอายุให้เรียกใช้ Popup Datepicker แทน
                 let expireEditBtn = '';
                 if (canEditStatusAndExpire) {
-                    expireEditBtn = `
-                        <span class="btn-icon-edit" onclick="editExpireDate(event, ${rowId}, '${itemType}')" title="แก้ไขวันหมดอายุ">✏️</span>
-                        <input type="date" id="dateInput_${itemType}_${rowId}" value="${expire !== '-' ? expire : ''}" style="position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0;" onchange="handleDateDirectChange(${rowId}, '${itemType}', this.value)">
-                    `;
+                    expireEditBtn = `<span class="btn-icon-edit" onclick="openDatePicker(${rowId}, '${itemType}', '${expire}')" title="แก้ไขวันหมดอายุ">✏️</span>`;
                 }
 
                 let actionTd = '';
@@ -739,7 +734,7 @@
                             </span>
                         </td>
                         <td data-label="จำนวนวัน"><span class="badge ${dayCls}">${dayText}</span></td>
-                        <td data-label="วันหมดอายุ" style="position: relative;">
+                        <td data-label="วันหมดอายุ">
                             <span>${expire || '-'}</span>${expireEditBtn}
                         </td>
                         ${actionTd}
@@ -775,22 +770,26 @@
             }
         }
 
-        function editExpireDate(event, rowId, itemType) {
+        // 🛠️ ฟังก์ชันใหม่สำหรับเปิด DatePicker บน SweetAlert2 เพื่อแก้ปัญหากดแก้ไขวันที่ไม่ได้
+        async function openDatePicker(rowId, itemType, currentExpire) {
             if (!hasAdminAccess()) return;
-            event.stopPropagation();
-            const dateInput = document.getElementById(`dateInput_${itemType}_${rowId}`);
-            if (dateInput) {
-                if (typeof dateInput.showPicker === 'function') {
-                    dateInput.showPicker();
-                } else {
-                    dateInput.focus();
-                    dateInput.click();
-                }
-            }
-        }
 
-        function handleDateDirectChange(rowId, itemType, selectedDate) {
-            updateStockItem(rowId, itemType, { expire: selectedDate || '-' });
+            const defaultDate = (currentExpire && currentExpire !== '-') ? currentExpire : '';
+
+            const { value: selectedDate } = await Swal.fire({
+                title: '📅 แก้ไขวันหมดอายุ',
+                html: `<input type="date" id="swal-input-date" class="swal2-input" value="${defaultDate}">`,
+                showCancelButton: true,
+                confirmButtonText: 'บันทึก',
+                cancelButtonText: 'ยกเลิก',
+                preConfirm: () => {
+                    return document.getElementById('swal-input-date').value;
+                }
+            });
+
+            if (selectedDate !== undefined) {
+                updateStockItem(rowId, itemType, { expire: selectedDate || '-' });
+            }
         }
 
         async function updateStockItem(rowId, itemType, updatedFields) {
@@ -800,6 +799,7 @@
 
             if (!item) return;
 
+            // 🛠️ ส่งค่า addedBy เดิมไปด้วยเพื่อไม่ให้ระบบหลังบ้านมองหาค่าไม่เจอ
             const payload = {
                 action: "update",
                 row: rowId,
@@ -808,6 +808,7 @@
                 email: item.email,
                 status: item.status,
                 expire: item.expire || "-",
+                addedBy: item.addedBy || sessionStorage.getItem('harnapp_admin_name') || '',
                 ...updatedFields
             };
 
