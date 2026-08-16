@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harnapp Premium - Store UI</title>
+    <title>Harnapp Premium - Desktop UI</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- LINE LIFF SDK -->
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', sans-serif; }
@@ -14,83 +13,74 @@
             background-color: #0d0819;
             color: #ffffff;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 24px 20px;
         }
 
         /* HERO BANNER */
-        .hero-section {
-            padding: 30px 0 20px;
-        }
-
         .hero-banner-placeholder {
             width: 100%;
-            height: 350px;
-            background: linear-gradient(135deg, #1d1133 0%, #2e103f 100%);
-            border: 2px dashed #a855f7;
-            border-radius: 28px;
+            border-radius: 24px;
             overflow: hidden;
             box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+            margin-bottom: 30px;
         }
 
         .hero-banner-placeholder img {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: auto;
             display: block;
         }
 
-        /* SECTION TITLE */
         .section-header {
             font-size: 22px;
             font-weight: 700;
-            margin: 25px 0 15px;
+            margin: 28px 0 16px;
             color: #ffffff;
         }
 
-        /* REVIEWS */
+        /* REVIEWS GRID (3 COLUMNS FOR DESKTOP) */
         .reviews-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 20px;
+            gap: 20px;
+            margin-bottom: 24px;
         }
 
         .review-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 16px;
-            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 18px;
             display: flex;
-            gap: 12px;
+            gap: 14px;
             align-items: flex-start;
         }
 
         .review-avatar {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             object-fit: cover;
             flex-shrink: 0;
-            border: 1px solid #a855f7;
+            border: 2px solid #a855f7;
         }
 
-        .review-content h5 { font-size: 13px; color: #fff; }
-        .stars { color: #facc15; font-size: 10px; margin: 2px 0; }
-        .review-content p { font-size: 11px; color: #cbd5e1; word-break: break-word; }
+        .review-content h5 { font-size: 15px; color: #fff; }
+        .stars { color: #facc15; font-size: 12px; margin: 2px 0; }
+        .review-content p { font-size: 13px; color: #cbd5e1; line-height: 1.4; }
 
         /* LINE LOGIN & REVIEW FORM BOX */
         .review-box {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(168, 85, 247, 0.25);
             border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 30px;
+            padding: 24px;
+            margin-bottom: 36px;
         }
 
         .btn-line-auth {
@@ -101,21 +91,21 @@
             border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s ease;
+            font-size: 15px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
             box-shadow: 0 4px 15px rgba(6, 199, 85, 0.3);
+            transition: transform 0.2s;
         }
 
-        .btn-line-auth:hover { background: #05b34c; transform: translateY(-1px); }
+        .btn-line-auth:hover { transform: translateY(-2px); }
 
         .user-profile-preview {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
 
         .user-profile-preview img {
@@ -128,7 +118,7 @@
 
         .form-input {
             width: 100%;
-            padding: 12px 14px;
+            padding: 12px 16px;
             background: #150a26;
             border: 1px solid rgba(168, 85, 247, 0.3);
             border-radius: 12px;
@@ -139,29 +129,22 @@
             font-size: 14px;
         }
 
-        .form-input:focus { border-color: #ec4899; }
-
         .btn-submit-review {
             background: linear-gradient(90deg, #ec4899, #a855f7);
             color: #fff;
             border: none;
-            padding: 12px 20px;
+            padding: 12px 28px;
             border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
-            width: 100%;
             font-size: 14px;
-            transition: opacity 0.2s;
         }
 
-        .btn-submit-review:hover { opacity: 0.9; }
-
-        /* PRODUCTS GRID */
-        .grid-3 {
+        /* PRODUCTS GRID (3 COLUMNS FOR DESKTOP) */
+        .products-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            align-items: stretch;
+            gap: 24px;
         }
 
         .product-card-large {
@@ -172,6 +155,11 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: border-color 0.3s;
+        }
+
+        .product-card-large:hover {
+            border-color: rgba(168, 85, 247, 0.4);
         }
 
         .card-top-info {
@@ -182,35 +170,26 @@
         }
 
         .app-icon-wrapper {
-            width: 60px;
-            height: 60px;
-            border-radius: 18px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
         }
 
-        .app-icon-wrapper.netflix {
-            background: #000000;
-            border: 1px solid rgba(229, 9, 20, 0.3);
-        }
-
-        .app-icon-wrapper.youtube {
-            background: #1f1f1f;
-            border: 1px solid rgba(255, 0, 0, 0.3);
-        }
-
+        .app-icon-wrapper.netflix { background: #000; border: 1px solid rgba(229, 9, 20, 0.3); }
+        .app-icon-wrapper.youtube { background: #1f1f1f; border: 1px solid rgba(255, 0, 0, 0.3); }
         .app-icon-wrapper svg { width: 32px; height: 32px; }
 
-        .product-meta h3 { font-size: 20px; font-weight: 700; color: #fff; }
-        .product-meta .tag { font-size: 11px; color: #ec4899; background: rgba(236, 72, 153, 0.15); padding: 2px 8px; border-radius: 6px; display: inline-block; margin: 4px 0; }
+        .product-meta h3 { font-size: 18px; font-weight: 700; color: #fff; }
+        .product-meta .tag { font-size: 11px; color: #ec4899; background: rgba(236, 72, 153, 0.15); padding: 3px 8px; border-radius: 6px; display: inline-block; margin: 4px 0; }
         .product-meta p { font-size: 12px; color: #94a3b8; }
 
         .feature-tags {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
@@ -218,75 +197,64 @@
         .feat-badge {
             font-size: 11px;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             padding: 4px 10px;
-            border-radius: 20px;
+            border-radius: 14px;
             color: #cbd5e1;
         }
 
         .select-group { margin-bottom: 20px; }
-
-        .select-label {
-            font-size: 12px;
-            color: #cbd5e1;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 500;
-        }
-
-        .select-label span { color: #ec4899; font-weight: 700; }
+        .select-label { font-size: 12px; color: #cbd5e1; margin-bottom: 8px; display: block; }
+        .select-label span { color: #ec4899; }
 
         .select-wrapper { position: relative; width: 100%; }
 
         .custom-select {
             width: 100%;
-            padding: 14px 40px 14px 18px;
-            background: linear-gradient(145deg, rgba(28, 15, 48, 0.9), rgba(18, 9, 33, 0.9));
-            border: 1.5px solid rgba(168, 85, 247, 0.35);
-            border-radius: 16px;
+            padding: 12px 36px 12px 14px;
+            background: #150a26;
+            border: 1px solid rgba(168, 85, 247, 0.35);
+            border-radius: 12px;
             color: #ffffff;
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 13px;
             outline: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
             appearance: none;
         }
-
-        .custom-select:hover { border-color: #ec4899; box-shadow: 0 0 15px rgba(236, 72, 153, 0.25); }
 
         .select-wrapper::after {
             content: "";
             position: absolute;
-            right: 16px;
+            right: 14px;
             top: 50%;
             transform: translateY(-50%);
-            width: 10px;
-            height: 6px;
+            width: 8px;
+            height: 5px;
             background-color: #ec4899;
             clip-path: polygon(100% 0, 0 0, 50% 100%);
             pointer-events: none;
         }
 
-        .custom-select option { background-color: #150a26; color: #ffffff; }
-
-        .btn-action-placeholder { margin-top: auto; width: 100%; }
+        .btn-action-placeholder {
+            margin-top: 12px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
 
         .btn-action-placeholder button {
             background: none;
             border: none;
             cursor: pointer;
             width: 100%;
-            transition: transform 0.2s ease, filter 0.2s ease;
+            max-width: 320px;
+            transition: transform 0.2s;
         }
 
+        .btn-action-placeholder button:hover { transform: scale(1.02); }
         .btn-action-placeholder button img { width: 100%; height: auto; display: block; }
-        .btn-action-placeholder button:hover { transform: translateY(-3px) scale(1.02); filter: brightness(1.1); }
 
         .banner3-section {
-            margin: 40px 0 60px;
+            margin: 36px 0 50px;
             width: 100%;
             border-radius: 24px;
             overflow: hidden;
@@ -296,40 +264,25 @@
 
         footer {
             border-top: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 30px 0;
+            padding: 24px 0;
             background: #080511;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: center;
         }
 
         .brand-text-lg { font-size: 18px; font-weight: 800; color: #a855f7; }
-
-        @media (max-width: 900px) {
-            .grid-3 { grid-template-columns: 1fr; }
-            .reviews-grid { grid-template-columns: 1fr; }
-            .footer-content { flex-direction: column; gap: 16px; text-align: center; }
-        }
     </style>
 </head>
 <body>
 
 <div class="container">
-
-    <!-- HERO BANNER -->
     <section class="hero-section">
         <div class="hero-banner-placeholder">
            <img src="banner2.png" alt="Harnapp Premium Banner">
         </div>
     </section>
 
-    <!-- REVIEWS SECTION -->
     <div class="section-header">💬 รีวิวจากลูกค้าของเรา</div>
 
-    <!-- รายการรีวิวทั้งหมด -->
     <div class="reviews-grid" id="reviewsContainer">
         <div class="review-card">
             <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Natcha" class="review-avatar" alt="profile">
@@ -359,10 +312,8 @@
         </div>
     </div>
 
-    <!-- ฟอร์มล็อกอิน / เขียนรีวิว -->
     <div class="review-box">
-        <!-- สถานะ: ยังไม่ได้ล็อกอิน LINE -->
-        <div id="loginSection" style="text-align: center; padding: 10px 0;">
+        <div id="loginSection" style="text-align: center;">
             <p style="font-size: 14px; color: #cbd5e1; margin-bottom: 12px;">ต้องการแบ่งปันประสบการณ์การใช้งาน?</p>
             <button onclick="liffLogin()" class="btn-line-auth">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.121.303.079.778.039 1.085l-.171 1.027c-.053.303-.242 1.186 1.039.647 1.281-.54 6.911-4.069 9.428-6.967 1.739-1.907 2.572-3.843 2.572-6.002z"/></svg>
@@ -370,7 +321,6 @@
             </button>
         </div>
 
-        <!-- สถานะ: ล็อกอิน LINE แล้ว -->
         <div id="formSection" style="display: none;">
             <div class="user-profile-preview">
                 <img id="userPicture" src="" alt="profile">
@@ -380,9 +330,9 @@
                 </div>
             </div>
 
-            <div class="select-group" style="margin-bottom: 10px;">
+            <div class="select-group" style="margin-bottom: 12px;">
                 <div class="select-wrapper">
-                    <select id="ratingSelect" class="custom-select" style="padding: 10px 14px;">
+                    <select id="ratingSelect" class="custom-select">
                         <option value="5">★★★★★ (5 ดาว - ประทับใจมาก)</option>
                         <option value="4">★★★★☆ (4 ดาว - ดีมาก)</option>
                         <option value="3">★★★☆☆ (3 ดาว - ปานกลาง)</option>
@@ -390,16 +340,15 @@
                 </div>
             </div>
 
-            <textarea id="commentInput" class="form-input" rows="3" placeholder="เขียนความรู้สึกหรือการบริการของคุณที่นี่..."></textarea>
+            <textarea id="commentInput" class="form-input" rows="3" placeholder="เขียนความรู้สึกของคุณ..."></textarea>
             <button onclick="submitReview()" class="btn-submit-review">ส่งรีวิว</button>
         </div>
     </div>
 
-    <!-- PRODUCTS SECTION -->
     <div class="section-header">⭐ สินค้าแนะนำ</div>
 
-    <div class="grid-3">
-        <!-- CARD 1: NETFLIX PREMIUM -->
+    <div class="products-grid">
+        <!-- CARD 1 -->
         <div class="product-card-large" data-product="Netflix Premium">
             <div>
                 <div class="card-top-info">
@@ -438,7 +387,7 @@
             </div>
         </div>
 
-        <!-- CARD 2: NETFLIX TV -->
+        <!-- CARD 2 -->
         <div class="product-card-large" data-product="Netflix TV">
             <div>
                 <div class="card-top-info">
@@ -476,7 +425,7 @@
             </div>
         </div>
 
-        <!-- CARD 3: YOUTUBE PREMIUM -->
+        <!-- CARD 3 -->
         <div class="product-card-large" data-product="YouTube Premium">
             <div>
                 <div class="card-top-info">
@@ -517,59 +466,42 @@
         </div>
     </div>
 
-    <!-- FULL BANNER 3 SECTION -->
     <div class="banner3-section">
         <img src="banner3.png" alt="ขั้นตอนการสั่งซื้อ">
     </div>
-
 </div>
 
-<!-- FOOTER -->
 <footer>
-    <div class="container footer-content">
-        <div class="footer-brand">
-            <div class="brand-text-lg">HARNAPP PREMIUM</div>
-            <p style="font-size: 12px; color: #64748b; margin-top: 4px;">เช่าพรีเมี่ยม ครบ จบที่เดียว!</p>
-        </div>
-        <div style="font-size: 12px; color: #64748b;">
+    <div class="container">
+        <div class="brand-text-lg">HARNAPP PREMIUM</div>
+        <p style="font-size: 12px; color: #64748b; margin-top: 2px;">เช่าพรีเมี่ยม ครบ จบที่เดียว!</p>
+        <div style="font-size: 12px; color: #64748b; margin-top: 8px;">
             © 2026 Harnapp Premium - Store. All rights reserved.
         </div>
     </div>
 </footer>
 
 <script>
-    // 📌 LIFF ID ของคุณที่ตั้งค่าไว้
     const MY_LIFF_ID = "2011131329-8rwwKFK0";
-    const LINE_OFFICIAL_ID = "@YOUR_LINE_ID"; // อย่าลืมใส่ LINE Official ID ของร้านตรงนี้
+    const LINE_OFFICIAL_ID = "@YOUR_LINE_ID";
 
     async function initLiff() {
         try {
             await liff.init({ liffId: MY_LIFF_ID });
-            if (liff.isLoggedIn()) {
-                showReviewForm();
-            }
-        } catch (err) {
-            console.error("LIFF Initialization failed", err);
-        }
+            if (liff.isLoggedIn()) { showReviewForm(); }
+        } catch (err) { console.error("LIFF Initialization failed", err); }
     }
 
-    function liffLogin() {
-        if (!liff.isLoggedIn()) {
-            liff.login();
-        }
-    }
+    function liffLogin() { if (!liff.isLoggedIn()) liff.login(); }
 
     async function showReviewForm() {
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('formSection').style.display = 'block';
-
         try {
             const profile = await liff.getProfile();
             document.getElementById('userName').innerText = profile.displayName;
             document.getElementById('userPicture').src = profile.pictureUrl || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + profile.displayName;
-        } catch (err) {
-            console.error("Failed to get profile", err);
-        }
+        } catch (err) { console.error("Failed to get profile", err); }
     }
 
     function submitReview() {
@@ -615,15 +547,11 @@
         }
 
         const message = `สนใจสั่งซื้อ ${productName}\nรายละเอียด: ${selectedValue}`;
-        const encodedMessage = encodeURIComponent(message);
-
-        const lineUrl = `https://line.me/R/oaMessage/${LINE_OFFICIAL_ID}/?${encodedMessage}`;
+        const lineUrl = `https://line.me/R/oaMessage/${LINE_OFFICIAL_ID}/?${encodeURIComponent(message)}`;
         window.location.href = lineUrl;
     }
 
-    window.onload = function() {
-        initLiff();
-    };
+    window.onload = function() { initLiff(); };
 </script>
 
 </body>
