@@ -30,7 +30,7 @@
             overflow: hidden;
         }
 
-        /* Header Header */
+        /* Header */
         .header {
             text-align: center;
             padding: 32px 20px 24px;
@@ -232,44 +232,8 @@
     let selectedProduct = "";
     let selectedPrice = 0;
 
-    const GOOGLE_API_KEY = "AIzaSyD_g7dNqVR6YSGegipQ6cYC32IFfLCAwoI"; 
-    const SPREADSHEET_ID = "13sccO907Q2SyWybrt226m9zesCFX-szqTP2rSMF3K8Y"; 
-
-    async function fetchStock() {
-        const range = "Sheet1!A2:B8"; 
-        const url = `https://sheets.googleapis.com/v1/spreadsheets/${SPREADSHEET_ID}/values/${range}?key=${GOOGLE_API_KEY}`;
-
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if (data.values) {
-                data.values.forEach(row => {
-                    const itemCode = row[0];
-                    const stockQty = parseInt(row[1]) || 0; 
-                    applyStockToUI(itemCode, stockQty);
-                });
-            }
-        } catch (err) {
-            console.error("ดึงสต็อกไม่สำเร็จ:", err);
-        }
-    }
-
-    function applyStockToUI(code, qty) {
-        const radio = document.getElementById(`radio-${code}`);
-        const optContainer = document.getElementById(`opt-${code}`);
-        const label = document.getElementById(`label-${code}`);
-        
-        if (radio && optContainer && label) {
-            if (qty <= 0) {
-                radio.disabled = true;
-                optContainer.classList.add('disabled');
-                if (!label.innerText.includes('(หมด)')) {
-                    label.innerText += " (หมด)";
-                }
-            }
-        }
-    }
+    // ใส่ ID ร้านค้า LINE Official Account ของคุณตรงนี้ (รวมเครื่องหมาย @)
+    const LINE_OA_ID = "@yourlineid"; 
 
     function updateTotal() {
         const radios = document.getElementsByName('product');
@@ -290,12 +254,17 @@
         }
 
         const message = `🛒 สนใจสั่งซื้อสินค้าครับ!\n------------------\nรายการ: ${selectedProduct}\nราคาทั้งหมด: ${selectedPrice} บาท\n------------------\nขอเลขบัญชี / QR Code โอนเงินหน่อยครับ`;
-        const finalUrl = `https://line.me/R/share?text=${encodeURIComponent(message)}`;
+        
+        // เด้งเข้าแชตร้านโดยตรง (ถ้าไม่มี ID ร้าน จะใช้แบบเลือกผู้รับแทน)
+        let finalUrl = "";
+        if (LINE_OA_ID && LINE_OA_ID !== "@yourlineid") {
+            finalUrl = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(message)}`;
+        } else {
+            finalUrl = `https://line.me/R/share?text=${encodeURIComponent(message)}`;
+        }
         
         window.location.href = finalUrl;
     }
-
-    window.onload = fetchStock;
 </script>
 
 </body>
