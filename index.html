@@ -3,268 +3,627 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harnapp Premium - Store</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Harnapp Premium - Store UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- LINE LIFF SDK -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', sans-serif; }
-        
+
         body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
-            color: #0f172a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-color: #0d0819;
+            color: #ffffff;
             min-height: 100vh;
-            padding: 20px 0;
+            overflow-x: hidden;
         }
 
-        .app-container {
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* HERO BANNER */
+        .hero-section {
+            padding: 30px 0 20px;
+        }
+
+        .hero-banner-placeholder {
             width: 100%;
-            max-width: 410px;
-            background: #ffffff;
-            min-height: 840px;
-            border-radius: 36px;
-            padding-bottom: 90px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
-            position: relative;
+            height: 350px;
+            background: linear-gradient(135deg, #1d1133 0%, #2e103f 100%);
+            border: 2px dashed #a855f7;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+        }
+
+        .hero-banner-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* SECTION TITLE */
+        .section-header {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 25px 0 15px;
+            color: #ffffff;
+        }
+
+        /* REVIEWS */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .review-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 1px solid #a855f7;
+        }
+
+        .review-content h5 { font-size: 13px; color: #fff; }
+        .stars { color: #facc15; font-size: 10px; margin: 2px 0; }
+        .review-content p { font-size: 11px; color: #cbd5e1; word-break: break-word; }
+
+        /* LINE LOGIN & REVIEW FORM BOX */
+        .review-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .btn-line-auth {
+            background: #06C755;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(6, 199, 85, 0.3);
+        }
+
+        .btn-line-auth:hover { background: #05b34c; transform: translateY(-1px); }
+
+        .user-profile-preview {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .user-profile-preview img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #06C755;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            background: #150a26;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            color: #fff;
+            margin-bottom: 12px;
+            outline: none;
+            resize: none;
+            font-size: 14px;
+        }
+
+        .form-input:focus { border-color: #ec4899; }
+
+        .btn-submit-review {
+            background: linear-gradient(90deg, #ec4899, #a855f7);
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-submit-review:hover { opacity: 0.9; }
+
+        /* PRODUCTS GRID */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .product-card-large {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-top-info {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .app-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .app-icon-wrapper.netflix {
+            background: #000000;
+            border: 1px solid rgba(229, 9, 20, 0.3);
+        }
+
+        .app-icon-wrapper.youtube {
+            background: #1f1f1f;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+
+        .app-icon-wrapper svg { width: 32px; height: 32px; }
+
+        .product-meta h3 { font-size: 20px; font-weight: 700; color: #fff; }
+        .product-meta .tag { font-size: 11px; color: #ec4899; background: rgba(236, 72, 153, 0.15); padding: 2px 8px; border-radius: 6px; display: inline-block; margin: 4px 0; }
+        .product-meta p { font-size: 12px; color: #94a3b8; }
+
+        .feature-tags {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .feat-badge {
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+            color: #cbd5e1;
+        }
+
+        .select-group { margin-bottom: 20px; }
+
+        .select-label {
+            font-size: 12px;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .select-label span { color: #ec4899; font-weight: 700; }
+
+        .select-wrapper { position: relative; width: 100%; }
+
+        .custom-select {
+            width: 100%;
+            padding: 14px 40px 14px 18px;
+            background: linear-gradient(145deg, rgba(28, 15, 48, 0.9), rgba(18, 9, 33, 0.9));
+            border: 1.5px solid rgba(168, 85, 247, 0.35);
+            border-radius: 16px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+        }
+
+        .custom-select:hover { border-color: #ec4899; box-shadow: 0 0 15px rgba(236, 72, 153, 0.25); }
+
+        .select-wrapper::after {
+            content: "";
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 6px;
+            background-color: #ec4899;
+            clip-path: polygon(100% 0, 0 0, 50% 100%);
+            pointer-events: none;
+        }
+
+        .custom-select option { background-color: #150a26; color: #ffffff; }
+
+        .btn-action-placeholder { margin-top: auto; width: 100%; }
+
+        .btn-action-placeholder button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .btn-action-placeholder button img { width: 100%; height: auto; display: block; }
+        .btn-action-placeholder button:hover { transform: translateY(-3px) scale(1.02); filter: brightness(1.1); }
+
+        .banner3-section {
+            margin: 40px 0 60px;
+            width: 100%;
+            border-radius: 24px;
             overflow: hidden;
         }
 
-        /* Header */
-        .header {
-            text-align: center;
-            padding: 32px 20px 24px;
-            background: linear-gradient(135deg, #fce7f3 0%, #f3e8ff 100%);
-            border-bottom-left-radius: 28px;
-            border-bottom-right-radius: 28px;
-            position: relative;
-        }
-        
-        .logo-img {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            border: 3px solid #ffffff;
-            object-fit: cover;
-            margin: 0 auto 12px;
-            display: block;
-            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.25);
-        }
-        
-        .brand-name { font-size: 22px; font-weight: 700; color: #0f172a; letter-spacing: -0.5px; }
-        .brand-sub { font-size: 13px; color: #64748b; margin-top: 4px; }
+        .banner3-section img { width: 100%; height: auto; display: block; }
 
-        /* Content Area */
-        .content { padding: 20px 18px; }
-        .section-title { font-size: 15px; font-weight: 700; color: #334155; margin: 18px 0 12px; display: flex; align-items: center; gap: 6px; }
-
-        /* Card Component */
-        .card {
-            background: #ffffff;
-            border: 1px solid #f1f5f9;
-            border-radius: 20px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 30px 0;
+            background: #080511;
         }
-        .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .prod-name { font-size: 15px; font-weight: 600; color: #0f172a; }
-        
-        /* Badges */
-        .stock-tag { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-        .st-ready { background: #dcfce7; color: #166534; }
 
-        /* Radio Options */
-        .opt-list { display: flex; flex-direction: column; gap: 10px; }
-        .opt-item {
+        .footer-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 14px;
-            border: 1.5px solid #f1f5f9;
-            background: #fafafa;
-            border-radius: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
         }
-        .opt-item:hover { border-color: #f472b6; background: #fff5f9; transform: translateY(-1px); }
-        .opt-item.disabled { opacity: 0.4; cursor: not-allowed; background: #f1f5f9; border-color: #e2e8f0; transform: none; }
-        .opt-item input[type="radio"] { accent-color: #ec4899; width: 18px; height: 18px; cursor: pointer; }
-        .opt-label { font-size: 14px; color: #334155; font-weight: 500; margin-left: 10px; }
-        .opt-price { font-size: 15px; font-weight: 700; color: #ec4899; }
 
-        /* Bottom Fixed Bar */
-        .bottom-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #ffffff;
-            border-top: 1px solid #f1f5f9;
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 -10px 25px rgba(0,0,0,0.05);
-        }
-        .summary-label { font-size: 11px; color: #64748b; font-weight: 500; }
-        .summary-price { font-size: 22px; font-weight: 800; color: #ec4899; line-height: 1.2; }
+        .brand-text-lg { font-size: 18px; font-weight: 800; color: #a855f7; }
 
-        .btn-send-line {
-            background: linear-gradient(135deg, #06c755 0%, #05b34c 100%);
-            color: #ffffff;
-            border: none;
-            padding: 12px 22px;
-            border-radius: 16px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 6px 18px rgba(6, 199, 85, 0.35);
-            transition: all 0.2s;
+        @media (max-width: 900px) {
+            .grid-3 { grid-template-columns: 1fr; }
+            .reviews-grid { grid-template-columns: 1fr; }
+            .footer-content { flex-direction: column; gap: 16px; text-align: center; }
         }
-        .btn-send-line:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(6, 199, 85, 0.45); }
-        .btn-send-line:active { transform: scale(0.96); }
     </style>
 </head>
 <body>
 
-<div class="app-container">
+<div class="container">
 
-    <!-- HEADER -->
-    <div class="header">
-        <img src="logo.png" alt="Harnapp Logo" class="logo-img">
-        <div class="brand-name">Harnapp Premium</div>
-        <div class="brand-sub">เลือกแพ็กเกจที่ต้องการ แล้วกดสั่งซื้อได้เลยครับ ✨</div>
+    <!-- HERO BANNER -->
+    <section class="hero-section">
+        <div class="hero-banner-placeholder">
+           <img src="banner2.png" alt="Harnapp Premium Banner">
+        </div>
+    </section>
+
+    <!-- REVIEWS SECTION -->
+    <div class="section-header">💬 รีวิวจากลูกค้าของเรา</div>
+
+    <!-- รายการรีวิวทั้งหมด -->
+    <div class="reviews-grid" id="reviewsContainer">
+        <div class="review-card">
+            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Natcha" class="review-avatar" alt="profile">
+            <div class="review-content">
+                <h5>Natcha★</h5>
+                <div class="stars">★★★★★</div>
+                <p>Netflix ลื่นมากก ดูได้ปกติเลย แอดมินตอบไว น่ารักมาก!</p>
+            </div>
+        </div>
+
+        <div class="review-card">
+            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Ton" class="review-avatar" alt="profile">
+            <div class="review-content">
+                <h5>Ton_kub</h5>
+                <div class="stars">★★★★★</div>
+                <p>YouTube Premium ไม่มีโฆษณาแล้ว ฟังเพลงเพลินสุดๆ</p>
+            </div>
+        </div>
+
+        <div class="review-card">
+            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Mew" class="review-avatar" alt="profile">
+            <div class="review-content">
+                <h5>Mewww</h5>
+                <div class="stars">★★★★★</div>
+                <p>ใช้ง่าย ส่งบัญชีไว 5 นาทีได้เลย บริการดีมากครับ!</p>
+            </div>
+        </div>
     </div>
 
-    <div class="content">
-
-        <!-- NETFLIX -->
-        <div class="section-title">🎬 Netflix Premium (4K)</div>
-        <div class="card">
-            <div class="card-head">
-                <div class="prod-name">เลือกระยะเวลา</div>
-                <span class="stock-tag st-ready" id="netflix-status">พร้อมส่ง</span>
-            </div>
-            <div class="opt-list">
-                <label class="opt-item" id="opt-nf-1d">
-                    <div style="display:flex; align-items:center;">
-                        <input type="radio" name="product" value="Netflix Premium (1 วัน)" data-price="17" id="radio-nf-1d" onclick="updateTotal()">
-                        <span class="opt-label" id="label-nf-1d">Netflix 1 วัน</span>
-                    </div>
-                    <span class="opt-price">17.-</span>
-                </label>
-                <label class="opt-item" id="opt-nf-7d">
-                    <div style="display:flex; align-items:center;">
-                        <input type="radio" name="product" value="Netflix Premium (7 วัน)" data-price="45" id="radio-nf-7d" onclick="updateTotal()">
-                        <span class="opt-label" id="label-nf-7d">Netflix 7 วัน</span>
-                    </div>
-                    <span class="opt-price">45.-</span>
-                </label>
-                <label class="opt-item" id="opt-nf-30d">
-                    <div style="display:flex; align-items:center;">
-                        <input type="radio" name="product" value="Netflix Premium (30 วัน)" data-price="110" id="radio-nf-30d" onclick="updateTotal()">
-                        <span class="opt-label" id="label-nf-30d">Netflix 30 วัน</span>
-                    </div>
-                    <span class="opt-price">110.-</span>
-                </label>
-            </div>
+    <!-- ฟอร์มล็อกอิน / เขียนรีวิว -->
+    <div class="review-box">
+        <!-- สถานะ: ยังไม่ได้ล็อกอิน LINE -->
+        <div id="loginSection" style="text-align: center; padding: 10px 0;">
+            <p style="font-size: 14px; color: #cbd5e1; margin-bottom: 12px;">ต้องการแบ่งปันประสบการณ์การใช้งาน?</p>
+            <button onclick="liffLogin()" class="btn-line-auth">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.121.303.079.778.039 1.085l-.171 1.027c-.053.303-.242 1.186 1.039.647 1.281-.54 6.911-4.069 9.428-6.967 1.739-1.907 2.572-3.843 2.572-6.002z"/></svg>
+                ล็อกอินด้วย LINE เพื่อเขียนรีวิว
+            </button>
         </div>
 
-        <!-- YOUTUBE -->
-        <div class="section-title">▶️ YouTube Premium (30 วัน)</div>
-        <div class="card">
-            <div class="card-head">
-                <div class="prod-name">เลือกประเภทเมล</div>
-                <span class="stock-tag st-ready" id="yt-status">พร้อมส่ง</span>
+        <!-- สถานะ: ล็อกอิน LINE แล้ว -->
+        <div id="formSection" style="display: none;">
+            <div class="user-profile-preview">
+                <img id="userPicture" src="" alt="profile">
+                <div>
+                    <span id="userName" style="font-weight: 600; font-size: 15px; color: #fff;"></span>
+                    <span style="font-size: 11px; color: #06C755; display: block;">✓ ยืนยันตัวตนผ่าน LINE แล้ว</span>
+                </div>
             </div>
-            <div class="opt-list">
-                <label class="opt-item" id="opt-yt-no-custom">
-                    <div style="display:flex; align-items:center;">
-                        <input type="radio" name="product" value="YouTube ไม่ต่อเมล (เมลลูกค้า)" data-price="39" id="radio-yt-no-custom" onclick="updateTotal()">
-                        <span class="opt-label" id="label-yt-no-custom">ไม่ต่อเมล • เมลลูกค้า</span>
-                    </div>
-                    <span class="opt-price">39.-</span>
-                </label>
-                <label class="opt-item" id="opt-yt-no-shop">
-                    <div style="display:flex; align-items:center;">
-                        <input type="radio" name="product" value="YouTube ไม่ต่อเมล (เมลร้าน)" data-price="55" id="radio-yt-no-shop" onclick="updateTotal()">
-                        <span class="opt-label" id="label-yt-no-shop">ไม่ต่อเมล • เมลร้าน</span>
-                    </div>
-                    <span class="opt-price">55.-</span>
-                </label>
-                <label class="opt-item" id="opt-yt-yes-custom">
-                    <div style="display:flex; align-items:center;">
-                        <input type="radio" name="product" value="YouTube ต่อเมลเดิม (เมลลูกค้า)" data-price="99" id="radio-yt-yes-custom" onclick="updateTotal()">
-                        <span class="opt-label" id="label-yt-yes-custom">ต่อเมลเดิม • เมลลูกค้า</span>
-                    </div>
-                    <span class="opt-price">99.-</span>
-                </label>
-                <label class="opt-item" id="opt-yt-yes-shop">
-                    <div style="display:flex; align-items:center;">
-                        <input type="radio" name="product" value="YouTube ต่อเมลเดิม (เมลร้าน)" data-price="115" id="radio-yt-yes-shop" onclick="updateTotal()">
-                        <span class="opt-label" id="label-yt-yes-shop">ต่อเมลเดิม • เมลร้าน</span>
-                    </div>
-                    <span class="opt-price">115.-</span>
-                </label>
-            </div>
-        </div>
 
+            <div class="select-group" style="margin-bottom: 10px;">
+                <div class="select-wrapper">
+                    <select id="ratingSelect" class="custom-select" style="padding: 10px 14px;">
+                        <option value="5">★★★★★ (5 ดาว - ประทับใจมาก)</option>
+                        <option value="4">★★★★☆ (4 ดาว - ดีมาก)</option>
+                        <option value="3">★★★☆☆ (3 ดาว - ปานกลาง)</option>
+                    </select>
+                </div>
+            </div>
+
+            <textarea id="commentInput" class="form-input" rows="3" placeholder="เขียนความรู้สึกหรือการบริการของคุณที่นี่..."></textarea>
+            <button onclick="submitReview()" class="btn-submit-review">ส่งรีวิว</button>
+        </div>
     </div>
 
-    <!-- BOTTOM BAR -->
-    <div class="bottom-bar">
-        <div>
-            <div class="summary-label">ยอดชำระทั้งหมด</div>
-            <div class="summary-price" id="total-display">0 บาท</div>
+    <!-- PRODUCTS SECTION -->
+    <div class="section-header">⭐ สินค้าแนะนำ</div>
+
+    <div class="grid-3">
+        <!-- CARD 1: NETFLIX PREMIUM -->
+        <div class="product-card-large" data-product="Netflix Premium">
+            <div>
+                <div class="card-top-info">
+                    <div class="app-icon-wrapper netflix">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M4 2v20l5.48-2.22V8.42L14.7 22H20V2l-5.48 2.22v11.36L9.3 2H4z" fill="#E50914"/></svg>
+                    </div>
+                    <div class="product-meta">
+                        <h3>Netflix Premium</h3>
+                        <span class="tag">4K Ultra HD</span>
+                        <p>ดูหนัง ซีรีส์ อนิเมะได้ไม่จำกัด</p>
+                    </div>
+                </div>
+
+                <div class="feature-tags">
+                    <span class="feat-badge">✔ โปรไฟล์ส่วนตัว</span>
+                    <span class="feat-badge">✔ รองรับหลายอุปกรณ์</span>
+                </div>
+
+                <div class="select-group">
+                    <label class="select-label">เลือกระยะเวลาใช้งาน <span>*</span></label>
+                    <div class="select-wrapper">
+                        <select class="custom-select">
+                            <option value="" disabled selected>-- กรุณาเลือกระยะเวลาใช้งาน --</option>
+                            <option value="1 วัน | 17 บาท">1 วัน — 17 บาท</option>
+                            <option value="7 วัน | 45 บาท">7 วัน — 45 บาท</option>
+                            <option value="30 วัน | 110 บาท">30 วัน — 110 บาท (คุ้มสุด)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-action-placeholder">
+                <button onclick="orderViaLine(this)">
+                    <img src="button1.png" alt="สั่งซื้อผ่านไลน์">
+                </button>
+            </div>
         </div>
-        <button class="btn-send-line" onclick="sendToLine()">
-            💬 สั่งซื้อผ่าน LINE
-        </button>
+
+        <!-- CARD 2: NETFLIX TV -->
+        <div class="product-card-large" data-product="Netflix TV">
+            <div>
+                <div class="card-top-info">
+                    <div class="app-icon-wrapper netflix">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M4 2v20l5.48-2.22V8.42L14.7 22H20V2l-5.48 2.22v11.36L9.3 2H4z" fill="#E50914"/></svg>
+                    </div>
+                    <div class="product-meta">
+                        <h3>Netflix TV</h3>
+                        <span class="tag">Smart TV & กล่อง TV</span>
+                        <p>รับชมผ่าน Smart TV / กล่องดิจิทัล</p>
+                    </div>
+                </div>
+
+                <div class="feature-tags">
+                    <span class="feat-badge">✔ คมชัดระดับ 4K</span>
+                    <span class="feat-badge">✔ จอใหญ่เต็มตา</span>
+                </div>
+
+                <div class="select-group">
+                    <label class="select-label">เลือกระยะเวลาใช้งาน <span>*</span></label>
+                    <div class="select-wrapper">
+                        <select class="custom-select">
+                            <option value="" disabled selected>-- กรุณาเลือกระยะเวลาใช้งาน --</option>
+                            <option value="7 วัน | 59 บาท">7 วัน — 59 บาท</option>
+                            <option value="30 วัน | 169 บาท">30 วัน — 169 บาท</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-action-placeholder">
+                <button onclick="orderViaLine(this)">
+                    <img src="button1.png" alt="สั่งซื้อผ่านไลน์">
+                </button>
+            </div>
+        </div>
+
+        <!-- CARD 3: YOUTUBE PREMIUM -->
+        <div class="product-card-large" data-product="YouTube Premium">
+            <div>
+                <div class="card-top-info">
+                    <div class="app-icon-wrapper youtube">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z" fill="#FF0000"/><path d="M9.545 15.568V8.432L15.818 12l-6.273 3.568z" fill="#FFFFFF"/></svg>
+                    </div>
+                    <div class="product-meta">
+                        <h3>YouTube Premium</h3>
+                        <span class="tag">30 วัน</span>
+                        <p>ดูได้ไม่มีโฆษณา • ฟังเพลงพื้นหลัง</p>
+                    </div>
+                </div>
+
+                <div class="feature-tags">
+                    <span class="feat-badge">✔ YouTube Music</span>
+                    <span class="feat-badge">✔ ดูออฟไลน์ได้</span>
+                </div>
+
+                <div class="select-group">
+                    <label class="select-label">เลือกประเภทแพ็กเกจ <span>*</span></label>
+                    <div class="select-wrapper">
+                        <select class="custom-select">
+                            <option value="" disabled selected>-- กรุณาเลือกประเภทแพ็กเกจ --</option>
+                            <option value="ไม่ต่อเมล (ลูกค้าเตรียมเมล) | 39 บาท">ไม่ต่อเมล (ลูกค้า) — 39 บาท</option>
+                            <option value="ไม่ต่อเมล (ร้านจัดหาเมล) | 55 บาท">ไม่ต่อเมล (ร้าน) — 55 บาท</option>
+                            <option value="ต่อเมลเดิม (ลูกค้าเตรียมเมล) | 99 บาท">ต่อเมลเดิม (ลูกค้า) — 99 บาท</option>
+                            <option value="ต่อเมลเดิม (ร้านจัดหาเมล) | 115 บาท">ต่อเมลเดิม (ร้าน) — 115 บาท</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-action-placeholder">
+                <button onclick="orderViaLine(this)">
+                    <img src="button1.png" alt="สั่งซื้อผ่านไลน์">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FULL BANNER 3 SECTION -->
+    <div class="banner3-section">
+        <img src="banner3.png" alt="ขั้นตอนการสั่งซื้อ">
     </div>
 
 </div>
 
+<!-- FOOTER -->
+<footer>
+    <div class="container footer-content">
+        <div class="footer-brand">
+            <div class="brand-text-lg">HARNAPP PREMIUM</div>
+            <p style="font-size: 12px; color: #64748b; margin-top: 4px;">เช่าพรีเมี่ยม ครบ จบที่เดียว!</p>
+        </div>
+        <div style="font-size: 12px; color: #64748b;">
+            © 2026 Harnapp Premium - Store. All rights reserved.
+        </div>
+    </div>
+</footer>
+
 <script>
-    let selectedProduct = "";
-    let selectedPrice = 0;
+    // 📌 LIFF ID ของคุณที่ตั้งค่าไว้
+    const MY_LIFF_ID = "2011131329-8rwwKFK0";
+    const LINE_OFFICIAL_ID = "@YOUR_LINE_ID"; // อย่าลืมใส่ LINE Official ID ของร้านตรงนี้
 
-    // ใส่ ID ร้านค้า LINE Official Account ของคุณตรงนี้ (รวมเครื่องหมาย @)
-    const LINE_OA_ID = "@419rtufm"; 
-
-    function updateTotal() {
-        const radios = document.getElementsByName('product');
-        for (const radio of radios) {
-            if (radio.checked) {
-                selectedProduct = radio.value;
-                selectedPrice = radio.getAttribute('data-price');
-                break;
+    async function initLiff() {
+        try {
+            await liff.init({ liffId: MY_LIFF_ID });
+            if (liff.isLoggedIn()) {
+                showReviewForm();
             }
+        } catch (err) {
+            console.error("LIFF Initialization failed", err);
         }
-        document.getElementById('total-display').innerText = selectedPrice + " บาท";
     }
 
-    function sendToLine() {
-        if (!selectedProduct) {
-            alert("กรุณาเลือกสินค้าที่ต้องการก่อนนะคะ 🙏");
+    function liffLogin() {
+        if (!liff.isLoggedIn()) {
+            liff.login();
+        }
+    }
+
+    async function showReviewForm() {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('formSection').style.display = 'block';
+
+        try {
+            const profile = await liff.getProfile();
+            document.getElementById('userName').innerText = profile.displayName;
+            document.getElementById('userPicture').src = profile.pictureUrl || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + profile.displayName;
+        } catch (err) {
+            console.error("Failed to get profile", err);
+        }
+    }
+
+    function submitReview() {
+        const comment = document.getElementById('commentInput').value;
+        const rating = document.getElementById('ratingSelect').value;
+
+        if (!comment.trim()) {
+            alert('กรุณากรอกข้อความรีวิวก่อนส่งครับ');
             return;
         }
 
-        const message = `🛒 สนใจสั่งซื้อสินค้า ค่ะ/คับ!\n------------------\nรายการ: ${selectedProduct}\nราคาทั้งหมด: ${selectedPrice} บาท\n------------------`;
-        
-        // เด้งเข้าแชตร้านโดยตรง (ถ้าไม่มี ID ร้าน จะใช้แบบเลือกผู้รับแทน)
-        let finalUrl = "";
-        if (LINE_OA_ID && LINE_OA_ID !== "@yourlineid") {
-            finalUrl = `https://line.me/R/oaMessage/${LINE_OA_ID}/?${encodeURIComponent(message)}`;
-        } else {
-            finalUrl = `https://line.me/R/share?text=${encodeURIComponent(message)}`;
-        }
-        
-        window.location.href = finalUrl;
+        const userName = document.getElementById('userName').innerText;
+        const userPic = document.getElementById('userPicture').src;
+        const starsText = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+
+        const container = document.getElementById('reviewsContainer');
+        const newCard = `
+            <div class="review-card">
+                <img src="${userPic}" class="review-avatar" alt="profile">
+                <div class="review-content">
+                    <h5>${userName}</h5>
+                    <div class="stars">${starsText}</div>
+                    <p>${comment}</p>
+                </div>
+            </div>
+        `;
+
+        container.insertAdjacentHTML('afterbegin', newCard);
+        document.getElementById('commentInput').value = '';
+        alert('ขอบคุณสำหรับรีวิวครับ!');
     }
+
+    function orderViaLine(btnElement) {
+        const card = btnElement.closest('.product-card-large');
+        const productName = card.getAttribute('data-product');
+        const selectElement = card.querySelector('.custom-select');
+        const selectedValue = selectElement.value;
+
+        if (!selectedValue) {
+            alert("กรุณาเลือกระยะเวลาหรือแพ็กเกจสินค้าก่อนทำรายการครับ");
+            selectElement.focus();
+            return;
+        }
+
+        const message = `สนใจสั่งซื้อ ${productName}\nรายละเอียด: ${selectedValue}`;
+        const encodedMessage = encodeURIComponent(message);
+
+        const lineUrl = `https://line.me/R/oaMessage/${LINE_OFFICIAL_ID}/?${encodedMessage}`;
+        window.location.href = lineUrl;
+    }
+
+    window.onload = function() {
+        initLiff();
+    };
 </script>
 
 </body>
